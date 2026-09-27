@@ -11,7 +11,7 @@ const { title, meta, as: Tag = 'div', class: cls, bodyClass } = Astro.props;
 
 <Tag class:list={['win', cls]}>
   <div class="win__bar" aria-hidden="true">
-    <span class="win__close" aria-hidden="true"></span>
+    <span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>
     <span class="win__title">{title}</span>
     {meta && <span class="win__meta">{meta}</span>}
   </div>

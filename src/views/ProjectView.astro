@@ -90,7 +90,7 @@ const readme = stats?.primary.readmeHtml;
 
         {readme && (
           <details class="readme-box win">
-            <summary class="win__bar"><span class="win__close" aria-hidden="true"></span><span class="win__title">README.md - {stats!.primary.name}</span><span class="win__meta">▼</span></summary>
+            <summary class="win__bar"><span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="win__title">README.md - {stats!.primary.name}</span><span class="win__meta">▼</span></summary>
             <div class="win__body prose readme" set:html={readme} />
           </details>
         )}

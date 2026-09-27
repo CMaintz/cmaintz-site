@@ -28,7 +28,7 @@ const items = [...pages, ...projects, ...posts, ...actions];
 ---
 
 <dialog class="cmdk win" aria-label={t('cmd.open')} data-items={JSON.stringify(items)} data-email={site.email}>
-  <div class="win__bar"><span class="win__close" aria-hidden="true"></span><span class="win__title">command.exe</span><span class="win__meta">esc</span></div>
+  <div class="win__bar"><span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="win__title">command.exe</span><span class="win__meta">esc</span></div>
   <div class="cmdk__body">
     <label class="prompt">
       <span class="accent mono" aria-hidden="true">&gt;</span>

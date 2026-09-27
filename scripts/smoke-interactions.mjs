@@ -71,7 +71,16 @@ async function paletteKeyboard(page) {
   return completed === highlighted && highlighted.startsWith('jev-');
 }
 
-const CHECKS = { paletteNavigates, paletteKeyboard, togglesFlip, filterHides, demoLoads, langSwitches, postLangSwitchLandsOnIndex };
+/** The homepage terminal switches to the git log tab and its entries link out. */
+async function terminalTabs(page) {
+  await page.goto(`${BASE}/`);
+  await page.click('#tab-log');
+  const visible = await page.isVisible('#panel-log');
+  const links = await page.$$eval('#panel-log .log a', (as) => as.length);
+  return visible && links > 0 && (await page.isHidden('#panel-whoami'));
+}
+
+const CHECKS = { terminalTabs, paletteNavigates, paletteKeyboard, togglesFlip, filterHides, demoLoads, langSwitches, postLangSwitchLandsOnIndex };
 
 async function run(page, [name, check]) {
   const ok = await check(page).catch((e) => (console.error(e.message), false));

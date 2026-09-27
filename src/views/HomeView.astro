@@ -1,10 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 import Window from '../components/Window.astro';
+import WhoamiTerminal from '../components/WhoamiTerminal.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import PostItem from '../components/PostItem.astro';
 import { type Lang, localize, useT } from '../i18n/ui';
-import { getFeaturedProjects, getPosts, github } from '../lib/content';
+import { getFeaturedProjects, getPosts } from '../lib/content';
 import { site } from '../data/site';
 
 interface Props { lang: Lang }
@@ -18,7 +19,6 @@ const focus = (['dx', 'devops', 'platform', 'ai'] as const).map((k, i) => ({
   body: t(`focus.${k}.body`),
   glyph: ['⌘', '⟳', '▦', '◈'][i],
 }));
-const repoCount = github.repos.length;
 const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', 'Spring Boot', 'Symfony', 'Angular', 'React', 'Astro', 'GitHub Actions', 'mise', 'Docker', 'PostgreSQL', 'RabbitMQ', 'Cloudflare', 'Azure', 'Kubernetes', 'Claude Code', 'Semgrep'];
 ---
 
@@ -35,19 +35,7 @@ const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', '
       </div>
     </div>
 
-    <Window title="~/whoami" meta="tty1" class="term">
-      <div class="term__body mono" aria-label="Profile summary">
-        <p><span class="accent">$</span> whoami</p>
-        <p class="out">christoffer maintz - developer, aarhus dk</p>
-        <p><span class="accent">$</span> cat focus.txt</p>
-        <p class="out">dx · devops · platform · ai enablement</p>
-        <p><span class="accent">$</span> ls ~/shipped</p>
-        <p class="out hl">illux-product-ai  foundry  jev-triage  jev-guard  jev-sort  jobbuddy  tech-atlas</p>
-        <p><span class="accent">$</span> gh repo list --public | wc -l</p>
-        <p class="out">{repoCount}</p>
-        <p><span class="accent">$</span> <span class="cursor"></span></p>
-      </div>
-    </Window>
+    <WhoamiTerminal lang={lang} />
   </section>
 
   <section class="section wrap" aria-labelledby="focus-h">
@@ -112,20 +100,6 @@ const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', '
   h1 { margin-bottom: 1.4rem; }
   .ctas { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2rem; align-items: center; }
   .kb { font-size: 0.75rem; color: var(--fg-dim); gap: 0.3rem; }
-  .term__body { font-size: 0.85rem; line-height: 1.75; }
-  .term__body p { white-space: pre-wrap; word-break: break-word; }
-  .term__body .out { color: var(--fg-dim); margin-bottom: 0.35rem; }
-  .term__body .hl { color: var(--accent-2); }
-  @media (prefers-reduced-motion: no-preference) {
-    .term__body p { animation: type 0.01s steps(1) both; }
-    .term__body p:nth-child(n) { animation-delay: calc(var(--i, 0) * 1ms); }
-    .term__body p:nth-child(1) { animation-delay: 0.15s; } .term__body p:nth-child(2) { animation-delay: 0.35s; }
-    .term__body p:nth-child(3) { animation-delay: 0.65s; } .term__body p:nth-child(4) { animation-delay: 0.85s; }
-    .term__body p:nth-child(5) { animation-delay: 1.15s; } .term__body p:nth-child(6) { animation-delay: 1.35s; }
-    .term__body p:nth-child(7) { animation-delay: 1.65s; } .term__body p:nth-child(8) { animation-delay: 1.85s; }
-    .term__body p:nth-child(9) { animation-delay: 2.1s; }
-  }
-  @keyframes type { from { visibility: hidden; } to { visibility: visible; } }
 
   .focus { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 0; border: 2px solid var(--line); background: var(--bg-2); }
   .focus__item { padding: 1.5rem; border-right: 1px dashed var(--line); display: flex; flex-direction: column; gap: 0.6rem; }

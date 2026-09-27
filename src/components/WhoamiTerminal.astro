@@ -1,0 +1,107 @@
+---
+// Homepage terminal with two tabs: `whoami` (profile, every item a link) and
+// `git log` (most recently pushed public repos, from the GitHub snapshot).
+import Window from './Window.astro';
+import { type Lang, localize, formatDate } from '../i18n/ui';
+import { getProjects, github } from '../lib/content';
+import { recentRepos } from '../lib/home';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const shipped = ['illux-product-ai', 'foundry', 'jev-triage', 'jev-guard', 'jev-sort', 'jobbuddy', 'tech-atlas'];
+const areas = [
+  { id: 'dx', label: 'dx' },
+  { id: 'devops', label: 'devops' },
+  { id: 'platform', label: 'platform' },
+  { id: 'ai', label: 'ai enablement' },
+];
+const projectByRepo = new Map((await getProjects()).flatMap((p) => p.data.repos.map((r) => [r, p.id] as const)));
+const synced = Date.parse(github.syncedAt);
+const pushes = recentRepos(7).map((r) => ({
+  name: r.name,
+  lang: r.language?.name ?? '-',
+  ago: `${Math.max(0, Math.round((synced - Date.parse(r.pushedAt)) / 86_400_000))}d`,
+  href: projectByRepo.has(r.name) ? localize(`/projects/${projectByRepo.get(r.name)}`, lang) : r.url,
+}));
+const link = (path: string) => localize(path, lang);
+---
+
+<Window title="~/whoami" meta="tty1" class="term">
+  <div class="tabs mono" role="tablist" aria-label="Terminal">
+    <button type="button" role="tab" id="tab-whoami" aria-controls="panel-whoami" aria-selected="true">whoami</button>
+    <button type="button" role="tab" id="tab-log" aria-controls="panel-log" aria-selected="false" tabindex="-1">git log</button>
+  </div>
+
+  <div class="term__body mono" role="tabpanel" id="panel-whoami" aria-labelledby="tab-whoami">
+    <p><span class="accent">$</span> whoami</p>
+    <p class="out"><a href={link('/about')}>christoffer maintz - developer, aarhus dk</a></p>
+    <p><span class="accent">$</span> cat focus.txt</p>
+    <p class="out">{areas.map((a, i) => <>{i > 0 && ' · '}<a href={link(`/projects#${a.id}`)}>{a.label}</a></>)}</p>
+    <p><span class="accent">$</span> ls ~/shipped</p>
+    <p class="out hl">{shipped.map((s) => <><a href={link(`/projects/${s}`)}>{s}</a>{'  '}</>)}</p>
+    <p><span class="accent">$</span> gh repo list --public | wc -l</p>
+    <p class="out"><a href={github.profile.url}>{github.repos.length}</a></p>
+    <p><span class="accent">$</span> <span class="cursor"></span></p>
+  </div>
+
+  <div class="term__body mono" role="tabpanel" id="panel-log" aria-labelledby="tab-log" hidden>
+    <p><span class="accent">$</span> git log --all-repos --latest</p>
+    <ul class="log">
+      {pushes.map((p) => <li><span class="ago">{p.ago}</span><a class="hl" href={p.href}>{p.name}</a><span class="lang">{p.lang}</span></li>)}
+    </ul>
+    <p class="note">synced {formatDate(new Date(github.syncedAt), lang)} · days since last push</p>
+    <p><span class="accent">$</span> <span class="cursor"></span></p>
+  </div>
+</Window>
+
+<script>
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>('.term [role="tab"]')];
+
+  function select(tab: HTMLButtonElement) {
+    for (const t of tabs) {
+      const on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')!)!.hidden = !on;
+    }
+    tab.focus();
+  }
+
+  function onKey(e: KeyboardEvent) {
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    const i = tabs.indexOf(e.currentTarget as HTMLButtonElement);
+    select(tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length]);
+  }
+
+  tabs.forEach((t) => {
+    t.addEventListener('click', () => select(t));
+    t.addEventListener('keydown', onKey);
+  });
+</script>
+
+<style>
+  .tabs { display: flex; gap: 0; margin: calc(-1 * clamp(1rem, 3vw, 1.6rem)) calc(-1 * clamp(1rem, 3vw, 1.6rem)) 1rem; border-bottom: 1px solid var(--line); }
+  .tabs button { font: 500 0.78rem var(--font-mono); background: none; border: 0; border-right: 1px solid var(--line); color: var(--fg-dim); padding: 0.45rem 0.9rem; cursor: pointer; }
+  .tabs button[aria-selected='true'] { background: var(--bg); color: var(--fg); box-shadow: inset 0 -2px 0 var(--accent); }
+  .tabs button:hover { color: var(--accent); }
+  .term__body { font-size: 0.85rem; line-height: 1.75; min-height: 15.5rem; }
+  .term__body p { white-space: pre-wrap; word-break: break-word; }
+  .term__body .out { color: var(--fg-dim); margin-bottom: 0.35rem; }
+  .term__body a { color: inherit; text-decoration: none; }
+  .term__body a:hover { color: var(--accent); text-decoration: underline; }
+  .term__body .hl, .term__body .hl a { color: var(--accent-2); }
+  .log { list-style: none; padding: 0; margin: 0.2rem 0 0.4rem; }
+  .log li { display: grid; grid-template-columns: 3rem 1fr auto; gap: 0.8rem; }
+  .ago { color: var(--fg-faint); }
+  .lang { color: var(--fg-dim); }
+  .note { color: var(--fg-faint); font-size: 0.72rem; }
+  @media (prefers-reduced-motion: no-preference) {
+    #panel-whoami p { animation: type 0.01s steps(1) both; }
+    #panel-whoami p:nth-child(1) { animation-delay: 0.15s; } #panel-whoami p:nth-child(2) { animation-delay: 0.35s; }
+    #panel-whoami p:nth-child(3) { animation-delay: 0.65s; } #panel-whoami p:nth-child(4) { animation-delay: 0.85s; }
+    #panel-whoami p:nth-child(5) { animation-delay: 1.15s; } #panel-whoami p:nth-child(6) { animation-delay: 1.35s; }
+    #panel-whoami p:nth-child(7) { animation-delay: 1.65s; } #panel-whoami p:nth-child(8) { animation-delay: 1.85s; }
+    #panel-whoami p:nth-child(9) { animation-delay: 2.1s; }
+  }
+  @keyframes type { from { visibility: hidden; } to { visibility: visible; } }
+</style>
