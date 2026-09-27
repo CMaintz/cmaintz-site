@@ -7,6 +7,7 @@ tagline:
 summary:
   en: A Spring Boot platform (strict hexagonal) that imports a developer's GitHub repositories and is designed to score them on activity, structure and code quality. Plumbing done; scoring engine in progress.
   da: En Spring Boot-platform (strengt hexagonal), der importerer en udviklers GitHub-repos og er designet til at score dem på aktivitet, struktur og kodekvalitet. Fundamentet er på plads; scoringsmotoren er under udvikling.
+areas: [dx]
 category: personal
 order: 11
 role: Sole developer

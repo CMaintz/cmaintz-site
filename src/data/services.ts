@@ -1,4 +1,5 @@
 import type { Lang } from '../i18n/ui';
+import type { AreaId } from './areas';
 
 type L = Record<Lang, string>;
 
@@ -15,13 +16,15 @@ export interface Service {
   title: L;
   body: L;
   deliverables: Record<Lang, string[]>;
-  /** Indicative starting price, DKK ex. VAT. Placeholder - see DECISIONS.md. */
+  /** Indicative starting price, DKK ex. VAT. */
   from: L;
+  areas: AreaId[];
 }
 
 export const services: Service[] = [
   {
     id: 'quality-gate',
+    areas: ['devops', 'dx'],
     glyph: '▣',
     title: { en: 'CI/CD & quality-gate setup', da: 'CI/CD & kvalitets-gates' },
     body: {
@@ -48,6 +51,7 @@ export const services: Service[] = [
   },
   {
     id: 'ai-integration',
+    areas: ['ai'],
     glyph: '◈',
     title: { en: 'AI integrations', da: 'AI-integrationer' },
     body: {
@@ -68,6 +72,7 @@ export const services: Service[] = [
   },
   {
     id: 'ai-dev',
+    areas: ['ai', 'dx'],
     glyph: '◎',
     title: { en: 'AI-assisted development enablement', da: 'AI-assisteret udvikling' },
     body: {
@@ -82,6 +87,7 @@ export const services: Service[] = [
   },
   {
     id: 'shopware',
+    areas: ['platform'],
     glyph: '▤',
     title: { en: 'Shopware 6 & PHP plugins', da: 'Shopware 6- & PHP-plugins' },
     body: {
@@ -96,6 +102,7 @@ export const services: Service[] = [
   },
   {
     id: 'fullstack',
+    areas: ['platform'],
     glyph: '▦',
     title: { en: 'Full-stack web apps', da: 'Full-stack webapps' },
     body: {
@@ -110,6 +117,7 @@ export const services: Service[] = [
   },
   {
     id: 'anything',
+    areas: [],
     glyph: '▢',
     title: { en: 'Everything else', da: 'Alt det andet' },
     body: {
@@ -125,13 +133,21 @@ export const workLanguages = ['TypeScript', 'JavaScript', 'Java', 'Kotlin', 'C#'
 
 export const process: Record<Lang, { step: string; body: string }[]> = {
   en: [
-    { step: 'Call', body: 'Free 30 minutes to understand the problem and whether I’m the right fit.' },
+    { step: 'Call', body: 'Free 30 minutes to hear what you need and whether I’m the right fit.' },
+    {
+      step: 'Understand',
+      body: 'Before anything is built, I get to know your processes, your team and where the time and risk actually go. Sometimes the most valuable fix isn’t the one you came in with, and I’ll tell you if so.',
+    },
     { step: 'Scope', body: 'A written proposal: deliverables, timeline, fixed price or hourly estimate.' },
     { step: 'Build', body: 'Short iterations, visible progress, everything in your repo from day one.' },
     { step: 'Hand over', body: 'Docs, a walkthrough, and code your team can own without me.' },
   ],
   da: [
-    { step: 'Opkald', body: 'Gratis 30 minutter til at forstå problemet, og om jeg er det rette match.' },
+    { step: 'Opkald', body: 'Gratis 30 minutter til at høre, hvad I har brug for, og om jeg er det rette match.' },
+    {
+      step: 'Forstå',
+      body: 'Før noget bygges, sætter jeg mig ind i jeres processer, jeres team og hvor tiden og risikoen reelt går hen. Nogle gange er den mest værdifulde løsning ikke den, I kom med, og så siger jeg det.',
+    },
     { step: 'Afgrænsning', body: 'Et skriftligt oplæg: leverancer, tidsplan, fast pris eller timeestimat.' },
     { step: 'Byg', body: 'Korte iterationer, synlige fremskridt, alt i jeres repo fra dag ét.' },
     { step: 'Overdragelse', body: 'Dokumentation, en gennemgang og kode, jeres team kan eje uden mig.' },

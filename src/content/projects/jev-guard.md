@@ -7,6 +7,7 @@ tagline:
 summary:
   en: A TypeScript library that vets every tool call an agent proposes through Jev before it runs - allow, block or hold for a human - so an autonomous agent can't rm -rf your box on a bad hunch.
   da: Et TypeScript-bibliotek, der vurderer hvert værktøjskald, en agent foreslår, gennem Jev, før det køres - tillad, bloker eller hold til et menneske - så en autonom agent ikke kører rm -rf på et dårligt indfald.
+areas: [ai, platform]
 category: open-source
 order: 4
 featured: true

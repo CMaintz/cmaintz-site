@@ -160,9 +160,8 @@ p { margin: 0; text-wrap: pretty; }
   letter-spacing: 0.06em;
 }
 .win__title { background: var(--bg-3); padding-inline: 0.5rem; margin-inline: auto; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
-.win__dots { display: flex; gap: 0.35rem; background: var(--bg-3); padding-right: 0.4rem; }
-.win__dots i { width: 0.7rem; height: 0.7rem; border: 2px solid var(--fg-dim); display: block; }
-.win__dots i:first-child { background: var(--accent); border-color: var(--accent); }
+/* A single classic close box, as on old-school window title bars. */
+.win__close { flex: none; width: 0.8rem; height: 0.8rem; border: 2px solid var(--fg-dim); background: var(--bg-3); box-shadow: 0 0 0 3px var(--bg-3); }
 .win__meta { background: var(--bg-3); padding-left: 0.4rem; color: var(--fg-dim); }
 .win__body { padding: clamp(1rem, 3vw, 1.6rem); }
 

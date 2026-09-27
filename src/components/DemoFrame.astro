@@ -10,7 +10,7 @@ const host = new URL(src).host;
 <!-- Click-to-load keeps third-party pages (and their requests) off the initial load. -->
 <figure class="demo win" data-demo={src} data-title={`${title} demo`}>
   <div class="win__bar">
-    <span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="win__close" aria-hidden="true"></span>
     <span class="win__title">{host}</span>
     <a class="win__meta" href={src} target="_blank" rel="noopener">{t('project.demo')} ↗</a>
   </div>

@@ -7,8 +7,10 @@ tagline:
 summary:
   en: A CLI that streams JSONL/CSV rows through Jev and returns typed classification and score columns plus a confidence field, flagging low-confidence rows for review.
   da: Et CLI-værktøj, der streamer JSONL/CSV-rækker gennem Jev og returnerer typede klassifikations- og score-kolonner med confidence, og markerer usikre rækker til gennemsyn.
+areas: [ai, dx]
 category: open-source
 order: 5
+featured: true
 role: Sole developer
 context: jev-tools · open-source CLI
 start: 2026-09

@@ -80,3 +80,11 @@ export function projectPeriod(p: Project, lang: 'en' | 'da', present: string) {
   if (!end && dateApprox) return `${prefix}${monthLabel(start, lang)}`;
   return `${prefix}${monthLabel(start, lang)} - ${end ? monthLabel(end, lang) : present}`;
 }
+
+export async function projectsInArea(area: string) {
+  return (await getProjects()).filter((p) => (p.data.areas as string[]).includes(area));
+}
+
+export async function postsInArea(area: string) {
+  return (await getPosts()).filter((p) => (p.data.areas as string[]).includes(area));
+}

@@ -1,5 +1,5 @@
 ---
-import { type Lang, useT, formatDate } from '../i18n/ui';
+import { type Lang, localize, useT, formatDate } from '../i18n/ui';
 import { type Post, readingTime } from '../lib/content';
 
 interface Props { post: Post; lang: Lang }
@@ -15,7 +15,7 @@ const mins = readingTime(post.body);
     <p class="dim">{post.data.description}</p>
     <p class="meta mono">
       <span>{mins} {t('blog.read')}</span>
-      {post.data.tags.map((tag) => <span class="tag">#{tag}</span>)}
+      {post.data.tags.map((tag) => <a class="tag" href={localize(`/blog/tags/${tag}`, lang)}>#{tag}</a>)}
       {post.data.draft && <span class="badge">draft</span>}
     </p>
   </div>
@@ -28,6 +28,7 @@ const mins = readingTime(post.body);
   h3 a { text-decoration: none; background: linear-gradient(var(--accent), var(--accent)) 0 100% / 0 2px no-repeat; transition: background-size 250ms var(--ease); }
   h3 a:hover { background-size: 100% 2px; color: var(--fg); }
   .meta { display: flex; gap: 0.8rem; flex-wrap: wrap; font-size: 0.75rem; color: var(--fg-faint); margin-top: 0.5rem; }
-  .tag { color: var(--accent-2); }
+  .tag { color: var(--accent-2); text-decoration: none; }
+  .tag:hover { text-decoration: underline; }
   @media (max-width: 600px) { .post { grid-template-columns: 1fr; gap: 0.3rem; } }
 </style>

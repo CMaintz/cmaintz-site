@@ -7,8 +7,10 @@ tagline:
 summary:
   en: Filter, spin a 12-slot wheel and get a title plus where it streams. A static React frontend with a hardened serverless TMDB proxy - per-IP rate limiting, a path allow-list and edge caching.
   da: Filtrér, drej et hjul med 12 felter og få en titel plus hvor den streames. En statisk React-frontend med en hærdet serverless TMDB-proxy - rate limiting pr. IP, allow-list og edge-caching.
+areas: [platform]
 category: personal
 order: 10
+featured: true
 role: Sole developer
 context: Personal project · ReelScout spin-off
 start: 2026-05

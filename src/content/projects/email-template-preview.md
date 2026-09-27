@@ -7,6 +7,7 @@ tagline:
 summary:
   en: A Shopware 6 admin plugin that renders transactional email templates against live customer and order data, with Gmail-style and device emulation, so teams can QA mail before customers see it.
   da: Et Shopware 6-admin-plugin, der renderer transaktionsmails med rigtige kunde- og ordredata samt Gmail- og enhedsemulering, så teams kan kvalitetssikre mails, før kunderne ser dem.
+areas: [dx]
 category: professional
 order: 9
 role: Developer

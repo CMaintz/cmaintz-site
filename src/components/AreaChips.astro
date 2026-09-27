@@ -1,0 +1,22 @@
+---
+// "What I do" areas for a post or project; each links to the related work.
+import { type Lang, localize } from '../i18n/ui';
+import { areaLabels, type AreaId } from '../data/areas';
+
+interface Props { areas: AreaId[]; lang: Lang }
+const { areas, lang } = Astro.props;
+---
+
+{
+  areas.length > 0 && (
+    <ul class="chips areas" aria-label={lang === 'da' ? 'Områder' : 'Areas'}>
+      {areas.map((a) => (
+        <li><a class="chip chip--area" href={localize(`/projects#${a}`, lang)}>◆ {areaLabels[a][lang]}</a></li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .chip--area { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 50%, var(--line)); }
+</style>

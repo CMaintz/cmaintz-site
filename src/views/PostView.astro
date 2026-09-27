@@ -3,6 +3,7 @@ import 'katex/dist/katex.min.css';
 import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Comments from '../components/Comments.astro';
+import AreaChips from '../components/AreaChips.astro';
 import { type Lang, useT, formatDate } from '../i18n/ui';
 import { type Post, readingTime } from '../lib/content';
 import { site } from '../data/site';
@@ -37,6 +38,7 @@ const ld = {
       </p>
       <h1 class="glow">{post.data.title}</h1>
       <p class="lede">{post.data.description}</p>
+      <AreaChips areas={post.data.areas} lang={lang} />
       <ul class="chips">{post.data.tags.map((tag) => <li><a class="chip" href={`/blog/tags/${tag}`}>#{tag}</a></li>)}</ul>
     </header>
 

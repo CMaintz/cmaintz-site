@@ -10,7 +10,7 @@ import { site } from '../data/site';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useT(lang);
-const featured = await getFeaturedProjects(6);
+const featured = await getFeaturedProjects(9);
 const posts = (await getPosts()).slice(0, 3);
 const focus = (['dx', 'devops', 'platform', 'ai'] as const).map((k, i) => ({
   n: String(i + 1).padStart(2, '0'),
@@ -42,7 +42,7 @@ const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', '
         <p><span class="accent">$</span> cat focus.txt</p>
         <p class="out">dx · devops · platform · ai enablement</p>
         <p><span class="accent">$</span> ls ~/shipped</p>
-        <p class="out"><span class="hl">illux-product-ai</span>  <span class="hl">foundry</span>  jev-triage  jev-guard  jobbuddy  tech-atlas</p>
+        <p class="out hl">illux-product-ai  foundry  jev-triage  jev-guard  jev-sort  jobbuddy  tech-atlas</p>
         <p><span class="accent">$</span> gh repo list --public | wc -l</p>
         <p class="out">{repoCount}</p>
         <p><span class="accent">$</span> <span class="cursor"></span></p>

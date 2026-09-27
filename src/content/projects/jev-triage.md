@@ -7,6 +7,7 @@ tagline:
 summary:
   en: A GitHub Action that labels every new issue with TypeSafe AI's Jev in milliseconds for fractions of a cent - and escalates only the ones it's unsure about to a human or a real LLM.
   da: En GitHub Action, der labeler hvert nyt issue med TypeSafe AI's Jev på millisekunder for brøkdele af en øre - og kun eskalerer dem, den er usikker på, til et menneske eller en rigtig LLM.
+areas: [ai, devops]
 category: open-source
 order: 3
 featured: true

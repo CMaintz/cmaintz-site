@@ -16,7 +16,7 @@ const DEFAULT_PAGES = [
   '/da/about',
   '/projects',
   '/projects/illux-product-ai',
-  '/projects/atlas',
+  '/projects/tech-atlas',
   '/blog',
   '/blog/one-rule-set-three-placements',
   '/blog/hello-world',

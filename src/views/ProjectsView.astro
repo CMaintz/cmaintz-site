@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { type Lang, useT, formatDate } from '../i18n/ui';
 import { getProjects, github } from '../lib/content';
+import { AREA_IDS, areaLabels } from '../data/areas';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -10,6 +11,7 @@ const t = useT(lang);
 const projects = await getProjects();
 const cats = ['professional', 'open-source', 'personal', 'academic'] as const;
 const counts = Object.fromEntries(cats.map((c) => [c, projects.filter((p) => p.data.category === c).length]));
+const areaCounts = Object.fromEntries(AREA_IDS.map((a) => [a, projects.filter((p) => (p.data.areas as string[]).includes(a)).length]));
 ---
 
 <Base lang={lang} title={t('projects.title')} description={t('projects.lede')}>
@@ -25,6 +27,9 @@ const counts = Object.fromEntries(cats.map((c) => [c, projects.filter((p) => p.d
       <button type="button" data-filter="all" aria-pressed="true">{t('projects.filter.all')} <span>{projects.length}</span></button>
       {cats.map((c) => <button type="button" data-filter={c} aria-pressed="false">{t(`projects.cat.${c}`)} <span>{counts[c]}</span></button>)}
     </div>
+    <div class="filters areas mono" role="toolbar" aria-label={lang === 'da' ? 'Områder' : 'Areas'}>
+      {AREA_IDS.map((a) => <button type="button" data-filter={a} aria-pressed="false">◆ {areaLabels[a][lang]} <span>{areaCounts[a]}</span></button>)}
+    </div>
     <div class="grid grid-3" data-projects>
       {projects.map((p, i) => <ProjectCard project={p} lang={lang} index={i} />)}
     </div>
@@ -36,10 +41,11 @@ const counts = Object.fromEntries(cats.map((c) => [c, projects.filter((p) => p.d
   const cards = document.querySelectorAll<HTMLElement>('[data-projects] > [data-category]');
   const apply = (f: string) => {
     buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === f)));
-    cards.forEach((c) => (c.hidden = f !== 'all' && c.dataset.category !== f));
+    cards.forEach((c) => (c.hidden = f !== 'all' && c.dataset.category !== f && !(c.dataset.areas ?? '').split(' ').includes(f)));
     history.replaceState(null, '', f === 'all' ? location.pathname : `#${f}`);
   };
   buttons.forEach((b) => b.addEventListener('click', () => apply(b.dataset.filter!)));
+  addEventListener('hashchange', () => apply(location.hash.slice(1) || 'all'));
   const initial = location.hash.slice(1);
   if (initial && [...buttons].some((b) => b.dataset.filter === initial)) apply(initial);
 </script>
@@ -47,7 +53,9 @@ const counts = Object.fromEntries(cats.map((c) => [c, projects.filter((p) => p.d
 <style>
   .head { padding-block: clamp(3rem, 7vw, 5rem) 2rem; display: grid; gap: 1rem; }
   .small { font-size: 0.78rem; }
-  .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+  .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; }
+  .filters.areas { margin-bottom: 2rem; }
+  .filters.areas button { color: var(--accent); }
   .filters button { font: 500 0.82rem var(--font-mono); background: var(--bg-2); color: var(--fg-dim); border: 1px solid var(--line); padding: 0.45rem 0.8rem; cursor: pointer; }
   .filters button span { color: var(--fg-faint); margin-left: 0.3rem; }
   .filters button:hover { border-color: var(--accent); color: var(--fg); }

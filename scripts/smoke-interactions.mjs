@@ -57,7 +57,21 @@ async function postLangSwitchLandsOnIndex(page) {
   return (await page.title()).startsWith('Blog');
 }
 
-const CHECKS = { paletteNavigates, togglesFlip, filterHides, demoLoads, langSwitches, postLangSwitchLandsOnIndex };
+/** Arrow keys move the highlight, Tab completes, Enter runs. */
+async function paletteKeyboard(page) {
+  await page.goto(`${BASE}/`);
+  await page.keyboard.press('Control+k');
+  await page.keyboard.type('jev');
+  await page.keyboard.press('ArrowDown');
+  const highlighted = await page.textContent('#cmdk-list [aria-selected="true"] .l');
+  await page.keyboard.press('Tab');
+  const completed = await page.inputValue('dialog.cmdk input');
+  await page.keyboard.press('Enter');
+  await page.waitForURL('**/projects/jev-**');
+  return completed === highlighted && highlighted.startsWith('jev-');
+}
+
+const CHECKS = { paletteNavigates, paletteKeyboard, togglesFlip, filterHides, demoLoads, langSwitches, postLangSwitchLandsOnIndex };
 
 async function run(page, [name, check]) {
   const ok = await check(page).catch((e) => (console.error(e.message), false));

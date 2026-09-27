@@ -28,13 +28,14 @@ const items = [...pages, ...projects, ...posts, ...actions];
 ---
 
 <dialog class="cmdk win" aria-label={t('cmd.open')} data-items={JSON.stringify(items)} data-email={site.email}>
-  <div class="win__bar"><span class="win__dots"><i></i><i></i></span><span class="win__title">command.exe</span><span class="win__meta">esc</span></div>
+  <div class="win__bar"><span class="win__close" aria-hidden="true"></span><span class="win__title">command.exe</span><span class="win__meta">esc</span></div>
   <div class="cmdk__body">
     <label class="prompt">
       <span class="accent mono" aria-hidden="true">&gt;</span>
-      <input type="text" placeholder={t('cmd.hint')} autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="cmdk-list" aria-autocomplete="list" />
+      <input type="text" aria-describedby="cmdk-help" placeholder={t('cmd.hint')} autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="cmdk-list" aria-autocomplete="list" />
     </label>
     <ul id="cmdk-list" role="listbox"></ul>
+    <p id="cmdk-help" class="help mono"><kbd>↑</kbd><kbd>↓</kbd> {lang === 'da' ? 'vælg' : 'select'} · <kbd>Tab</kbd> {lang === 'da' ? 'udfyld' : 'complete'} · <kbd>Enter</kbd> {lang === 'da' ? 'kør' : 'run'} · <kbd>Esc</kbd> {lang === 'da' ? 'luk' : 'close'}</p>
   </div>
 </dialog>
 
@@ -139,10 +140,19 @@ const items = [...pages, ...projects, ...posts, ...actions];
     else open();
   }
 
+  /** Tab completes the input to the highlighted entry, like a shell. */
+  function complete() {
+    if (!results[sel]) return;
+    input.value = results[sel].label;
+    sel = 0;
+    render();
+  }
+
   function onInputKey(e: KeyboardEvent) {
     const handlers: Record<string, () => void> = {
       ArrowDown: () => move(1),
       ArrowUp: () => move(-1),
+      Tab: complete,
       Enter: () => results[sel] && run(results[sel]),
     };
     if (!handlers[e.key]) return;
@@ -167,6 +177,7 @@ const items = [...pages, ...projects, ...posts, ...actions];
   .cmdk[open] { animation: pop 140ms steps(4); }
   @keyframes pop { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
   .cmdk__body { padding: 0.75rem; }
+  .help { margin: 0.6rem 0 0; font-size: 0.7rem; color: var(--fg-faint); display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap; }
   .prompt { display: flex; gap: 0.6rem; align-items: center; border: 2px solid var(--line); padding: 0.55rem 0.75rem; background: var(--bg); }
   .prompt input { flex: 1; background: none; border: 0; outline: 0; color: var(--fg); font: 500 1rem var(--font-mono); min-width: 0; }
   ul { list-style: none; margin: 0.6rem 0 0; padding: 0; max-height: 50vh; overflow-y: auto; }
