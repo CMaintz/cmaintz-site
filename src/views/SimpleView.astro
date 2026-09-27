@@ -1,0 +1,23 @@
+---
+// Shared shell for small text pages (/now, /uses).
+import Base from '../layouts/Base.astro';
+import { type Lang } from '../i18n/ui';
+
+interface Props { lang: Lang; title: string; eyebrow: string; lede: string; updated?: string }
+const { lang, title, eyebrow, lede, updated } = Astro.props;
+---
+
+<Base lang={lang} title={title} description={lede}>
+  <section class="wrap head">
+    <p class="eyebrow">{eyebrow}</p>
+    <h1>{title}</h1>
+    <p class="lede">{lede}</p>
+    {updated && <p class="mono faint small">{updated}</p>}
+  </section>
+  <section class="wrap"><slot /></section>
+</Base>
+
+<style>
+  .head { padding-block: clamp(3rem, 7vw, 5rem) 2rem; display: grid; gap: 1rem; }
+  .small { font-size: 0.78rem; }
+</style>

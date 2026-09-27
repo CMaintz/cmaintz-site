@@ -1,0 +1,125 @@
+---
+// Printable, ATS-friendly CV rendered from the same data as /about.
+// scripts/cv-pdf.mjs prints this page to public/cv.pdf and public/cv-da.pdf.
+import Base from '../layouts/Base.astro';
+import { type Lang, useT } from '../i18n/ui';
+import { monthRange, getFeaturedProjects, projectPeriod } from '../lib/content';
+import { basics, work, earlier, education, skills, languages } from '../data/resume';
+import { site } from '../data/site';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const projects = (await getFeaturedProjects(8)).filter((p) => p.data.category !== 'professional').slice(0, 4);
+const L = {
+  en: { profile: 'Profile', projects: 'Selected projects', earlier: 'Earlier experience' },
+  da: { profile: 'Profil', projects: 'Udvalgte projekter', earlier: 'Tidligere erfaring' },
+}[lang];
+---
+
+<Base lang={lang} title="CV" description={basics.summary[lang]}>
+  <div class="wrap bar no-print">
+    <button class="btn btn--primary" type="button" onclick="window.print()">{t('about.print')} ⎙</button>
+    <a class="btn" href={lang === 'da' ? '/cv-da.pdf' : '/cv.pdf'} download>{t('about.download')} ↓</a>
+  </div>
+  <article class="paper">
+    <header>
+      <h1>{basics.name}</h1>
+      <p class="label">{basics.label[lang]}</p>
+      <p class="contact">
+        {site.location} · <a href={`mailto:${site.email}`}>{site.email}</a> ·
+        <a href={site.socials.github}>github.com/CMaintz</a>
+        {site.socials.linkedin && <> · <a href={site.socials.linkedin}>linkedin.com/in/christoffer-maintz</a></>}
+      </p>
+    </header>
+
+    <section><h2>{L.profile}</h2><p>{basics.summary[lang]}</p></section>
+
+    <section>
+      <h2>{t('about.experience')}</h2>
+      {work.map((j) => (
+        <div class="item">
+          <div class="row"><h3>{j.role[lang]}, {j.org}</h3><span class="date">{monthRange(j.start, j.end, lang)}</span></div>
+          <p>{j.summary[lang]}</p>
+          <ul>{j.highlights[lang].map((h) => <li>{h}</li>)}</ul>
+        </div>
+      ))}
+    </section>
+
+    <section>
+      <h2>{L.projects}</h2>
+      {projects.map((p) => (
+        <div class="item">
+          <div class="row"><h3>{p.data.title} - {p.data.tagline[lang]}</h3><span class="date">{projectPeriod(p, lang, lang === 'da' ? 'nu' : 'present')}</span></div>
+          <p>{p.data.summary[lang]}</p>
+          <p class="tech">{p.data.stack.join(' · ')}</p>
+        </div>
+      ))}
+    </section>
+
+    <section>
+      <h2>{t('about.education')}</h2>
+      {education.map((e) => (
+        <div class="item">
+          <div class="row"><h3>{e.degree[lang]}, {e.institution}</h3><span class="date">{monthRange(e.start, e.end, lang)}</span></div>
+          {e.note && <p>{e.note[lang]}</p>}
+        </div>
+      ))}
+    </section>
+
+    <section>
+      <h2>{t('about.skills')}</h2>
+      <dl class="skills">
+        {skills.map((s) => (<><dt>{s.name[lang]}</dt><dd>{s.keywords.join(' · ')}</dd></>))}
+        <dt>{t('about.languages')}</dt><dd>{languages.map((l) => `${l.language[lang]} (${l.fluency[lang]})`).join(' · ')}</dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2>{L.earlier}</h2>
+      {earlier.map((j) => (
+        <div class="item">
+          <div class="row"><h3>{j.role[lang]}, {j.org}</h3><span class="date">{monthRange(j.start, j.end, lang)}</span></div>
+          <p>{j.summary[lang]}</p>
+        </div>
+      ))}
+    </section>
+  </article>
+</Base>
+
+<style>
+  .bar { display: flex; gap: 0.8rem; padding-block: 2rem 1.5rem; flex-wrap: wrap; }
+  .paper {
+    width: min(100% - 2rem, 52rem);
+    margin: 0 auto;
+    background: #fdfcf8; color: #1e1e1e;
+    padding: clamp(1.5rem, 5vw, 3.5rem);
+    box-shadow: 10px 10px 0 var(--shadow-c);
+    border: 2px solid var(--line-strong);
+    font: 400 0.92rem/1.5 var(--font-sans);
+    position: relative; z-index: 1;
+  }
+  header { border-bottom: 3px solid #1e1e1e; padding-bottom: 0.9rem; margin-bottom: 1.2rem; }
+  h1 { font-size: 2.2rem; letter-spacing: -0.03em; }
+  .label { font: 600 0.95rem var(--font-mono); color: #b8336a; margin-top: 0.3rem; }
+  .contact { font-size: 0.82rem; margin-top: 0.5rem; color: #444; }
+  a { color: inherit; text-decoration-color: #b8336a; }
+  section { margin-top: 1.3rem; }
+  h2 { font: 700 0.78rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; color: #b8336a; border-bottom: 1px solid #ccc; padding-bottom: 0.25rem; margin-bottom: 0.7rem; }
+  h3 { font-size: 0.98rem; font-weight: 700; letter-spacing: -0.01em; }
+  .item { margin-bottom: 0.9rem; break-inside: avoid; }
+  .row { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; }
+  .date { font: 500 0.75rem var(--font-mono); color: #666; white-space: nowrap; }
+  ul { margin: 0.35rem 0 0; padding-left: 1.1rem; }
+  li { margin-top: 0.2rem; }
+  .tech { font: 0.75rem var(--font-mono); color: #555; margin-top: 0.25rem; }
+  .skills { display: grid; grid-template-columns: 11rem 1fr; gap: 0.35rem 1rem; margin: 0; }
+  .skills dt { font-weight: 700; }
+  .skills dd { margin: 0; }
+  @media (max-width: 640px) { .row { flex-direction: column; gap: 0; } .skills { grid-template-columns: 1fr; } .skills dd { margin-bottom: 0.4rem; } }
+  @media print {
+    @page { size: A4; margin: 14mm 14mm; }
+    .paper { width: auto; box-shadow: none; border: 0; padding: 0; font-size: 9pt; background: #fff; }
+    h1 { font-size: 20pt; }
+  }
+</style>

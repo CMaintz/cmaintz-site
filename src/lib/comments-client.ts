@@ -1,0 +1,189 @@
+// Browser-side Supabase comments. Loaded lazily by SupabaseComments.astro, so
+// supabase-js only ships on post pages and only once the section is in view.
+// All user content is rendered with textContent (never innerHTML).
+import type { SupabaseClient, User } from '@supabase/supabase-js';
+
+interface Config {
+  url: string;
+  key: string;
+  slug: string;
+  providers: string[];
+  text: Record<string, string>;
+}
+
+interface Comment {
+  id: string;
+  user_id: string;
+  author_name: string;
+  author_avatar: string | null;
+  body: string;
+  created_at: string;
+}
+
+const PROVIDER_LABELS: Record<string, string> = {
+  github: 'GitHub',
+  google: 'Google',
+  linkedin_oidc: 'LinkedIn',
+  facebook: 'Facebook',
+  discord: 'Discord',
+};
+
+let clientPromise: Promise<SupabaseClient> | null = null;
+
+function getClient(cfg: Config) {
+  clientPromise ??= import('@supabase/supabase-js').then(({ createClient }) => createClient(cfg.url, cfg.key));
+  return clientPromise;
+}
+
+function readConfig(root: HTMLElement): Config {
+  const d = root.dataset;
+  return {
+    url: d.url!,
+    key: d.key!,
+    slug: d.slug!,
+    providers: (d.providers ?? 'github')
+      .split(',')
+      .map((p) => p.trim())
+      .filter(Boolean),
+    text: JSON.parse(d.text ?? '{}'),
+  };
+}
+
+function h(tag: string, cls = '', text = '') {
+  const el = document.createElement(tag);
+  if (cls) el.className = cls;
+  if (text) el.textContent = text;
+  return el;
+}
+
+/** Only https avatars from the auth provider are shown. */
+const safeAvatar = (url: string | null) => (url && url.startsWith('https://') ? url : null);
+
+async function fetchComments(client: SupabaseClient, slug: string) {
+  const { data, error } = await client
+    .from('site_comments')
+    .select('id, user_id, author_name, author_avatar, body, created_at')
+    .eq('post_slug', slug)
+    .order('created_at', { ascending: true });
+  if (error) throw error;
+  return (data ?? []) as Comment[];
+}
+
+function renderAvatar(c: Comment) {
+  const src = safeAvatar(c.author_avatar);
+  if (!src) return h('span', 'avatar avatar--blank', c.author_name.slice(0, 1).toUpperCase());
+  const img = h('img', 'avatar') as HTMLImageElement;
+  Object.assign(img, { src, alt: '', width: 32, height: 32, loading: 'lazy', referrerPolicy: 'no-referrer' });
+  return img;
+}
+
+function renderComment(c: Comment, userId: string | null, cfg: Config, onDelete: (id: string) => void) {
+  const li = h('li', 'comment');
+  const meta = h('p', 'comment__meta');
+  const time = h('time', '', new Date(c.created_at).toLocaleDateString(document.documentElement.lang === 'da' ? 'da-DK' : 'en-GB'));
+  time.setAttribute('datetime', c.created_at);
+  meta.append(renderAvatar(c), h('strong', '', c.author_name), time);
+  if (c.user_id === userId) meta.append(deleteButton(c.id, cfg, onDelete));
+  li.append(meta, h('p', 'comment__body', c.body));
+  return li;
+}
+
+function deleteButton(id: string, cfg: Config, onDelete: (id: string) => void) {
+  const btn = h('button', 'comment__delete', cfg.text.delete) as HTMLButtonElement;
+  btn.type = 'button';
+  btn.addEventListener('click', () => onDelete(id));
+  return btn;
+}
+
+function renderList(list: HTMLElement, comments: Comment[], userId: string | null, cfg: Config, onDelete: (id: string) => void) {
+  if (!comments.length) return list.replaceChildren(h('li', 'comment comment--empty', cfg.text.empty));
+  list.replaceChildren(...comments.map((c) => renderComment(c, userId, cfg, onDelete)));
+}
+
+function providerButton(client: SupabaseClient, provider: string) {
+  const btn = h('button', 'btn btn--sm', PROVIDER_LABELS[provider] ?? provider) as HTMLButtonElement;
+  btn.type = 'button';
+  const redirectTo = `${location.origin}${location.pathname}#comments`;
+  btn.addEventListener('click', () => client.auth.signInWithOAuth({ provider: provider as 'github', options: { redirectTo } }));
+  return btn;
+}
+
+function renderSignedOut(auth: HTMLElement, form: HTMLFormElement, client: SupabaseClient, cfg: Config) {
+  form.hidden = true;
+  const row = h('div', 'providers');
+  row.append(...cfg.providers.map((p) => providerButton(client, p)));
+  auth.replaceChildren(h('p', 'dim', cfg.text.signin), row);
+}
+
+function displayName(user: User) {
+  const m = user.user_metadata ?? {};
+  return m.full_name ?? m.name ?? m.user_name ?? user.email ?? '';
+}
+
+function renderSignedIn(auth: HTMLElement, form: HTMLFormElement, client: SupabaseClient, cfg: Config, user: User) {
+  form.hidden = false;
+  const out = h('button', 'linkish', cfg.text.signout) as HTMLButtonElement;
+  out.type = 'button';
+  out.addEventListener('click', () => client.auth.signOut());
+  const p = h('p', 'dim', `${cfg.text.as} `);
+  p.append(h('strong', '', displayName(user)), ' · ', out);
+  auth.replaceChildren(p);
+}
+
+interface Ui {
+  root: HTMLElement;
+  list: HTMLElement;
+  auth: HTMLElement;
+  form: HTMLFormElement;
+  status: HTMLElement;
+}
+
+function queryUi(root: HTMLElement): Ui {
+  const q = <T extends Element>(s: string) => root.querySelector(s) as unknown as T;
+  return { root, list: q('[data-list]'), auth: q('[data-auth]'), form: q('form'), status: q('[data-status]') };
+}
+
+async function refresh(ui: Ui, client: SupabaseClient, cfg: Config) {
+  const { data } = await client.auth.getUser();
+  const user = data.user;
+  if (user) renderSignedIn(ui.auth, ui.form, client, cfg, user);
+  else renderSignedOut(ui.auth, ui.form, client, cfg);
+  const onDelete = (id: string) => remove(ui, client, cfg, id);
+  renderList(ui.list, await fetchComments(client, cfg.slug), user?.id ?? null, cfg, onDelete);
+}
+
+async function remove(ui: Ui, client: SupabaseClient, cfg: Config, id: string) {
+  const { error } = await client.from('site_comments').delete().eq('id', id);
+  ui.status.textContent = error ? cfg.text.error : '';
+  await refresh(ui, client, cfg);
+}
+
+async function submit(ui: Ui, client: SupabaseClient, cfg: Config) {
+  const field = ui.form.querySelector('textarea')!;
+  const { error } = await client.from('site_comments').insert({ post_slug: cfg.slug, body: field.value.trim() });
+  ui.status.textContent = error ? `${cfg.text.error} (${error.message})` : '';
+  if (!error) field.value = '';
+  await refresh(ui, client, cfg);
+}
+
+function bind(ui: Ui, client: SupabaseClient, cfg: Config) {
+  ui.form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    submit(ui, client, cfg);
+  });
+  client.auth.onAuthStateChange(() => {
+    setTimeout(() => refresh(ui, client, cfg), 0);
+  });
+}
+
+export async function mountComments(root: HTMLElement) {
+  const cfg = readConfig(root);
+  const ui = queryUi(root);
+  try {
+    const client = await getClient(cfg);
+    bind(ui, client, cfg);
+    await refresh(ui, client, cfg);
+  } catch {
+    ui.status.textContent = cfg.text.error;
+  }
+}

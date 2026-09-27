@@ -1,0 +1,150 @@
+---
+import Base from '../layouts/Base.astro';
+import Window from '../components/Window.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import PostItem from '../components/PostItem.astro';
+import { type Lang, localize, useT } from '../i18n/ui';
+import { getFeaturedProjects, getPosts, github } from '../lib/content';
+import { site } from '../data/site';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const featured = await getFeaturedProjects(6);
+const posts = (await getPosts()).slice(0, 3);
+const focus = (['dx', 'devops', 'platform', 'ai'] as const).map((k, i) => ({
+  n: String(i + 1).padStart(2, '0'),
+  title: t(`focus.${k}.title`),
+  body: t(`focus.${k}.body`),
+  glyph: ['⌘', '⟳', '▦', '◈'][i],
+}));
+const repoCount = github.repos.length;
+const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', 'Spring Boot', 'Symfony', 'Angular', 'React', 'Astro', 'GitHub Actions', 'mise', 'Docker', 'PostgreSQL', 'RabbitMQ', 'Cloudflare', 'Azure', 'Kubernetes', 'Claude Code', 'Semgrep'];
+---
+
+<Base lang={lang}>
+  <section class="hero wrap">
+    <div class="hero__text">
+      <p class="status mono"><span class="status-dot" aria-hidden="true"></span> {t('home.status')} · {site.location}</p>
+      <h1 class="glow">{t('home.hello').replace('.', '')}<span class="cursor" aria-hidden="true"></span></h1>
+      <p class="lede">{t('home.lede')}</p>
+      <div class="ctas">
+        <a class="btn btn--primary" href={localize('/projects', lang)}>{t('home.cta.work')} <span class="arrow">→</span></a>
+        <a class="btn" href={localize('/contact', lang)}>{t('home.cta.hire')}</a>
+        <button class="btn btn--ghost kb mono" type="button" data-cmdk-open><kbd>Ctrl</kbd>+<kbd>K</kbd></button>
+      </div>
+    </div>
+
+    <Window title="~/whoami" meta="tty1" class="term">
+      <div class="term__body mono" aria-label="Profile summary">
+        <p><span class="accent">$</span> whoami</p>
+        <p class="out">christoffer maintz - developer, aarhus dk</p>
+        <p><span class="accent">$</span> cat focus.txt</p>
+        <p class="out">dx · devops · platform · ai enablement</p>
+        <p><span class="accent">$</span> ls ~/shipped</p>
+        <p class="out"><span class="hl">illux-product-ai</span>  <span class="hl">foundry</span>  jev-triage  jev-guard  jobbuddy  atlas</p>
+        <p><span class="accent">$</span> gh repo list --public | wc -l</p>
+        <p class="out">{repoCount}</p>
+        <p><span class="accent">$</span> <span class="cursor"></span></p>
+      </div>
+    </Window>
+  </section>
+
+  <section class="section wrap" aria-labelledby="focus-h">
+    <div class="section-head">
+      <h2 id="focus-h"><span class="idx">01</span>{t('home.focus')}</h2>
+    </div>
+    <div class="grid focus">
+      {focus.map((f) => (
+        <div class="focus__item reveal">
+          <span class="focus__glyph" aria-hidden="true">{f.glyph}</span>
+          <h3>{f.title}</h3>
+          <p class="dim">{f.body}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="section wrap" aria-labelledby="work-h">
+    <div class="section-head">
+      <h2 id="work-h"><span class="idx">02</span>{t('home.featured')}</h2>
+      <a class="btn btn--sm" href={localize('/projects', lang)}>{t('home.all_projects')} <span class="arrow">→</span></a>
+    </div>
+    <div class="grid grid-3">
+      {featured.map((p, i) => <ProjectCard project={p} lang={lang} index={i} />)}
+    </div>
+  </section>
+
+  <section class="marquee" aria-label={t('home.stack')}>
+    <div class="marquee__track mono" aria-hidden="true">
+      {[...stack, ...stack].map((s) => <span>{s}<i>✦</i></span>)}
+    </div>
+    <p class="visually-hidden">{stack.join(', ')}</p>
+  </section>
+
+  <section class="section wrap" aria-labelledby="posts-h">
+    <div class="section-head">
+      <h2 id="posts-h"><span class="idx">03</span>{t('home.latest')}</h2>
+      <a class="btn btn--sm" href={localize('/blog', lang)}>{t('home.all_posts')} <span class="arrow">→</span></a>
+    </div>
+    <div>{posts.map((p) => <PostItem post={p} lang={lang} />)}</div>
+  </section>
+
+  <section class="wrap">
+    <Window title="inquiry.txt" meta="↵" class="cta reveal">
+      <div class="cta__inner">
+        <div>
+          <h2>{t('home.cta.title')}</h2>
+          <p class="dim">{t('home.cta.body')}</p>
+        </div>
+        <div class="ctas">
+          <a class="btn btn--primary" href={localize('/contact', lang)}>{t('nav.contact')} <span class="arrow">→</span></a>
+          <a class="btn" href={localize('/services', lang)}>{t('nav.services')}</a>
+        </div>
+      </div>
+    </Window>
+  </section>
+</Base>
+
+<style>
+  .hero { display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; padding-block: clamp(3rem, 9vw, 7rem) clamp(2rem, 5vw, 4rem); }
+  .status { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-dim); border: 1px solid var(--line); padding: 0.3rem 0.7rem; background: var(--bg-2); margin-bottom: 1.5rem; }
+  h1 { margin-bottom: 1.4rem; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2rem; align-items: center; }
+  .kb { font-size: 0.75rem; color: var(--fg-dim); gap: 0.3rem; }
+  .term__body { font-size: 0.85rem; line-height: 1.75; }
+  .term__body p { white-space: pre-wrap; word-break: break-word; }
+  .term__body .out { color: var(--fg-dim); margin-bottom: 0.35rem; }
+  .term__body .hl { color: var(--accent-2); }
+  @media (prefers-reduced-motion: no-preference) {
+    .term__body p { animation: type 0.01s steps(1) both; }
+    .term__body p:nth-child(n) { animation-delay: calc(var(--i, 0) * 1ms); }
+    .term__body p:nth-child(1) { animation-delay: 0.15s; } .term__body p:nth-child(2) { animation-delay: 0.35s; }
+    .term__body p:nth-child(3) { animation-delay: 0.65s; } .term__body p:nth-child(4) { animation-delay: 0.85s; }
+    .term__body p:nth-child(5) { animation-delay: 1.15s; } .term__body p:nth-child(6) { animation-delay: 1.35s; }
+    .term__body p:nth-child(7) { animation-delay: 1.65s; } .term__body p:nth-child(8) { animation-delay: 1.85s; }
+    .term__body p:nth-child(9) { animation-delay: 2.1s; }
+  }
+  @keyframes type { from { visibility: hidden; } to { visibility: visible; } }
+
+  .focus { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 0; border: 2px solid var(--line); background: var(--bg-2); }
+  .focus__item { padding: 1.5rem; border-right: 1px dashed var(--line); display: flex; flex-direction: column; gap: 0.6rem; }
+  .focus__item:last-child { border-right: 0; }
+  .focus__glyph { font-size: 1.4rem; color: var(--accent); text-shadow: var(--glow); }
+  .focus__item h3 { font-size: 1.1rem; }
+  .focus__item p { font-size: 0.93rem; }
+  @media (max-width: 980px) { .focus__item { border-right: 0; border-bottom: 1px dashed var(--line); } }
+
+  .marquee { position: relative; z-index: 1; overflow: hidden; border-block: 2px solid var(--line); background: var(--bg-2); padding: 0.9rem 0; margin-block: 1rem; }
+  .marquee__track { display: flex; width: max-content; gap: 0; font-size: 0.9rem; color: var(--fg-dim); }
+  .marquee__track span { display: inline-flex; align-items: center; gap: 1.4rem; padding-right: 1.4rem; white-space: nowrap; }
+  .marquee__track i { font-style: normal; color: var(--accent); }
+  @media (prefers-reduced-motion: no-preference) { .marquee__track { animation: marquee 60s linear infinite; } }
+  @keyframes marquee { to { transform: translateX(-50%); } }
+
+  .cta__inner { display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap; padding: 1rem 0.5rem; }
+  .cta__inner h2 { margin-bottom: 0.5rem; }
+  .cta__inner .ctas { margin-top: 0; }
+
+  @media (max-width: 860px) { .hero { grid-template-columns: 1fr; } }
+</style>

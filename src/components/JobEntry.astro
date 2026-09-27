@@ -1,0 +1,27 @@
+---
+import Window from './Window.astro';
+import type { Lang } from '../i18n/ui';
+import type { Job } from '../data/resume';
+import { monthRange } from '../lib/content';
+
+interface Props { job: Job; lang: Lang }
+const { job, lang } = Astro.props;
+---
+
+<li class="reveal">
+  <div class="when mono">{monthRange(job.start, job.end, lang)}</div>
+  <Window title={job.org} as="article">
+    <h3>{job.role[lang]}</h3>
+    <p class="dim">{job.summary[lang]}</p>
+    {job.highlights[lang].length > 0 && <ul class="hl">{job.highlights[lang].map((h) => <li>{h}</li>)}</ul>}
+    {job.tech && <ul class="chips tech">{job.tech.map((x) => <li class="chip">{x}</li>)}</ul>}
+  </Window>
+</li>
+
+<style>
+  .when { font-size: 0.8rem; color: var(--fg-faint); text-transform: uppercase; letter-spacing: 0.05em; }
+  h3 { margin-bottom: 0.4rem; }
+  .hl { margin: 1rem 0 0; padding-left: 1.2rem; display: grid; gap: 0.5rem; font-size: 0.95rem; }
+  .hl li::marker { content: '▪  '; color: var(--accent); }
+  .tech { margin-top: 1rem; }
+</style>

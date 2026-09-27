@@ -1,0 +1,116 @@
+---
+import '@fontsource/hanken-grotesk/400.css';
+import '@fontsource/hanken-grotesk/600.css';
+import '@fontsource/hanken-grotesk/700.css';
+import '@fontsource/hanken-grotesk/800.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '@fontsource/jetbrains-mono/600.css';
+import '@fontsource/silkscreen/400.css';
+import '../styles/global.css';
+import { PUBLIC_CF_BEACON_TOKEN } from 'astro:env/client';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PixelField from '../components/PixelField.astro';
+import CommandPalette from '../components/CommandPalette.astro';
+import { site } from '../data/site';
+import { type Lang, localize, unlocalize, useT } from '../i18n/ui';
+
+interface Props {
+  title?: string;
+  description?: string;
+  lang: Lang;
+  /** Set false for pages that only exist in one locale (e.g. blog posts). */
+  alternates?: boolean;
+  ogImage?: string;
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  jsonLd?: Record<string, unknown>;
+  /** Unlocalized path the language switch targets; defaults to the current page. */
+  langSwitchPath?: string;
+}
+
+const { title, description = site.description[Astro.props.lang], lang, alternates = true, ogImage = '/og.png', type = 'website', publishedTime, jsonLd, langSwitchPath } = Astro.props;
+const t = useT(lang);
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name} - ${site.role[lang]}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const basePath = unlocalize(Astro.url.pathname);
+const og = new URL(ogImage, Astro.site);
+const personLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  jobTitle: site.role.en,
+  email: `mailto:${site.email}`,
+  url: Astro.site?.toString(),
+  image: new URL('/img/christoffer.jpg', Astro.site).toString(),
+  address: { '@type': 'PostalAddress', addressLocality: 'Aarhus', addressCountry: 'DK' },
+  sameAs: [site.socials.github, site.socials.linkedin].filter(Boolean),
+};
+---
+
+<!doctype html>
+<html lang={lang} data-theme="dark" data-crt="on">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {
+      alternates && (
+        <>
+          <link rel="alternate" hreflang="en" href={new URL(localize(basePath, 'en'), Astro.site)} />
+          <link rel="alternate" hreflang="da" href={new URL(localize(basePath, 'da'), Astro.site)} />
+          <link rel="alternate" hreflang="x-default" href={new URL(localize(basePath, 'en'), Astro.site)} />
+        </>
+      )
+    }
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title={`${site.name} - blog`} href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#121212" />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={og} />
+    <meta property="og:locale" content={lang === 'da' ? 'da_DK' : 'en_GB'} />
+    {publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd ?? personLd)} />
+    <script is:inline>
+      // Apply stored theme/CRT prefs before first paint (no flash).
+      (() => {
+        const d = document.documentElement;
+        try {
+          const theme = localStorage.getItem('theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          d.dataset.theme = theme;
+          d.dataset.crt = localStorage.getItem('crt') ?? (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'off' : 'on');
+        } catch {}
+      })();
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip visually-hidden" href="#main">{t('skip')}</a>
+    <PixelField />
+    <div class="crt-vignette" aria-hidden="true"></div>
+    <div class="crt-scan" aria-hidden="true"></div>
+    <Header lang={lang} switchPath={langSwitchPath} />
+    <main id="main" data-pagefind-body={type === 'article' ? '' : undefined}>
+      <slot />
+    </main>
+    <Footer lang={lang} />
+    <CommandPalette lang={lang} switchPath={langSwitchPath} />
+    {
+      PUBLIC_CF_BEACON_TOKEN && (
+        <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: PUBLIC_CF_BEACON_TOKEN })} />
+      )
+    }
+  </body>
+</html>
+
+<style>
+  .skip:focus { position: fixed !important; top: 0.5rem; left: 0.5rem; width: auto; height: auto; clip: auto; z-index: 100; padding: 0.6rem 1rem; background: var(--accent); color: var(--accent-ink); }
+</style>

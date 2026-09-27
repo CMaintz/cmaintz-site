@@ -1,0 +1,58 @@
+{
+  "name": "cmaintz-site",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && pagefind --site dist/client",
+    "preview": "astro preview",
+    "astro": "astro",
+    "sync": "node scripts/sync-github.mjs",
+    "shots": "node scripts/screenshots.mjs",
+    "cv:pdf": "node scripts/cv-pdf.mjs",
+    "og": "node scripts/og-image.mjs",
+    "check": "astro check && node scripts/check-fn-length.mjs && node scripts/test-comments-sql.mjs",
+    "lint:fn": "node scripts/check-fn-length.mjs",
+    "smoke": "node scripts/smoke-interactions.mjs",
+    "test:comments": "node scripts/test-comments-sql.mjs",
+    "clip": "node scripts/encode-clip.mjs"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^14.3.3",
+    "@astrojs/markdown-remark": "^7.3.1",
+    "@astrojs/mdx": "^8.0.2",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource/fraunces": "^5.3.0",
+    "@fontsource/hanken-grotesk": "^5.3.0",
+    "@fontsource/ibm-plex-sans": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/silkscreen": "^5.3.0",
+    "@fontsource/space-grotesk": "^5.3.0",
+    "@supabase/supabase-js": "^2.117.2",
+    "astro": "^7.3.5",
+    "astro-expressive-code": "^0.44.2",
+    "astro-mermaid": "^2.1.0",
+    "katex": "^0.18.9",
+    "mermaid": "^11.17.2",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0"
+  },
+  "allowScripts": {
+    "esbuild": true,
+    "workerd@1.20260925.1": true
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@electric-sql/pglite": "^0.5.8",
+    "ffmpeg-static": "^5.3.0",
+    "pagefind": "^1.5.2",
+    "playwright": "^1.63.0",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.141.0"
+  }
+}

@@ -1,0 +1,35 @@
+---
+import SimpleView from './SimpleView.astro';
+import Window from '../components/Window.astro';
+import { type Lang, useT } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+
+// From the master CV's tools section. Edit freely.
+const groups = [
+  { title: 'editors', items: ['JetBrains IDEs (WebStorm, IntelliJ IDEA, Rider, PhpStorm)', 'Visual Studio', 'VS Code', 'Xcode', 'Android Studio'] },
+  { title: 'terminal', items: ['Ghostty', 'Claude Code (with custom skills & hooks)', 'Herdr for agent orchestration', 'mise for toolchains & tasks', 'gh CLI'] },
+  { title: 'quality', items: ['Foundry gate: ESLint, Semgrep, gitleaks, osv-scanner', 'Vitest, JUnit, PHPUnit', 'Renovate'] },
+  { title: 'infra', items: ['Docker & Docker Compose', 'DDEV for PHP/Shopware', 'GitHub Actions, GitLab CI, Azure Pipelines', 'Cloudflare'] },
+  { title: 'design & api', items: ['Postman', 'Wireshark', 'Visual Paradigm (UML)', 'Balsamiq'] },
+  { title: 'this site', items: ['Astro', 'Hand-written CSS', 'Hanken Grotesk, JetBrains Mono, Silkscreen', 'Cloudflare Workers', 'giscus, Resend, Pagefind'] },
+];
+const lede = lang === 'da' ? 'Værktøjerne jeg bruger til daglig.' : 'The tools I use day to day.';
+---
+
+<SimpleView lang={lang} title={t('uses.title')} eyebrow="~/uses" lede={lede}>
+  <div class="grid grid-3">
+    {groups.map((g) => (
+      <Window title={g.title} class="reveal">
+        <ul class="list">{g.items.map((i) => <li>{i}</li>)}</ul>
+      </Window>
+    ))}
+  </div>
+</SimpleView>
+
+<style>
+  .list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.45rem; font-size: 0.95rem; }
+  .list li::before { content: '▪ '; color: var(--accent); }
+</style>

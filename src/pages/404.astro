@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import { useT } from '../i18n/ui';
+
+const t = useT('en');
+const td = useT('da');
+---
+
+<Base lang="en" title="404" alternates={false} langSwitchPath="/">
+  <section class="wrap nf">
+    <p class="code pixel glow" aria-hidden="true">404</p>
+    <h1>{t('notfound.title')}</h1>
+    <p class="lede">{t('notfound.body')} <span lang="da" class="faint">/ {td('notfound.body')}</span></p>
+    <pre class="mono log" aria-hidden="true">ERR_SIGNAL_LOST at {'<'}requested path{'>'}
+  at router.resolve (router.ts:404)
+  at human.click (browser:1)</pre>
+    <div class="ctas">
+      <a class="btn btn--primary" href="/">{t('notfound.home')} →</a>
+      <button class="btn" type="button" data-cmdk-open>{t('nav.search')} (Ctrl+K)</button>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf { padding-block: clamp(4rem, 12vw, 9rem); display: grid; gap: 1.2rem; justify-items: start; }
+  .code { font-size: clamp(5rem, 18vw, 11rem); line-height: 1; color: var(--accent); }
+  @media (prefers-reduced-motion: no-preference) { .code { animation: flicker 3s steps(1) infinite; } }
+  @keyframes flicker { 0%, 92%, 100% { opacity: 1; } 93% { opacity: 0.3; transform: translateX(3px); } 95% { opacity: 1; transform: none; } 97% { opacity: 0.5; } }
+  .log { font-size: 0.8rem; color: var(--fg-faint); border-left: 3px solid var(--accent); padding: 0.6rem 1rem; background: var(--bg-2); overflow-x: auto; max-width: 100%; }
+  .ctas { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+</style>

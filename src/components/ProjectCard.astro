@@ -1,0 +1,59 @@
+---
+import { type Lang, localize, useT } from '../i18n/ui';
+import { type Project, projectRepoStats, projectPeriod } from '../lib/content';
+
+interface Props { project: Project; lang: Lang; index?: number; compact?: boolean }
+const { project: p, lang, index, compact = false } = Astro.props;
+const t = useT(lang);
+const stats = projectRepoStats(p);
+const href = localize(`/projects/${p.id}`, lang);
+const period = projectPeriod(p, lang, lang === 'da' ? 'nu' : 'now');
+---
+
+<article class="card reveal" data-category={p.data.category}>
+  <a class="hit" href={href} aria-label={p.data.title}></a>
+  <header class="top">
+    <span class="glyph" aria-hidden="true">{p.data.glyph}</span>
+    <span class="cat pixel">{t(`projects.cat.${p.data.category}`)}</span>
+    {index !== undefined && <span class="idx mono">{String(index + 1).padStart(2, '0')}</span>}
+  </header>
+  <h3>{p.data.title}</h3>
+  <p class="tagline">{p.data.tagline[lang]}</p>
+  {!compact && <p class="summary dim">{p.data.summary[lang]}</p>}
+  <ul class="chips">
+    {p.data.stack.slice(0, compact ? 4 : 6).map((s) => <li class="chip">{s}</li>)}
+  </ul>
+  <footer class="foot mono">
+    <span>{period}</span>
+    <span class="flags">
+      {p.data.grade && <span class="badge">{p.data.grade}</span>}
+      {p.data.demo && <span class="badge badge--accent">demo</span>}
+      {stats && stats.stars > 0 && <span>★ {stats.stars}</span>}
+    </span>
+  </footer>
+</article>
+
+<style>
+  .card {
+    position: relative;
+    display: flex; flex-direction: column; gap: 0.7rem;
+    padding: 1.25rem;
+    background: var(--bg-2);
+    border: 2px solid var(--line);
+    transition: transform 120ms steps(3), box-shadow 120ms steps(3), border-color 120ms;
+  }
+  .card:hover, .card:focus-within { transform: translate(-4px, -4px); box-shadow: 8px 8px 0 var(--accent); border-color: var(--accent); }
+  .hit { position: absolute; inset: 0; z-index: 1; }
+  .hit:focus-visible { outline-offset: -4px; }
+  .top { display: flex; align-items: center; gap: 0.7rem; }
+  .glyph { width: 2.2rem; height: 2.2rem; display: grid; place-items: center; background: var(--bg-3); border: 1px solid var(--line); font-size: 1.1rem; color: var(--accent); }
+  .card:hover .glyph { background: var(--accent); color: var(--accent-ink); }
+  .cat { font-size: 0.65rem; text-transform: uppercase; color: var(--fg-faint); }
+  .idx { margin-left: auto; font-size: 0.75rem; color: var(--fg-faint); }
+  h3 { font-size: 1.35rem; }
+  .tagline { font-weight: 600; font-size: 0.98rem; line-height: 1.4; }
+  .summary { font-size: 0.92rem; line-height: 1.55; }
+  .chips { margin-top: auto; }
+  .foot { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; font-size: 0.72rem; color: var(--fg-dim); border-top: 1px dashed var(--line); padding-top: 0.7rem; flex-wrap: wrap; }
+  .flags { display: inline-flex; gap: 0.4rem; align-items: center; }
+</style>

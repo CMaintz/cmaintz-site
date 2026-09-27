@@ -1,0 +1,143 @@
+---
+import { type Lang, localize, unlocalize, useT } from '../i18n/ui';
+import { site } from '../data/site';
+
+interface Props { lang: Lang; switchPath?: string }
+const { lang, switchPath } = Astro.props;
+const t = useT(lang);
+const here = unlocalize(Astro.url.pathname).replace(/\/$/, '') || '/';
+const links = [
+  { href: '/about', label: t('nav.about') },
+  { href: '/projects', label: t('nav.projects') },
+  { href: '/blog', label: t('nav.blog') },
+  { href: '/services', label: t('nav.services') },
+  { href: '/contact', label: t('nav.contact') },
+];
+const isActive = (href: string) => here === href || here.startsWith(href + '/');
+const other: Lang = lang === 'en' ? 'da' : 'en';
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href={localize('/', lang)} aria-label={`${site.name} - ${t('nav.home')}`}>
+      <span class="logo pixel" aria-hidden="true">CM</span>
+      <span class="name mono">christoffer<span class="accent">.</span>maintz</span>
+    </a>
+
+    <nav class="nav" aria-label="Main">
+      <ul>
+        {links.map((l) => (
+          <li><a href={localize(l.href, lang)} aria-current={isActive(l.href) ? 'page' : undefined}>{l.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="tools">
+      <button class="tool cmdk" type="button" data-cmdk-open aria-label={t('cmd.open')}>
+        <span class="mono">⌘K</span>
+      </button>
+      <a class="tool lang mono" href={localize(switchPath ?? here, other)} hreflang={other} lang={other} aria-label={`${t('lang.label')}: ${other.toUpperCase()}`}>
+        <span class:list={{ on: lang === 'en' }}>EN</span><span class="sep">/</span><span class:list={{ on: lang === 'da' }}>DA</span>
+      </a>
+      <button class="tool" type="button" data-crt-toggle aria-label={t('crt.toggle')} title={t('crt.toggle')}>
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M1 3h14v9H1zM2 4v7h12V4zM5 13h6v1H5z M3 5h10v1H3zM3 7h10v1H3zM3 9h10v1H3z" /></svg>
+      </button>
+      <button class="tool" type="button" data-theme-toggle aria-label={t('theme.toggle')} title={t('theme.toggle')}>
+        <svg class="sun" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M6 5h4v1h1v4h-1v1H6v-1H5V6h1zM7 0h2v3H7zM7 13h2v3H7zM0 7h3v2H0zM13 7h3v2h-3zM2 2h2v2H2zM12 2h2v2h-2zM2 12h2v2H2zM12 12h2v2h-2z" /></svg>
+        <svg class="moon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M6 1h4v1H8v1H7v2H6v6h1v1h1v1h4v-1h2v2h-1v1h-2v1H6v-1H4v-1H3v-1H2v-2H1V6h1V4h1V3h1V2h2z" /></svg>
+      </button>
+      <details class="menu">
+        <summary class="tool mono" aria-label={t('nav.menu')}>≡</summary>
+        <div class="menu__panel win">
+          <ul>
+            {links.map((l) => <li><a href={localize(l.href, lang)} aria-current={isActive(l.href) ? 'page' : undefined}>{l.label}</a></li>)}
+            <li><a href={localize('/now', lang)}>{t('nav.now')}</a></li>
+            <li><a href={localize('/uses', lang)}>{t('nav.uses')}</a></li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<script>
+  const root = document.documentElement;
+  const save = (k: string, v: string) => { try { localStorage.setItem(k, v); } catch {} };
+  document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+    root.dataset.theme = next;
+    save('theme', next);
+    window.dispatchEvent(new CustomEvent('themechange'));
+  });
+  document.querySelector('[data-crt-toggle]')?.addEventListener('click', () => {
+    const next = root.dataset.crt === 'off' ? 'on' : 'off';
+    root.dataset.crt = next;
+    save('crt', next);
+    window.dispatchEvent(new CustomEvent('crtchange'));
+  });
+</script>
+
+<style>
+  .site-header {
+    position: sticky; top: 0; z-index: 40;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 2px solid var(--line);
+    view-transition-name: site-header;
+  }
+  .bar { display: flex; align-items: center; gap: 1.5rem; height: 3.75rem; }
+  .brand { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; }
+  .logo {
+    display: grid; place-items: center;
+    width: 2.1rem; height: 2.1rem;
+    background: var(--accent); color: var(--accent-ink);
+    font-size: 0.85rem;
+    box-shadow: 3px 3px 0 var(--shadow-c), var(--glow);
+  }
+  .name { font-size: 0.9rem; font-weight: 600; }
+  .brand:hover { color: var(--fg); }
+  .brand:hover .logo { animation: glitch 300ms steps(3) 1; }
+  @keyframes glitch { 33% { transform: translate(-2px, 1px); } 66% { transform: translate(2px, -1px); filter: hue-rotate(60deg); } }
+
+  .nav { margin-left: auto; }
+  .nav ul { display: flex; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
+  .nav a {
+    font: 500 0.85rem var(--font-mono);
+    text-decoration: none; padding: 0.35rem 0.6rem; color: var(--fg-dim);
+    border: 1px solid transparent;
+  }
+  .nav a:hover { color: var(--fg); border-color: var(--line); }
+  .nav a[aria-current='page'] { color: var(--accent-ink); background: var(--accent); }
+  .nav a[aria-current='page']::before { content: '>'; margin-right: 0.3em; }
+
+  .tools { display: flex; align-items: center; gap: 0.35rem; }
+  .tool {
+    display: inline-grid; place-items: center;
+    height: 2.1rem; min-width: 2.1rem; padding: 0 0.5rem;
+    background: transparent; color: var(--fg-dim);
+    border: 1px solid var(--line); cursor: pointer;
+    font-size: 0.78rem; text-decoration: none;
+  }
+  .tool:hover { color: var(--accent); border-color: var(--accent); }
+  .lang { display: inline-flex; gap: 0.15rem; }
+  .lang .on { color: var(--fg); font-weight: 700; }
+  .lang .sep { color: var(--fg-faint); }
+  :global(:root[data-theme='light']) .sun, :global(:root:not([data-theme='light'])) .moon { display: none; }
+  :global(:root[data-crt='off']) [data-crt-toggle] { opacity: 0.5; }
+
+  .menu { display: none; position: relative; }
+  .menu summary { list-style: none; font-size: 1.1rem; }
+  .menu summary::-webkit-details-marker { display: none; }
+  .menu__panel { position: absolute; right: 0; top: calc(100% + 0.6rem); min-width: 12rem; padding: 0.5rem; }
+  .menu__panel ul { list-style: none; margin: 0; padding: 0; }
+  .menu__panel a { display: block; padding: 0.5rem 0.7rem; font: 500 0.95rem var(--font-mono); text-decoration: none; }
+  .menu__panel a[aria-current='page'] { background: var(--accent); color: var(--accent-ink); }
+
+  @media (max-width: 860px) {
+    .nav { display: none; }
+    .tools { margin-left: auto; }
+    .menu { display: block; }
+    .name { display: none; }
+  }
+  @media (max-width: 380px) { .cmdk { display: none; } }
+</style>

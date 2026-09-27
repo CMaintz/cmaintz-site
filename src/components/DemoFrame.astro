@@ -1,0 +1,59 @@
+---
+import { type Lang, useT } from '../i18n/ui';
+
+interface Props { src: string; title: string; lang: Lang }
+const { src, title, lang } = Astro.props;
+const t = useT(lang);
+const host = new URL(src).host;
+---
+
+<!-- Click-to-load keeps third-party pages (and their requests) off the initial load. -->
+<figure class="demo win" data-demo={src} data-title={`${title} demo`}>
+  <div class="win__bar">
+    <span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="win__title">{host}</span>
+    <a class="win__meta" href={src} target="_blank" rel="noopener">{t('project.demo')} ↗</a>
+  </div>
+  <div class="stage">
+    <button class="btn btn--primary load" type="button">▶ {t('project.demo.load')}</button>
+  </div>
+  <figcaption class="mono">{t('project.demo.note')}</figcaption>
+</figure>
+
+<script>
+  function buildFrame(fig: HTMLElement) {
+    const iframe = document.createElement('iframe');
+    iframe.src = fig.dataset.demo!;
+    iframe.title = fig.dataset.title ?? 'demo';
+    iframe.loading = 'lazy';
+    iframe.referrerPolicy = 'no-referrer';
+    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
+    return iframe;
+  }
+
+  function loadDemo(fig: HTMLElement) {
+    const stage = fig.querySelector('.stage')!;
+    stage.replaceChildren(buildFrame(fig));
+    stage.classList.add('live');
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-demo]').forEach((fig) => {
+    fig.querySelector('.load')?.addEventListener('click', () => loadDemo(fig));
+  });
+</script>
+
+<style>
+  .demo { margin: 0 0 2.5rem; }
+  .win__meta { text-decoration: none; color: var(--accent); }
+  .stage {
+    aspect-ratio: 16 / 10;
+    display: grid; place-items: center;
+    background:
+      radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 14px 14px,
+      var(--bg);
+  }
+  .stage.live { display: block; }
+  .stage :global(iframe) { width: 100%; height: 100%; border: 0; background: #fff; }
+  figcaption { font-size: 0.72rem; color: var(--fg-faint); padding: 0.5rem 0.8rem; border-top: 1px solid var(--line); }
+  @media (max-width: 600px) { .stage { aspect-ratio: 3 / 4; } }
+</style>

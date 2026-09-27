@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { type Lang, useT, formatDate } from '../i18n/ui';
+import { getProjects, github } from '../lib/content';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const projects = await getProjects();
+const cats = ['professional', 'open-source', 'personal', 'academic'] as const;
+const counts = Object.fromEntries(cats.map((c) => [c, projects.filter((p) => p.data.category === c).length]));
+---
+
+<Base lang={lang} title={t('projects.title')} description={t('projects.lede')}>
+  <section class="wrap head">
+    <p class="eyebrow">~/projects</p>
+    <h1>{t('projects.title')}</h1>
+    <p class="lede">{t('projects.lede')}</p>
+    <p class="mono faint small">{t('footer.synced')}: {formatDate(new Date(github.syncedAt), lang)} · {github.repos.length} public repos</p>
+  </section>
+
+  <section class="wrap">
+    <div class="filters mono" role="toolbar" aria-label="Filter">
+      <button type="button" data-filter="all" aria-pressed="true">{t('projects.filter.all')} <span>{projects.length}</span></button>
+      {cats.map((c) => <button type="button" data-filter={c} aria-pressed="false">{t(`projects.cat.${c}`)} <span>{counts[c]}</span></button>)}
+    </div>
+    <div class="grid grid-3" data-projects>
+      {projects.map((p, i) => <ProjectCard project={p} lang={lang} index={i} />)}
+    </div>
+  </section>
+</Base>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('[data-projects] > [data-category]');
+  const apply = (f: string) => {
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === f)));
+    cards.forEach((c) => (c.hidden = f !== 'all' && c.dataset.category !== f));
+    history.replaceState(null, '', f === 'all' ? location.pathname : `#${f}`);
+  };
+  buttons.forEach((b) => b.addEventListener('click', () => apply(b.dataset.filter!)));
+  const initial = location.hash.slice(1);
+  if (initial && [...buttons].some((b) => b.dataset.filter === initial)) apply(initial);
+</script>
+
+<style>
+  .head { padding-block: clamp(3rem, 7vw, 5rem) 2rem; display: grid; gap: 1rem; }
+  .small { font-size: 0.78rem; }
+  .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+  .filters button { font: 500 0.82rem var(--font-mono); background: var(--bg-2); color: var(--fg-dim); border: 1px solid var(--line); padding: 0.45rem 0.8rem; cursor: pointer; }
+  .filters button span { color: var(--fg-faint); margin-left: 0.3rem; }
+  .filters button:hover { border-color: var(--accent); color: var(--fg); }
+  .filters button[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .filters button[aria-pressed='true'] span { color: inherit; opacity: 0.7; }
+  [hidden] { display: none !important; }
+</style>

@@ -1,0 +1,45 @@
+---
+import SimpleView from './SimpleView.astro';
+import Window from '../components/Window.astro';
+import { type Lang, localize, useT } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+
+// Edit this list when things change; bump UPDATED.
+const UPDATED = '2026-09-27';
+const items = {
+  en: [
+    { k: 'Work', v: 'Consulting at DEVEX on DevOps, CI/CD, developer experience and AI-assisted development.' },
+    { k: 'Looking for', v: 'A role in DevOps, developer experience, platform engineering or AI enablement. Aarhus or remote.' },
+    { k: 'Building', v: 'The jev-tools family (jev-guard, jev-triage, jev-sort) and a major restructuring of Foundry.' },
+    { k: 'Also', v: 'Growing Atlas, the bilingual technical dictionary, and this site.' },
+  ],
+  da: [
+    { k: 'Arbejde', v: 'Konsulent hos DEVEX med DevOps, CI/CD, developer experience og AI-assisted development.' },
+    { k: 'Søger', v: 'En rolle inden for DevOps, developer experience, platform engineering eller AI-enablement. Aarhus eller remote.' },
+    { k: 'Bygger', v: 'jev-tools-familien (jev-guard, jev-triage, jev-sort) og en større omstrukturering af Foundry.' },
+    { k: 'Også', v: 'Udvider Atlas, den tosprogede tekniske ordbog, og denne side.' },
+  ],
+}[lang];
+const lede = lang === 'da' ? 'Hvad jeg går og laver lige nu. Inspireret af nownownow.com.' : 'What I’m focused on right now. Inspired by nownownow.com.';
+---
+
+<SimpleView lang={lang} title={t('now.title')} eyebrow="~/now" lede={lede} updated={`${t('blog.updated')}: ${UPDATED}`}>
+  <Window title="status.log" meta={UPDATED}>
+    <dl class="log">
+      {items.map((i) => (<><dt class="mono">{i.k}</dt><dd>{i.v}</dd></>))}
+    </dl>
+  </Window>
+  <p class="more mono"><a href={localize('/contact', lang)}>{t('home.cta.hire')} →</a></p>
+</SimpleView>
+
+<style>
+  .log { display: grid; grid-template-columns: 9rem 1fr; gap: 0.9rem 1.5rem; margin: 0; }
+  dt { color: var(--accent); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 0.2rem; }
+  dt::before { content: '> '; color: var(--fg-faint); }
+  dd { margin: 0; }
+  .more { margin-top: 2rem; font-size: 0.9rem; }
+  @media (max-width: 600px) { .log { grid-template-columns: 1fr; gap: 0.2rem; } dd { margin-bottom: 0.8rem; } }
+</style>

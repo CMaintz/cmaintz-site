@@ -1,0 +1,21 @@
+# build output
+dist/
+.astro/
+.wrangler/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+
+# env
+.env
+.env.*
+!.env.example
+.dev.vars
+
+# local tooling output
+screenshots/
+
+.DS_Store

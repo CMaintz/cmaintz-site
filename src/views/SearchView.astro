@@ -1,0 +1,59 @@
+---
+import SimpleView from './SimpleView.astro';
+import { type Lang, useT } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const lede = lang === 'da' ? 'Søg i blogindlæg og projekter.' : 'Search blog posts and projects.';
+const note = lang === 'da' ? 'Søgeindekset bygges ved `npm run build`; i dev-mode er søgning ikke tilgængelig.' : 'The search index is built by `npm run build`; search is unavailable in dev mode.';
+---
+
+<SimpleView lang={lang} title={t('search.title')} eyebrow="~/search" lede={lede}>
+  <div id="search" class="search" data-note={note}></div>
+</SimpleView>
+
+<script>
+  async function loadPagefind() {
+    const url = '/pagefind/pagefind-ui.js';
+    await import(/* @vite-ignore */ url);
+    return (window as unknown as { PagefindUI: new (o: object) => unknown }).PagefindUI;
+  }
+
+  function showUnavailable(el: HTMLElement) {
+    el.textContent = el.dataset.note ?? '';
+    el.classList.add('unavailable');
+  }
+
+  async function mount() {
+    const el = document.getElementById('search')!;
+    try {
+      const PagefindUI = await loadPagefind();
+      new PagefindUI({ element: '#search', showSubResults: true, showImages: false, resetStyles: false });
+      el.querySelector<HTMLInputElement>('input')?.focus();
+    } catch {
+      showUnavailable(el);
+    }
+  }
+
+  mount();
+</script>
+
+<style>
+  .search :global(.unavailable), .search.unavailable { font: 0.85rem var(--font-mono); color: var(--fg-faint); border: 1px dashed var(--line); padding: 1rem; }
+  .search {
+    --pagefind-ui-scale: 0.9;
+    --pagefind-ui-primary: var(--accent);
+    --pagefind-ui-text: var(--fg);
+    --pagefind-ui-background: var(--bg-2);
+    --pagefind-ui-border: var(--line);
+    --pagefind-ui-tag: var(--bg-3);
+    --pagefind-ui-border-width: 2px;
+    --pagefind-ui-border-radius: 0;
+    --pagefind-ui-font: var(--font-sans);
+    max-width: 50rem;
+  }
+  .search :global(.pagefind-ui__search-input) { font-family: var(--font-mono); }
+  .search :global(.pagefind-ui__result-link) { color: var(--fg); }
+  .search :global(mark) { background: var(--accent); color: var(--accent-ink); }
+</style>

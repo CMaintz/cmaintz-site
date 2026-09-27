@@ -1,0 +1,144 @@
+---
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Window from '../components/Window.astro';
+import DemoFrame from '../components/DemoFrame.astro';
+import ProjectClip from '../components/ProjectClip.astro';
+import { type Lang, localize, useT, formatDate } from '../i18n/ui';
+import { type Project, projectRepoStats, projectPeriod } from '../lib/content';
+
+interface Props { project: Project; lang: Lang; prev?: Project; next?: Project }
+const { project: p, lang, prev, next } = Astro.props;
+const t = useT(lang);
+const { Content } = await render(p);
+const stats = projectRepoStats(p);
+const period = projectPeriod(p, lang, lang === 'da' ? 'nu' : 'now');
+const readme = stats?.primary.readmeHtml;
+---
+
+<Base lang={lang} title={p.data.title} description={p.data.summary[lang]} type="article">
+  <article>
+    <header class="wrap head">
+      <a class="back mono" href={localize('/projects', lang)}>← {t('project.back')}</a>
+      <p class="eyebrow">{t(`projects.cat.${p.data.category}`)}</p>
+      <h1 class="glow"><span class="glyph" aria-hidden="true">{p.data.glyph}</span>{p.data.title}</h1>
+      <p class="lede">{p.data.tagline[lang]}</p>
+      <div class="actions">
+        {p.data.live && <a class="btn btn--primary" href={p.data.live} rel="noopener">{t('project.live')} ↗</a>}
+        {stats && <a class="btn" href={stats.primary.url} rel="noopener">{t('project.repo')} ↗</a>}
+        {stats && stats.repos.slice(1).map((r) => <a class="btn" href={r.url} rel="noopener">{r.name} ↗</a>)}
+      </div>
+    </header>
+
+    <div class="wrap layout">
+      <aside class="meta">
+        <Window title="info.sys">
+          <dl class="mono">
+            <dt>{t('project.role')}</dt><dd>{p.data.role}</dd>
+            <dt>{t('project.when')}</dt><dd>{period}</dd>
+            <dt>{t('project.context')}</dt><dd>{p.data.context}</dd>
+            {p.data.grade && (<><dt>{t('project.grade')}</dt><dd><span class="badge badge--accent">{p.data.grade}</span></dd></>)}
+            {stats && (
+              <>
+                <dt>GitHub</dt>
+                <dd>{stats.stars > 0 && `★ ${stats.stars} ${t('project.stars')} · `}{t('project.updated')} {formatDate(new Date(stats.pushedAt), lang)}</dd>
+              </>
+            )}
+          </dl>
+          {stats && stats.languages.length > 0 && (
+            <div class="langs" aria-label="Languages">
+              <div class="langbar">
+                {stats.languages.map((l) => <span style={`flex:${l.share};background:${l.color ?? 'var(--fg-faint)'}`} title={`${l.name} ${(l.share * 100).toFixed(1)}%`}></span>)}
+              </div>
+              <ul class="mono">
+                {stats.languages.slice(0, 5).map((l) => <li><i style={`background:${l.color ?? 'var(--fg-faint)'}`}></i>{l.name} <span class="faint">{(l.share * 100).toFixed(0)}%</span></li>)}
+              </ul>
+            </div>
+          )}
+          {!stats && <p class="faint small mono">{t('project.private')}</p>}
+        </Window>
+        <div class="stack">
+          <h2 class="mono small-h">{t('project.stack')}</h2>
+          <ul class="chips">{p.data.stack.map((s) => <li class="chip">{s}</li>)}</ul>
+          {stats && stats.primary.topics.length > 0 && (
+            <ul class="chips topics">{stats.primary.topics.slice(0, 12).map((s) => <li class="chip">#{s}</li>)}</ul>
+          )}
+        </div>
+      </aside>
+
+      <div class="main">
+        {p.data.metrics.length > 0 && (
+          <div class="metrics">
+            {p.data.metrics.map((m) => (
+              <div class="metric"><span class="v glow">{m.value}</span><span class="l mono">{m.label[lang]}</span></div>
+            ))}
+          </div>
+        )}
+
+        <p class="summary">{p.data.summary[lang]}</p>
+
+        {p.data.video && <ProjectClip base={p.data.video} label={p.id} />}
+
+        {p.data.demo && <DemoFrame src={p.data.demo} title={p.data.title} lang={lang} />}
+
+        <section class="prose" aria-label={t('project.casestudy')}>
+          {lang === 'da' && <p class="note mono">{t('project.en_only')}</p>}
+          <Content />
+        </section>
+
+        {readme && (
+          <details class="readme-box win">
+            <summary class="win__bar"><span class="win__dots"><i></i><i></i><i></i></span><span class="win__title">README.md - {stats!.primary.name}</span><span class="win__meta">▼</span></summary>
+            <div class="win__body prose readme" set:html={readme} />
+          </details>
+        )}
+      </div>
+    </div>
+
+    <nav class="wrap pager mono" aria-label="Projects">
+      {prev ? <a href={localize(`/projects/${prev.id}`, lang)}>← {prev.data.title}</a> : <span></span>}
+      {next ? <a href={localize(`/projects/${next.id}`, lang)}>{next.data.title} →</a> : <span></span>}
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .head { padding-block: clamp(2.5rem, 6vw, 4.5rem) 2.5rem; display: grid; gap: 1rem; }
+  .back { font-size: 0.82rem; color: var(--fg-dim); text-decoration: none; }
+  h1 { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .glyph { display: inline-grid; place-items: center; width: 1.2em; height: 1.2em; font-size: 0.8em; background: var(--accent); color: var(--accent-ink); text-shadow: none; box-shadow: 5px 5px 0 var(--shadow-c); }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 0.5rem; }
+  .layout { display: grid; grid-template-columns: 19rem 1fr; gap: clamp(1.5rem, 4vw, 3.5rem); align-items: start; }
+  .meta { position: sticky; top: 5rem; display: grid; gap: 1.5rem; }
+  dl { display: grid; gap: 0.2rem; margin: 0; font-size: 0.8rem; }
+  dt { color: var(--fg-faint); text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.06em; margin-top: 0.6rem; }
+  dt:first-child { margin-top: 0; }
+  dd { margin: 0; }
+  .langs { margin-top: 1.2rem; }
+  .langbar { display: flex; height: 0.6rem; border: 1px solid var(--line); gap: 1px; background: var(--line); }
+  .langs ul { list-style: none; padding: 0; margin: 0.6rem 0 0; font-size: 0.75rem; display: grid; gap: 0.2rem; }
+  .langs li { display: flex; align-items: center; gap: 0.45rem; }
+  .langs i { width: 0.55rem; height: 0.55rem; display: inline-block; }
+  .small { font-size: 0.8rem; margin-top: 1rem; }
+  .small-h { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-faint); margin-bottom: 0.6rem; }
+  .topics { margin-top: 0.5rem; }
+  .topics .chip { color: var(--accent-2); border-style: dashed; }
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); border: 2px solid var(--line); background: var(--bg-2); margin-bottom: 2rem; }
+  .metric { padding: 1.1rem 1.3rem; border-right: 1px dashed var(--line); display: grid; gap: 0.2rem; }
+  .metric:last-child { border-right: 0; }
+  .metric .v { font: 800 2rem var(--font-sans); color: var(--accent); letter-spacing: -0.03em; }
+  .metric .l { font-size: 0.72rem; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+  .summary { font-size: 1.15rem; line-height: 1.6; max-width: 44rem; margin-bottom: 2rem; }
+  .note { font-size: 0.8rem; color: var(--fg-faint); border: 1px dashed var(--line); padding: 0.5rem 0.8rem; }
+  .readme-box { margin-top: 3rem; }
+  .readme-box summary { cursor: pointer; list-style: none; }
+  .readme-box summary::-webkit-details-marker { display: none; }
+  .readme-box[open] .win__meta { transform: rotate(180deg); }
+  .pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: 4rem; padding-top: 1.5rem; border-top: 2px dashed var(--line); font-size: 0.85rem; }
+  .pager a { text-decoration: none; color: var(--fg-dim); }
+  .pager a:hover { color: var(--accent); }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .meta { position: static; }
+  }
+</style>

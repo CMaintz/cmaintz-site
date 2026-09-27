@@ -1,0 +1,118 @@
+---
+import '@fontsource/fraunces/400.css';
+import '@fontsource/fraunces/400-italic.css';
+import '@fontsource/fraunces/600.css';
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import PreviewShell from '../layouts/PreviewShell.astro';
+import { homeData } from '../lib/home';
+import { formatDate } from '../i18n/ui';
+import { site } from '../data/site';
+
+const d = await homeData();
+---
+
+<PreviewShell style="editorial" title="Christoffer Maintz - editorial preview">
+  <div class="ed">
+    <header class="top">
+      <a href="/editorial" class="mark">Christoffer Maintz</a>
+      <nav><a href="/about">About</a><a href="/projects">Work</a><a href="/blog">Writing</a><a href="/contact">Contact</a></nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <p class="kicker">{d.status} · Aarhus</p>
+        <h1>I build the <em>machinery</em> that makes software teams faster and safer.</h1>
+        <p class="lede">{d.lede}</p>
+      </section>
+
+      <section class="block">
+        <h2><span>I.</span> Focus</h2>
+        <div class="focus">
+          {d.focus.map((f) => <div><h3>{f.title}</h3><p>{f.body}</p></div>)}
+        </div>
+      </section>
+
+      <section class="block">
+        <h2><span>II.</span> Selected work</h2>
+        <ol class="work">
+          {d.projects.map((p, i) => (
+            <li>
+              <a href={`/projects/${p.id}`}>
+                <span class="n">{String(i + 1).padStart(2, '0')}</span>
+                <span class="t">{p.title}</span>
+                <span class="s">{p.tagline}</span>
+                <span class="arr">→</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section class="block">
+        <h2><span>III.</span> Writing</h2>
+        <ul class="posts">
+          {d.posts.map((p) => (
+            <li>
+              <time>{formatDate(p.date, 'en', { month: 'long', day: 'numeric', year: 'numeric' })}</time>
+              <a href={`/blog/${p.id}`}>{p.title}</a>
+              <p>{p.description}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="coda">
+        <p class="big">{d.ctaTitle}</p>
+        <p>{d.ctaBody} <a href={`mailto:${site.email}`}>{site.email}</a></p>
+      </section>
+    </main>
+  </div>
+</PreviewShell>
+
+<style>
+  .ed {
+    --bg: #faf9f6; --fg: #1a1a1a; --dim: #5d5a54; --line: #e3dfd6; --accent: #b5451b;
+    background: var(--bg); color: var(--fg);
+    font: 400 17px/1.7 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 0 clamp(1rem, 5vw, 3rem) 6rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    .ed { --bg: #16151c; --fg: #edeae3; --dim: #a19d95; --line: #2c2a33; --accent: #e08d5e; }
+  }
+  .ed a { color: inherit; text-decoration: none; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size 300ms ease; }
+  .ed a:hover { background-size: 100% 1px; }
+  .top { max-width: 44rem; margin: 0 auto; display: flex; justify-content: space-between; align-items: baseline; padding-block: 2rem; flex-wrap: wrap; gap: 1rem; }
+  .mark { font: 600 1.1rem 'Fraunces', serif; }
+  .top nav { display: flex; gap: 1.3rem; font-size: 0.9rem; color: var(--dim); }
+  main { max-width: 44rem; margin: 0 auto; }
+  .hero { padding-block: 5rem 3rem; }
+  .kicker { font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin: 0 0 1.5rem; }
+  h1 { font: 400 clamp(2.4rem, 6vw, 3.8rem)/1.08 'Fraunces', serif; letter-spacing: -0.02em; margin: 0 0 1.5rem; }
+  h1 em { font-style: italic; color: var(--accent); }
+  .lede { color: var(--dim); font-size: 1.15rem; margin: 0; }
+  .block { padding-top: 3.5rem; margin-top: 3.5rem; border-top: 1px solid var(--line); }
+  h2 { font: 400 1.6rem 'Fraunces', serif; margin: 0 0 2rem; }
+  h2 span { font-style: italic; color: var(--accent); margin-right: 0.4rem; }
+  .focus { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem 2.5rem; }
+  .focus h3 { font: 600 1rem 'Inter', sans-serif; margin: 0 0 0.4rem; }
+  .focus p { color: var(--dim); margin: 0; font-size: 0.95rem; }
+  .work { list-style: none; padding: 0; margin: 0; }
+  .work a { display: grid; grid-template-columns: 2.5rem 1fr auto; gap: 0.2rem 1rem; padding: 1.1rem 0; border-bottom: 1px solid var(--line); background: none; }
+  .work .n { color: var(--dim); font-size: 0.8rem; padding-top: 0.45rem; }
+  .work .t { font: 400 1.5rem 'Fraunces', serif; }
+  .work .s { grid-column: 2; color: var(--dim); font-size: 0.95rem; }
+  .work .arr { grid-row: 1; grid-column: 3; color: var(--accent); transition: transform 250ms ease; }
+  .work a:hover .t { color: var(--accent); }
+  .work a:hover .arr { transform: translateX(6px); }
+  .posts { list-style: none; padding: 0; margin: 0; display: grid; gap: 2rem; }
+  .posts time { display: block; font-size: 0.8rem; color: var(--dim); letter-spacing: 0.04em; }
+  .posts a { font: 400 1.35rem 'Fraunces', serif; }
+  .posts p { color: var(--dim); margin: 0.3rem 0 0; }
+  .coda { margin-top: 5rem; padding: 2.5rem 0; border-top: 2px solid var(--fg); }
+  .big { font: 400 italic 2rem/1.2 'Fraunces', serif; margin: 0 0 0.8rem; }
+  .coda a { color: var(--accent); }
+  @media (max-width: 640px) { .focus { grid-template-columns: 1fr; } }
+</style>

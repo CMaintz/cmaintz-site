@@ -1,0 +1,41 @@
+---
+// Silent looping clip (GIF-like, ~10x smaller). `base` is e.g. "/media/illux-visualiser";
+// expects .webm, .mp4 and .jpg (poster) next to each other (scripts/encode-clip.mjs).
+interface Props { base: string; label: string }
+const { base, label } = Astro.props;
+---
+
+<figure class="clip win">
+  <div class="win__bar" aria-hidden="true">
+    <span class="win__dots"><i></i><i></i><i></i></span>
+    <span class="win__title">{label}.mp4</span>
+    <span class="win__meta">▶ loop</span>
+  </div>
+  <video muted loop playsinline preload="metadata" poster={`${base}.jpg`} aria-label={label} data-clip>
+    <source src={`${base}.webm`} type="video/webm" />
+    <source src={`${base}.mp4`} type="video/mp4" />
+  </video>
+</figure>
+
+<script>
+  // Autoplay only while visible, and never under reduced motion (poster stays).
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function onVisibility(entries: IntersectionObserverEntry[]) {
+    for (const e of entries) {
+      const video = e.target as HTMLVideoElement;
+      if (e.isIntersecting) video.play().catch(() => {});
+      else video.pause();
+    }
+  }
+
+  if (!reduce) {
+    const io = new IntersectionObserver(onVisibility, { threshold: 0.3 });
+    document.querySelectorAll('video[data-clip]').forEach((v) => io.observe(v));
+  }
+</script>
+
+<style>
+  .clip { margin: 0 0 2.5rem; }
+  video { width: 100%; height: auto; display: block; background: var(--bg); }
+</style>

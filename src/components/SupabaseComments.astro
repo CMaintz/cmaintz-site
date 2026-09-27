@@ -1,0 +1,67 @@
+---
+import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_PROVIDERS } from 'astro:env/client';
+import { type Lang, useT } from '../i18n/ui';
+
+interface Props { lang: Lang; slug: string }
+const { lang, slug } = Astro.props;
+const t = useT(lang);
+const text = {
+  signin: t('comments.signin'), as: t('comments.as'), signout: t('comments.signout'), empty: t('comments.empty'),
+  delete: t('comments.delete'), error: t('comments.error'),
+};
+---
+
+<div
+  class="sb-comments"
+  data-supabase-comments
+  data-url={PUBLIC_SUPABASE_URL}
+  data-key={PUBLIC_SUPABASE_ANON_KEY}
+  data-providers={PUBLIC_SUPABASE_PROVIDERS}
+  data-slug={slug}
+  data-text={JSON.stringify(text)}
+>
+  <ul class="list" data-list aria-live="polite"><li class="comment comment--empty">{t('comments.loading')}</li></ul>
+  <div class="auth" data-auth></div>
+  <form class="form" hidden>
+    <label class="visually-hidden" for="comment-body">{t('comments.placeholder')}</label>
+    <textarea id="comment-body" name="body" rows="4" minlength="2" maxlength="4000" required placeholder={t('comments.placeholder')}></textarea>
+    <button class="btn btn--primary btn--sm" type="submit">{t('comments.post')}</button>
+  </form>
+  <p class="status mono" data-status role="status"></p>
+  <p class="privacy faint">{t('comments.privacy')}</p>
+</div>
+
+<script>
+  // Load supabase-js only when the comments come into view.
+  function whenVisible(el: HTMLElement, run: () => void) {
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      run();
+    }, { rootMargin: '400px' });
+    io.observe(el);
+  }
+
+  const root = document.querySelector<HTMLElement>('[data-supabase-comments]');
+  if (root) whenVisible(root, () => import('../lib/comments-client').then((m) => m.mountComments(root)));
+</script>
+
+<style>
+  .list { list-style: none; padding: 0; margin: 0 0 1.5rem; display: grid; gap: 1rem; }
+  .list :global(.comment) { border-left: 3px solid var(--line); padding: 0.2rem 0 0.2rem 1rem; }
+  .list :global(.comment--empty) { color: var(--fg-faint); font: 0.85rem var(--font-mono); }
+  .list :global(.comment__meta) { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; margin-bottom: 0.3rem; flex-wrap: wrap; }
+  .list :global(.comment__meta time) { color: var(--fg-faint); font: 0.75rem var(--font-mono); }
+  .list :global(.comment__body) { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .list :global(.avatar) { width: 1.6rem; height: 1.6rem; border: 1px solid var(--line); object-fit: cover; }
+  .list :global(.avatar--blank) { display: inline-grid; place-items: center; background: var(--accent); color: var(--accent-ink); font: 0.7rem var(--font-pixel); }
+  .list :global(.comment__delete), .auth :global(.linkish) { background: none; border: 0; padding: 0; color: var(--fg-dim); font: 0.75rem var(--font-mono); text-decoration: underline; cursor: pointer; }
+  .list :global(.comment__delete) { margin-left: auto; }
+  .auth :global(.providers) { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.6rem; }
+  .form { display: grid; gap: 0.7rem; justify-items: start; margin-top: 1rem; }
+  .form[hidden] { display: none; }
+  .form textarea { width: 100%; font: 1rem var(--font-sans); color: var(--fg); background: var(--bg); border: 2px solid var(--line); padding: 0.65rem 0.75rem; resize: vertical; }
+  .form textarea:focus { outline: none; border-color: var(--accent); box-shadow: 4px 4px 0 var(--accent); }
+  .status { font-size: 0.8rem; color: var(--warn); min-height: 1em; margin-top: 0.5rem; }
+  .privacy { font-size: 0.75rem; margin-top: 0.8rem; }
+</style>

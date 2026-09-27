@@ -1,0 +1,66 @@
+---
+import { PUBLIC_GISCUS_REPO, PUBLIC_GISCUS_REPO_ID, PUBLIC_GISCUS_CATEGORY, PUBLIC_GISCUS_CATEGORY_ID } from 'astro:env/client';
+import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from 'astro:env/client';
+import SupabaseComments from './SupabaseComments.astro';
+import { type Lang, useT } from '../i18n/ui';
+
+interface Props { lang: Lang; slug: string }
+const { lang, slug } = Astro.props;
+const t = useT(lang);
+// Supabase is preferred; giscus is the fallback when only its IDs are set.
+const useSupabase = Boolean(PUBLIC_SUPABASE_URL && PUBLIC_SUPABASE_ANON_KEY);
+const configured = Boolean(PUBLIC_GISCUS_REPO && PUBLIC_GISCUS_REPO_ID && PUBLIC_GISCUS_CATEGORY && PUBLIC_GISCUS_CATEGORY_ID);
+const cfg = configured
+  ? { repo: PUBLIC_GISCUS_REPO, repoId: PUBLIC_GISCUS_REPO_ID, category: PUBLIC_GISCUS_CATEGORY, categoryId: PUBLIC_GISCUS_CATEGORY_ID, lang }
+  : null;
+---
+
+<section class="comments" aria-labelledby="comments-h" id="comments">
+  <h2 id="comments-h" class="mono">// {t('comments.title')}</h2>
+  {
+    useSupabase ? (
+      <SupabaseComments lang={lang} slug={slug} />
+    ) : cfg ? (
+      <div class="gate win" data-giscus={JSON.stringify(cfg)}>
+        <div class="win__body">
+          <p class="dim">{t('comments.consent')}</p>
+          <button class="btn btn--primary" type="button">{t('comments.load')}</button>
+        </div>
+      </div>
+    ) : (
+      <p class="off mono">{t('comments.off')}</p>
+    )
+  }
+  <div class="giscus"></div>
+</section>
+
+<script>
+  // giscus is only loaded after an explicit click (GDPR: it contacts github.com).
+  const gate = document.querySelector<HTMLElement>('[data-giscus]');
+  const theme = () => (document.documentElement.dataset.theme === 'light' ? 'light' : 'transparent_dark');
+  gate?.querySelector('button')?.addEventListener('click', () => {
+    const c = JSON.parse(gate.dataset.giscus!);
+    const s = document.createElement('script');
+    s.src = 'https://giscus.app/client.js';
+    s.async = true;
+    s.crossOrigin = 'anonymous';
+    Object.entries({
+      'data-repo': c.repo, 'data-repo-id': c.repoId, 'data-category': c.category, 'data-category-id': c.categoryId,
+      'data-mapping': 'pathname', 'data-strict': '1', 'data-reactions-enabled': '1', 'data-emit-metadata': '0',
+      'data-input-position': 'top', 'data-theme': theme(), 'data-lang': c.lang, 'data-loading': 'lazy',
+    }).forEach(([k, v]) => s.setAttribute(k, v));
+    document.querySelector('.giscus')!.append(s);
+    gate.remove();
+  });
+  addEventListener('themechange', () => {
+    const frame = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+    frame?.contentWindow?.postMessage({ giscus: { setConfig: { theme: theme() } } }, 'https://giscus.app');
+  });
+</script>
+
+<style>
+  .comments { margin-top: 4rem; padding-top: 2rem; border-top: 2px dashed var(--line); max-width: 44rem; }
+  h2 { font-size: 1rem; color: var(--fg-dim); margin-bottom: 1.2rem; }
+  .gate .win__body { display: grid; gap: 1rem; justify-items: start; }
+  .off { font-size: 0.85rem; color: var(--fg-faint); border: 1px dashed var(--line); padding: 0.8rem 1rem; }
+</style>

@@ -1,0 +1,179 @@
+---
+import { type Lang, localize, unlocalize, useT } from '../i18n/ui';
+import { getProjects, getPosts } from '../lib/content';
+import { site } from '../data/site';
+
+interface Props { lang: Lang; switchPath?: string }
+const { lang, switchPath } = Astro.props;
+const t = useT(lang);
+const other: Lang = lang === 'en' ? 'da' : 'en';
+const here = unlocalize(Astro.url.pathname);
+
+const pages = (['/', '/about', '/projects', '/blog', '/services', '/contact', '/now', '/uses', '/cv', '/search'] as const).map((p) => ({
+  group: 'go',
+  label: p === '/' ? t('nav.home') : t(`nav.${p.slice(1)}` as Parameters<typeof t>[0]),
+  hint: localize(p, lang),
+  href: localize(p, lang),
+}));
+const projects = (await getProjects()).map((p) => ({ group: t('nav.projects'), label: p.data.title, hint: p.data.tagline[lang], href: localize(`/projects/${p.id}`, lang) }));
+const posts = (await getPosts()).map((p) => ({ group: t('nav.blog'), label: p.data.title, hint: p.data.description, href: `/blog/${p.id}` }));
+const actions = [
+  { group: 'run', label: t('theme.toggle'), hint: 'theme', action: 'theme' },
+  { group: 'run', label: t('crt.toggle'), hint: 'crt', action: 'crt' },
+  { group: 'run', label: `${t('lang.label')}: ${other.toUpperCase()}`, hint: 'lang', href: localize(switchPath ?? here, other) },
+  { group: 'run', label: lang === 'da' ? 'Kopiér e-mail' : 'Copy email address', hint: site.email, action: 'copy-email' },
+  { group: 'run', label: 'GitHub', hint: site.socials.github, href: site.socials.github },
+];
+const items = [...pages, ...projects, ...posts, ...actions];
+---
+
+<dialog class="cmdk win" aria-label={t('cmd.open')} data-items={JSON.stringify(items)} data-email={site.email}>
+  <div class="win__bar"><span class="win__dots"><i></i><i></i></span><span class="win__title">command.exe</span><span class="win__meta">esc</span></div>
+  <div class="cmdk__body">
+    <label class="prompt">
+      <span class="accent mono" aria-hidden="true">&gt;</span>
+      <input type="text" placeholder={t('cmd.hint')} autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="cmdk-list" aria-autocomplete="list" />
+    </label>
+    <ul id="cmdk-list" role="listbox"></ul>
+  </div>
+</dialog>
+
+<script>
+  type Item = { group: string; label: string; hint?: string; href?: string; action?: string };
+  const dlg = document.querySelector<HTMLDialogElement>('dialog.cmdk')!;
+  const input = dlg.querySelector('input')!;
+  const list = dlg.querySelector('ul')!;
+  const items: Item[] = JSON.parse(dlg.dataset.items ?? '[]');
+  let results: Item[] = [];
+  let sel = 0;
+
+  // Subsequence match with a bonus for word-start and contiguous hits.
+  function score(q: string, s: string) {
+    s = s.toLowerCase();
+    let i = 0, sc = 0, prev = -2;
+    for (const ch of q) {
+      const j = s.indexOf(ch, i);
+      if (j < 0) return -1;
+      sc += j === prev + 1 ? 3 : 1;
+      if (j === 0 || s[j - 1] === ' ' || s[j - 1] === '/') sc += 2;
+      prev = j; i = j + 1;
+    }
+    return sc - s.length * 0.01;
+  }
+
+  function search(q: string): Item[] {
+    if (!q) return items.filter((i) => i.group === 'go' || i.group === 'run');
+    return items
+      .map((it) => ({ it, s: Math.max(score(q, it.label), score(q, it.hint ?? '') - 2) }))
+      .filter((r) => r.s >= 0)
+      .sort((a, b) => b.s - a.s)
+      .slice(0, 12)
+      .map((r) => r.it);
+  }
+
+  function buildOption(r: Item, idx: number) {
+    const li = document.createElement('li');
+    li.role = 'option';
+    li.id = `cmdk-${idx}`;
+    li.innerHTML = `<span class="g"></span><span class="l"></span><span class="h"></span>`;
+    li.querySelector('.g')!.textContent = r.group;
+    li.querySelector('.l')!.textContent = r.label;
+    li.querySelector('.h')!.textContent = r.hint ?? '';
+    li.addEventListener('click', () => run(r));
+    li.addEventListener('mousemove', () => select(idx));
+    return li;
+  }
+
+  function render() {
+    results = search(input.value.trim().toLowerCase());
+    sel = Math.min(sel, Math.max(0, results.length - 1));
+    list.replaceChildren(...results.map(buildOption));
+    mark();
+  }
+
+  function mark() {
+    [...list.children].forEach((li, i) => (li.ariaSelected = String(i === sel)));
+    list.children[sel]?.scrollIntoView({ block: 'nearest' });
+    input.setAttribute('aria-activedescendant', results.length ? `cmdk-${sel}` : '');
+  }
+
+  function select(idx: number) {
+    if (sel === idx) return;
+    sel = idx;
+    mark();
+  }
+
+  function move(step: number) {
+    const n = Math.max(1, results.length);
+    select((sel + step + n) % n);
+  }
+
+  function runAction(action?: string) {
+    if (action === 'theme') document.querySelector<HTMLButtonElement>('[data-theme-toggle]')?.click();
+    if (action === 'crt') document.querySelector<HTMLButtonElement>('[data-crt-toggle]')?.click();
+    if (action === 'copy-email') navigator.clipboard?.writeText(dlg.dataset.email ?? '');
+  }
+
+  function run(r: Item) {
+    dlg.close();
+    if (r.href) location.href = r.href;
+    else runAction(r.action);
+  }
+
+  function open() {
+    input.value = '';
+    sel = 0;
+    render();
+    dlg.showModal();
+    input.focus();
+  }
+
+  const isTyping = (t: EventTarget | null) => t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement;
+
+  function onGlobalKey(e: KeyboardEvent) {
+    const cmdK = e.key.toLowerCase() === 'k' && (e.metaKey || e.ctrlKey);
+    const slash = e.key === '/' && !dlg.open && !isTyping(e.target);
+    if (!cmdK && !slash) return;
+    e.preventDefault();
+    if (dlg.open) dlg.close();
+    else open();
+  }
+
+  function onInputKey(e: KeyboardEvent) {
+    const handlers: Record<string, () => void> = {
+      ArrowDown: () => move(1),
+      ArrowUp: () => move(-1),
+      Enter: () => results[sel] && run(results[sel]),
+    };
+    if (!handlers[e.key]) return;
+    e.preventDefault();
+    handlers[e.key]();
+  }
+
+  document.querySelectorAll('[data-cmdk-open]').forEach((b) => b.addEventListener('click', open));
+  addEventListener('keydown', onGlobalKey);
+  input.addEventListener('input', () => { sel = 0; render(); });
+  input.addEventListener('keydown', onInputKey);
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+</script>
+
+<style>
+  .cmdk {
+    width: min(40rem, calc(100vw - 2rem));
+    padding: 0; margin: 12vh auto auto;
+    color: var(--fg);
+  }
+  .cmdk::backdrop { background: rgb(0 0 0 / 0.55); backdrop-filter: blur(2px); }
+  .cmdk[open] { animation: pop 140ms steps(4); }
+  @keyframes pop { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+  .cmdk__body { padding: 0.75rem; }
+  .prompt { display: flex; gap: 0.6rem; align-items: center; border: 2px solid var(--line); padding: 0.55rem 0.75rem; background: var(--bg); }
+  .prompt input { flex: 1; background: none; border: 0; outline: 0; color: var(--fg); font: 500 1rem var(--font-mono); min-width: 0; }
+  ul { list-style: none; margin: 0.6rem 0 0; padding: 0; max-height: 50vh; overflow-y: auto; }
+  ul :global(li) { display: grid; grid-template-columns: 5.5rem 1fr; gap: 0 0.8rem; padding: 0.5rem 0.6rem; cursor: pointer; border: 1px solid transparent; }
+  ul :global(li .g) { grid-row: span 2; font: 400 0.65rem var(--font-pixel); text-transform: uppercase; color: var(--fg-faint); padding-top: 0.25rem; }
+  ul :global(li .l) { font-weight: 600; }
+  ul :global(li .h) { font: 0.78rem var(--font-mono); color: var(--fg-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  ul :global(li[aria-selected='true']) { background: var(--accent); color: var(--accent-ink); }
+  ul :global(li[aria-selected='true'] .g), ul :global(li[aria-selected='true'] .h) { color: var(--accent-ink); opacity: 0.8; }
+</style>

@@ -1,0 +1,137 @@
+---
+import Base from '../layouts/Base.astro';
+import Window from '../components/Window.astro';
+import Portrait from '../components/Portrait.astro';
+import JobEntry from '../components/JobEntry.astro';
+import { type Lang, localize, useT } from '../i18n/ui';
+import { monthRange } from '../lib/content';
+import { work, earlier, education, courses, skills, languages } from '../data/resume';
+import { github } from '../lib/content';
+import { site } from '../data/site';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+
+const intro = {
+  en: [
+    'I’m a developer in Aarhus who likes the unglamorous machinery that decides whether a team ships fast and safely: the pipeline, the gate, the tooling, the paved road. Lately that includes making AI coding agents genuinely useful without letting them quietly lower the bar.',
+    'During my internship at WEXO I built a generative-AI platform for Shopware 6 as sole developer. It enriches a 3,000+ product catalogue in four languages, removed over a thousand hours of manual work, and is still business-critical today. I now work as a consultant on DevOps, automation and AI-assisted development, and build open-source developer tooling on the side: Foundry, a polyglot quality gate for AI-assisted development, and the jev-tools family.',
+    'Before software I spent six years in retail leadership, which taught me more about processes, people and prioritising under pressure than any course. I’m looking for a role in DevOps, developer experience, platform engineering or AI enablement, and take on freelance work in the meantime.',
+  ],
+  da: [
+    'Jeg er udvikler i Aarhus og holder af det uglamourøse maskineri, der afgør, om et team leverer hurtigt og sikkert: pipelinen, gaten, værktøjerne, den asfalterede vej. For nylig handler det også om at gøre AI-kodeagenter reelt nyttige uden at lade dem sænke barren i det stille.',
+    'I min praktik hos WEXO byggede jeg som eneste udvikler en generativ AI-platform til Shopware 6. Den beriger et katalog på 3.000+ produkter på fire sprog, har fjernet over tusind timers manuelt arbejde og er stadig forretningskritisk i dag. Nu arbejder jeg som konsulent med DevOps, automatisering og AI-assisted development og bygger open source-udviklerværktøjer ved siden af: Foundry, en sprog-agnostisk kvalitets-gate til AI-assisteret udvikling, og jev-tools-familien.',
+    'Før software brugte jeg seks år på ledelse i detailhandlen, hvilket lærte mig mere om processer, mennesker og prioritering under pres end noget kursus. Jeg søger en rolle inden for DevOps, developer experience, platform engineering eller AI-enablement og tager freelanceopgaver i mellemtiden.',
+  ],
+}[lang];
+
+const highlights = [
+  { v: '1,000+ h', l: { en: 'manual work removed at Illux', da: 'manuelt arbejde fjernet hos Illux' } },
+  { v: '3,000+', l: { en: 'products enriched by AI in production', da: 'produkter beriget af AI i produktion' } },
+  { v: '6+ yrs', l: { en: 'retail leadership before tech', da: 'ledelse i detail før tech' } },
+  { v: String(github.repos.length), l: { en: 'public repositories', da: 'offentlige repositories' } },
+];
+---
+
+<Base lang={lang} title={t('about.title')} description={t('about.lede')}>
+  <section class="wrap head">
+    <div>
+      <p class="eyebrow">~/about</p>
+      <h1>{t('about.title')}</h1>
+      <p class="lede">{t('about.lede')}</p>
+      <div class="actions">
+        <a class="btn btn--primary" href={lang === 'da' ? '/cv-da.pdf' : '/cv.pdf'} download>{t('about.download')} ↓</a>
+        <a class="btn" href={localize('/cv', lang)}>{t('about.print')}</a>
+        <a class="btn btn--ghost" href={localize('/contact', lang)}>{t('nav.contact')} →</a>
+      </div>
+    </div>
+    <Portrait alt={lang === 'da' ? 'Portræt af Christoffer Maintz' : 'Portrait of Christoffer Maintz'} />
+  </section>
+
+  <section class="wrap intro">
+    <div class="prose">
+      {intro.map((p) => <p>{p}</p>)}
+      <p class="mono faint small">{t('about.funfact')}</p>
+    </div>
+    <div class="stats">
+      {highlights.map((h) => (
+        <div class="stat"><span class="v glow">{h.v}</span><span class="l mono">{h.l[lang]}</span></div>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="exp-h">
+    <div class="section-head"><h2 id="exp-h"><span class="idx">01</span>{t('about.experience')}</h2></div>
+    <ol class="timeline">{work.map((job) => <JobEntry job={job} lang={lang} />)}</ol>
+    <details class="earlier">
+      <summary class="mono">{t('about.earlier')} (2015-2023)</summary>
+      <ol class="timeline">{earlier.map((job) => <JobEntry job={job} lang={lang} />)}</ol>
+    </details>
+  </section>
+
+  <section class="wrap section" aria-labelledby="edu-h">
+    <div class="section-head"><h2 id="edu-h"><span class="idx">02</span>{t('about.education')}</h2></div>
+    <ol class="timeline">
+      {education.map((e) => (
+        <li class="reveal">
+          <div class="when mono">{monthRange(e.start, e.end, lang)}</div>
+          <Window title={e.institution} as="article">
+            <h3>{e.degree[lang]}</h3>
+            {e.note && <p class="dim">{e.note[lang]}</p>}
+          </Window>
+        </li>
+      ))}
+    </ol>
+    <p class="courses mono">
+      {t('about.courses')}: {courses.map((c) => `${c.name[lang]} (${c.org}, ${c.year})`).join(' · ')}
+    </p>
+  </section>
+
+  <section class="wrap section" aria-labelledby="skills-h">
+    <div class="section-head"><h2 id="skills-h"><span class="idx">03</span>{t('about.skills')}</h2></div>
+    <div class="grid grid-3">
+      {skills.map((s) => (
+        <Window title={s.name[lang]} class="reveal">
+          <ul class="chips">{s.keywords.map((k) => <li class="chip">{k}</li>)}</ul>
+        </Window>
+      ))}
+    </div>
+    <p class="courses mono">
+      {t('about.languages')}: {languages.map((l) => `${l.language[lang]} (${l.fluency[lang]})`).join(' · ')}
+    </p>
+  </section>
+
+  <section class="wrap">
+    <p class="mono dim small">
+      {site.email} · {site.location} · <a href={site.socials.github}>GitHub</a>
+      {site.socials.linkedin && <> · <a href={site.socials.linkedin}>LinkedIn</a></>}
+    </p>
+  </section>
+</Base>
+
+<style>
+  .head { display: grid; grid-template-columns: 1fr auto; gap: 3rem; align-items: center; padding-block: clamp(3rem, 7vw, 5rem) 2rem; }
+  .head > div { display: grid; gap: 1rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 0.8rem; }
+  .intro { display: grid; grid-template-columns: 1fr 18rem; gap: 3rem; align-items: start; padding-block: 1.5rem; }
+  .stats { display: grid; border: 2px solid var(--line); background: var(--bg-2); }
+  .stat { display: grid; padding: 1rem 1.2rem; border-bottom: 1px dashed var(--line); }
+  .stat:last-child { border-bottom: 0; }
+  .stat .v { font: 800 1.8rem var(--font-sans); color: var(--accent); letter-spacing: -0.03em; }
+  .stat .l { font-size: 0.72rem; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .timeline { list-style: none; margin: 0; padding: 0 0 0 1.5rem; border-left: 2px dashed var(--line); display: grid; gap: 2rem; }
+  .timeline > :global(li) { position: relative; display: grid; gap: 0.6rem; }
+  .timeline > :global(li)::before { content: ''; position: absolute; left: calc(-1.5rem - 7px); top: 0.3rem; width: 12px; height: 12px; background: var(--accent); box-shadow: var(--glow); }
+  .when { font-size: 0.8rem; color: var(--fg-faint); text-transform: uppercase; letter-spacing: 0.05em; }
+  .timeline h3 { margin-bottom: 0.4rem; }
+  .earlier { margin-top: 2rem; }
+  .earlier summary { cursor: pointer; font-size: 0.85rem; color: var(--fg-dim); padding: 0.6rem 0.9rem; border: 1px dashed var(--line); display: inline-block; margin-bottom: 1.5rem; }
+  .earlier summary:hover { color: var(--accent); border-color: var(--accent); }
+  .courses { margin-top: 1.5rem; font-size: 0.85rem; color: var(--fg-dim); }
+  .small { font-size: 0.8rem; }
+  @media (max-width: 860px) {
+    .head, .intro { grid-template-columns: 1fr; }
+    .head :global(.avatar) { order: -1; width: 8rem; }
+  }
+</style>

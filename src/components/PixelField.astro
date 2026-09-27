@@ -1,0 +1,155 @@
+---
+// Intentionally low-res, dithered plasma field behind the page. Rendered to a
+// canvas that is a fraction of the viewport size and upscaled with
+// `image-rendering: pixelated`, so it costs ~30k pixel writes per frame.
+// Frame-capped, paused when the tab is hidden, static under reduced motion or
+// when CRT effects are switched off.
+interface Props { cell?: number }
+const { cell = 7 } = Astro.props;
+---
+
+<canvas class="pixel-field" data-cell={cell} aria-hidden="true"></canvas>
+
+<script>
+  type RGB = [number, number, number];
+  const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((n) => (n + 0.5) / 16);
+  const FPS = 24;
+  const MOUSE_R2 = 14 * 14;
+
+  const canvas = document.querySelector<HTMLCanvasElement>('canvas.pixel-field');
+  const ctx = canvas?.getContext('2d');
+  const root = document.documentElement;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const cell = Number(canvas?.dataset.cell) || 7;
+  const state = { cols: 0, rows: 0, raf: 0, last: 0, t0: performance.now() };
+  const mouse = { x: -999, y: -999, tx: -999, ty: -999 };
+  let img: ImageData;
+  let palette: RGB[] = [];
+
+  function hexToRgb(hex: string): RGB {
+    const h = hex.trim().replace('#', '');
+    const full = h.length === 3 ? [...h].map((c) => c + c).join('') : h;
+    const n = parseInt(full, 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+  }
+
+  function readPalette() {
+    const cs = getComputedStyle(root);
+    palette = ['--accent', '--accent-3', '--accent-2'].map((v) => hexToRgb(cs.getPropertyValue(v)));
+  }
+
+  function resize() {
+    state.cols = Math.ceil(innerWidth / cell);
+    state.rows = Math.ceil(innerHeight / cell);
+    canvas!.width = state.cols;
+    canvas!.height = state.rows;
+    img = ctx!.createImageData(state.cols, state.rows);
+  }
+
+  /** Plasma value in 0..1 for one cell at time t (seconds). */
+  function plasma(x: number, y: number, t: number) {
+    const dx = x - state.cols * 0.72;
+    const dy = (y - state.rows * 0.28) * 1.6;
+    const v =
+      Math.sin(x * 0.075 + t * 0.6) +
+      Math.sin(y * 0.11 - t * 0.45) +
+      Math.sin((x + y) * 0.045 + t * 0.35) +
+      Math.sin(Math.sqrt(dx * dx + dy * dy) * 0.16 - t * 1.1);
+    return (v + 4) / 8;
+  }
+
+  function mouseGlow(x: number, y: number) {
+    const d = (x - mouse.x) ** 2 + (y - mouse.y) ** 2;
+    return d < MOUSE_R2 * 4 ? Math.exp(-d / MOUSE_R2) * 0.55 : 0;
+  }
+
+  function writePixel(i: number, level: number, threshold: number) {
+    const d = img.data;
+    if (level <= threshold) { d[i + 3] = 0; return; }
+    const tier = level > 0.86 ? 0 : level > 0.74 ? 1 : 2;
+    const [r, g, b] = palette[tier];
+    d[i] = r; d[i + 1] = g; d[i + 2] = b;
+    d[i + 3] = [255, 170, 110][tier];
+  }
+
+  function drawRow(y: number, t: number) {
+    // Denser near the top/hero, thinning toward the bottom of the viewport.
+    const vfade = 1 - (y / state.rows) * 0.55;
+    for (let x = 0; x < state.cols; x++) {
+      const level = (plasma(x, y, t) + mouseGlow(x, y)) * vfade;
+      const threshold = 0.52 + BAYER[(y & 3) * 4 + (x & 3)] * 0.36;
+      writePixel((y * state.cols + x) * 4, level, threshold);
+    }
+  }
+
+  function easeMouse() {
+    mouse.x += (mouse.tx - mouse.x) * 0.15;
+    mouse.y += (mouse.ty - mouse.y) * 0.15;
+  }
+
+  function draw(time: number) {
+    easeMouse();
+    const t = (time - state.t0) / 1000;
+    for (let y = 0; y < state.rows; y++) drawRow(y, t);
+    ctx!.putImageData(img, 0, 0);
+  }
+
+  const isAnimated = () => !reduce.matches && root.dataset.crt !== 'off' && !document.hidden;
+  const drawStill = () => draw(performance.now());
+
+  function loop(time: number) {
+    state.raf = requestAnimationFrame(loop);
+    if (time - state.last < 1000 / FPS) return;
+    state.last = time;
+    draw(time);
+  }
+
+  function sync() {
+    cancelAnimationFrame(state.raf);
+    if (isAnimated()) state.raf = requestAnimationFrame(loop);
+    else drawStill();
+  }
+
+  function trackPointer(e: PointerEvent) {
+    mouse.tx = e.clientX / cell;
+    mouse.ty = e.clientY / cell;
+  }
+
+  function onResize() {
+    resize();
+    if (!isAnimated()) drawStill();
+  }
+
+  function onThemeChange() {
+    readPalette();
+    if (!isAnimated()) drawStill();
+  }
+
+  function bindEvents() {
+    addEventListener('resize', onResize);
+    addEventListener('pointermove', trackPointer, { passive: true });
+    document.addEventListener('visibilitychange', sync);
+    reduce.addEventListener('change', sync);
+    addEventListener('themechange', onThemeChange);
+    addEventListener('crtchange', sync);
+  }
+
+  if (canvas && ctx) {
+    readPalette();
+    resize();
+    sync();
+    bindEvents();
+  }
+</script>
+
+<style>
+  .pixel-field {
+    position: fixed; inset: 0; z-index: 0;
+    width: 100vw; height: 100vh;
+    image-rendering: pixelated;
+    pointer-events: none;
+    opacity: var(--pixel-alpha);
+    /* Keep the reading column calm: fade the field out behind the content. */
+    mask-image: linear-gradient(to right, #000 0%, rgb(0 0 0 / 0.25) 30%, rgb(0 0 0 / 0.15) 50%, rgb(0 0 0 / 0.3) 70%, #000 100%);
+  }
+</style>

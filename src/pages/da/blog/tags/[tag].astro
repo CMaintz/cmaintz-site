@@ -1,0 +1,9 @@
+---
+import BlogIndexView from '../../../../views/BlogIndexView.astro';
+import { tagPaths } from '../../../../lib/paths';
+
+export const getStaticPaths = tagPaths;
+const { tag, posts } = Astro.props;
+---
+
+<BlogIndexView lang="da" tag={tag} posts={posts} />
