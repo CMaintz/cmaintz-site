@@ -35,15 +35,15 @@ Public repo `CMaintz/cmaintz-site`. CI (`ci.yml`) builds and runs `npm run check
 
 1. **You:** sign up at https://resend.com **with `cmaintz@outlook.com`**. Until you verify a domain, Resend's test sender can only deliver to your own account address, which is exactly the inbox we want.
 2. **You:** Resend -> API Keys -> Create (permission "Sending access").
-3. **You:** `! npx wrangler secret put RESEND_API_KEY` and paste the key when prompted.
+3. **You:** in your own terminal (not the chat `!`): `npx wrangler secret put RESEND_API_KEY --name cmaintz-site` and paste the key when prompted.
 4. **Claude:** submit the live form once and you confirm the mail arrived. This is the one path that hasn't been tested yet.
 
-Later, with a domain: verify it in Resend, then `npx wrangler secret put CONTACT_FROM_EMAIL` (e.g. `Website <contact@yourdomain.dk>`) and update `CONTACT_TO_EMAIL` if you get a domain mailbox.
+Later, with a domain: verify it in Resend, then `npx wrangler secret put CONTACT_FROM_EMAIL --name cmaintz-site` (e.g. `Website <contact@yourdomain.dk>`) and update `CONTACT_TO_EMAIL` if you get a domain mailbox.
 
 ## Phase 4 - Spam protection (Cloudflare Turnstile, optional)
 
 1. **You:** Cloudflare dashboard -> Turnstile -> Add widget. Hostnames: the `workers.dev` host (and your domain later). Mode: Managed.
-2. **You:** `! npx wrangler secret put TURNSTILE_SECRET_KEY` (secret key).
+2. **You:** in your own terminal (not the chat `!`): `npx wrangler secret put TURNSTILE_SECRET_KEY --name cmaintz-site` (secret key).
 3. **Claude:** add `PUBLIC_TURNSTILE_SITE_KEY=<site key>` to `.env` / build variables, rebuild, redeploy.
 
 Without Turnstile the form still has a honeypot field and Astro's same-origin check.

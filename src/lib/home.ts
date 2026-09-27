@@ -1,5 +1,5 @@
-// Content shared by the main homepage and the /editorial, /technical and
-// /bold style previews, so the previews compare style, not content.
+// Content shared by the main homepage and the style previews (/technical,
+// /alien, /bladerunner), so the previews compare style, not content.
 import { useT } from '../i18n/ui';
 import { getFeaturedProjects, getPosts, projectRepoStats, readingTime, github } from './content';
 

@@ -8,6 +8,7 @@ import { monthRange } from '../lib/content';
 import { work, earlier, education, courses, skills, languages } from '../data/resume';
 import { github } from '../lib/content';
 import { site } from '../data/site';
+import { values } from '../data/values';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -61,8 +62,17 @@ const highlights = [
     </div>
   </section>
 
+  <section class="wrap section values-sec" aria-labelledby="values-h">
+    <div class="section-head"><h2 id="values-h"><span class="idx">01</span>{t('about.values')}</h2></div>
+    <ol class="values">
+      {values.map((v, i) => (
+        <li class="reveal"><span class="n mono">{String(i + 1).padStart(2, '0')}</span><div><h3>{v.title[lang]}</h3><p class="dim">{v.body[lang]}</p></div></li>
+      ))}
+    </ol>
+  </section>
+
   <section class="wrap section" aria-labelledby="exp-h">
-    <div class="section-head"><h2 id="exp-h"><span class="idx">01</span>{t('about.experience')}</h2></div>
+    <div class="section-head"><h2 id="exp-h"><span class="idx">02</span>{t('about.experience')}</h2></div>
     <ol class="timeline">{work.map((job) => <JobEntry job={job} lang={lang} />)}</ol>
     <details class="earlier">
       <summary class="mono">{t('about.earlier')} (2015-2023)</summary>
@@ -71,7 +81,7 @@ const highlights = [
   </section>
 
   <section class="wrap section" aria-labelledby="edu-h">
-    <div class="section-head"><h2 id="edu-h"><span class="idx">02</span>{t('about.education')}</h2></div>
+    <div class="section-head"><h2 id="edu-h"><span class="idx">03</span>{t('about.education')}</h2></div>
     <ol class="timeline">
       {education.map((e) => (
         <li class="reveal">
@@ -89,7 +99,7 @@ const highlights = [
   </section>
 
   <section class="wrap section" aria-labelledby="skills-h">
-    <div class="section-head"><h2 id="skills-h"><span class="idx">03</span>{t('about.skills')}</h2></div>
+    <div class="section-head"><h2 id="skills-h"><span class="idx">04</span>{t('about.skills')}</h2></div>
     <div class="grid grid-3">
       {skills.map((s) => (
         <Window title={s.name[lang]} class="reveal">
@@ -120,6 +130,11 @@ const highlights = [
   .stat:last-child { border-bottom: 0; }
   .stat .v { font: 800 1.8rem var(--font-sans); color: var(--accent); letter-spacing: -0.03em; }
   .stat .l { font-size: 0.72rem; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .values-sec { padding-bottom: 0; }
+  .values { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1.5rem 2.5rem; }
+  .values li { display: grid; grid-template-columns: 2.4rem 1fr; gap: 0.8rem; }
+  .values .n { color: var(--accent); font-size: 0.9rem; padding-top: 0.2rem; }
+  .values h3 { font-size: 1.15rem; margin-bottom: 0.35rem; }
   .timeline { list-style: none; margin: 0; padding: 0 0 0 1.5rem; border-left: 2px dashed var(--line); display: grid; gap: 2rem; }
   .timeline > :global(li) { position: relative; display: grid; gap: 0.6rem; }
   .timeline > :global(li)::before { content: ''; position: absolute; left: calc(-1.5rem - 7px); top: 0.3rem; width: 12px; height: 12px; background: var(--accent); box-shadow: var(--glow); }

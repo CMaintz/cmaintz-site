@@ -13,6 +13,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PixelField from '../components/PixelField.astro';
 import CommandPalette from '../components/CommandPalette.astro';
+import DoomLauncher from '../components/DoomLauncher.astro';
 import { site } from '../data/site';
 import { type Lang, localize, unlocalize, useT } from '../i18n/ui';
 
@@ -104,6 +105,7 @@ const personLd = {
     </main>
     <Footer lang={lang} />
     <CommandPalette lang={lang} switchPath={langSwitchPath} />
+    <DoomLauncher />
     {
       PUBLIC_CF_BEACON_TOKEN && (
         <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: PUBLIC_CF_BEACON_TOKEN })} />

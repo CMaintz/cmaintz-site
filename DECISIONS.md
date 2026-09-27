@@ -30,6 +30,10 @@ Choices made on your behalf while you were away. Each one says what I chose, why
 
 ## Content
 
+- **Values** (`src/data/values.ts`): four working values, in full on /about and as links on /services. Drafts in your voice; edit freely.
+- **Style previews:** editorial and bold were removed; `/technical` stays, and `/alien` and `/bladerunner` are built around the on-screen tech of the films (Nostromo bridge monitors; ESPER, Voight-Kampff and spinner displays).
+- **DOOM easter egg:** type `doom` or `iddqd` in the homepage terminal, search it in the command palette, or enter the Konami code. Chocolate Doom as WebAssembly (cloudflare/doom-wasm, GPL-2.0, source linked in `public/doom/NOTICE.txt`) with the official shareware DOOM 1.9 WAD, served from this site with a policy that blocks all outside connections. About 6.5 MB, loaded only when opened.
+
 - **Areas taxonomy:** posts, projects and services carry `areas` (dx, devops, platform, ai), defined in `src/data/areas.ts`. Pages show them as chips linking to `/projects#<area>`, and /projects can filter by them. This is the groundwork for per-area "What I do" pages.
 - **Tech Atlas** (renamed from "Atlas", URL `/projects/tech-atlas`) refuses to render inside iframes on purpose (its layout hides itself when framed, protecting account actions). The project page therefore shows a recorded 15-second clip of the explorer (2D force layout, layout by depth, 3D) plus a "Live" button to the explorer. Re-record with `node scripts/record-tech-atlas.mjs`.
 

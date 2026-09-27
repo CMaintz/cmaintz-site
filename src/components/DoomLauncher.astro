@@ -1,0 +1,60 @@
+---
+// Easter egg: DOOM in a retro window. Opened by the `doom:open` event (the
+// homepage terminal) or the Konami code. Nothing loads until it's opened.
+---
+
+<dialog class="doom win" aria-label="DOOM">
+  <div class="win__bar">
+    <span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="win__title">doom.exe</span>
+    <button class="win__meta close" type="button" aria-label="Close">✕ close</button>
+  </div>
+  <div class="screen"></div>
+  <p class="hint mono">WASD move · ←→ turn · Space fire · E use · Shift run · Enter menu · <a href="/doom/NOTICE.txt">licences</a></p>
+</dialog>
+
+<script>
+  const dlg = document.querySelector<HTMLDialogElement>('dialog.doom')!;
+  const screen = dlg.querySelector('.screen')!;
+  const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+  let progress = 0;
+
+  function open() {
+    const frame = document.createElement('iframe');
+    frame.src = '/doom/';
+    frame.title = 'DOOM';
+    screen.replaceChildren(frame);
+    dlg.showModal();
+    frame.focus();
+  }
+
+  /** Closing removes the iframe, which stops the game and frees its memory. */
+  function close() {
+    dlg.close();
+    screen.replaceChildren();
+  }
+
+  function trackKonami(e: KeyboardEvent) {
+    progress = e.key === KONAMI[progress] ? progress + 1 : e.key === KONAMI[0] ? 1 : 0;
+    if (progress < KONAMI.length) return;
+    progress = 0;
+    open();
+  }
+
+  addEventListener('doom:open', open);
+  addEventListener('keydown', trackKonami);
+  dlg.querySelector('.close')!.addEventListener('click', close);
+  // Esc belongs to the game menu, so it must not close the window.
+  dlg.addEventListener('cancel', (e) => e.preventDefault());
+</script>
+
+<style>
+  .doom { width: min(960px, calc(100vw - 2rem)); padding: 0; margin: auto; color: var(--fg); }
+  .doom::backdrop { background: rgb(0 0 0 / 0.75); }
+  .close { background: var(--bg-3); border: 0; font: inherit; color: var(--fg); cursor: pointer; text-transform: uppercase; }
+  .close:hover { color: var(--accent); }
+  .screen { aspect-ratio: 4 / 3; background: #000; }
+  .screen :global(iframe) { width: 100%; height: 100%; border: 0; display: block; }
+  .hint { font-size: 0.72rem; color: var(--fg-dim); padding: 0.5rem 0.8rem; margin: 0; border-top: 1px solid var(--line); }
+  .hint a { color: var(--fg-dim); }
+</style>

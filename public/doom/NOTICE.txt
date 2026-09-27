@@ -1,0 +1,13 @@
+DOOM easter egg
+
+Engine: Chocolate Doom compiled to WebAssembly by Cloudflare (doom-wasm),
+licensed under the GNU General Public License v2.0.
+Source code: https://github.com/cloudflare/doom-wasm
+Prebuilt binaries taken from the npm package @nicejsisverycool/tizendoom 0.1.6
+(websockets-doom.js, websockets-doom.wasm), unmodified.
+
+Game data: doom1.wad, DOOM v1.9 shareware episode (SHA-1
+5b2e249b9c5133ec987b3ea77596381dc0d6bc1d), (c) id Software. The shareware
+version may be freely redistributed unmodified.
+
+DOOM is a trademark of id Software. This site is not affiliated with id Software.

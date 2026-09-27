@@ -106,6 +106,7 @@ export const ui = {
     'about.title': 'About',
     'about.lede':
       'Developer from Aarhus. Consultant in DevOps, automation and AI-assisted development, with a business-critical AI system behind me and a habit of building the tools I wish I had.',
+    'about.values': 'Values',
     'about.experience': 'Experience',
     'about.education': 'Education',
     'about.skills': 'Skills',
@@ -258,6 +259,7 @@ export const ui = {
     'about.title': 'Om mig',
     'about.lede':
       'Udvikler fra Aarhus. Konsulent i DevOps, automatisering og AI-assisted development, med et forretningskritisk AI-system bag mig og en vane med at bygge de værktøjer, jeg selv mangler.',
+    'about.values': 'Værdier',
     'about.experience': 'Erfaring',
     'about.education': 'Uddannelse',
     'about.skills': 'Kompetencer',

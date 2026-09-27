@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Window from '../components/Window.astro';
 import { type Lang, localize, useT } from '../i18n/ui';
 import { services, workLanguages, process, HOURLY_RATE_DKK } from '../data/services';
+import { values } from '../data/values';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -52,6 +53,11 @@ const t = useT(lang);
     </div>
   </section>
 
+  <section class="wrap values mono" aria-label={t('about.values')}>
+    <span class="faint">{t('about.values')}:</span>
+    {values.map((v) => <a href={localize('/about', lang) + '#values-h'}>◆ {v.title[lang]}</a>)}
+  </section>
+
   <section class="wrap cta">
     <a class="btn btn--primary" href={localize('/contact', lang) + '?topic=freelance'}>{t('services.ask')} <span class="arrow">→</span></a>
   </section>
@@ -75,6 +81,8 @@ const t = useT(lang);
   .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
   .steps li { display: grid; grid-template-columns: 2.5rem 1fr; gap: 0.8rem; }
   .steps .n { color: var(--accent); font-size: 0.9rem; padding-top: 0.15rem; }
+  .values { display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem; font-size: 0.82rem; margin-bottom: 2.5rem; }
+  .values a { color: var(--accent); text-decoration: none; }
   .cta { text-align: center; }
   @media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
 </style>
