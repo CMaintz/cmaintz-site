@@ -201,7 +201,7 @@ export const skills: { name: L; keywords: string[] }[] = [
     ],
   },
   {
-    name: { en: 'Languages', da: 'Sprog' },
+    name: { en: 'Programming languages', da: 'Programmeringssprog' },
     keywords: ['C# / .NET', 'Java', 'PHP', 'TypeScript', 'JavaScript', 'Python', 'Kotlin', 'Swift', 'SQL', 'Shell'],
   },
   {

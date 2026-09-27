@@ -1,0 +1,145 @@
+---
+// Style preview: late-70s ship-computer terminal (Alien, 1979). Phosphor green
+// monochrome, wide-tracked title card, a motion tracker, amber priority alerts.
+import '@fontsource/michroma/400.css';
+import '@fontsource/share-tech-mono/400.css';
+import PreviewShell from '../layouts/PreviewShell.astro';
+import { homeData } from '../lib/home';
+import { site } from '../data/site';
+
+const d = await homeData();
+const title = 'CHRISTOFFER MAINTZ';
+const code = (i: number) => `A-${String(i + 1).padStart(2, '0')}`;
+---
+
+<PreviewShell style="alien" title="Christoffer Maintz - alien preview">
+  <div class="al">
+    <div class="scan" aria-hidden="true"></div>
+    <header class="top">
+      <span>INTERFACE 2037 // CMAINTZ</span>
+      <nav><a href="/about">PERSONNEL</a><a href="/projects">ASSETS</a><a href="/blog">LOG</a><a href="/contact">COMMS</a></nav>
+      <span class="ready">READY<i aria-hidden="true">█</i></span>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1 aria-label={title}>
+          {title.split(' ').map((word, w) => (
+            <span class="word" aria-hidden="true">{[...word].map((ch, i) => <span style={`--i:${(i * 5 + w * 3) % 11}`}>{ch}</span>)}</span>
+          ))}
+        </h1>
+        <p class="sub">DEVELOPER · DX · DEVOPS · PLATFORM · AI · AARHUS STATION</p>
+        <div class="console">
+          <p class="q">&gt; QUERY: WHAT IS THIS OPERATOR'S FUNCTION?</p>
+          <p class="a">{d.lede.toUpperCase()}</p>
+          <p class="q">&gt; QUERY: STATUS?</p>
+          <p class="a amber">{d.status.toUpperCase()}. AWAITING INSTRUCTIONS.</p>
+        </div>
+        <div class="tracker" aria-hidden="true"><div class="sweep"></div><i class="blip"></i><span>MOTION</span></div>
+      </section>
+
+      <section class="block">
+        <h2>// SYSTEM MODULES</h2>
+        <table>
+          <thead><tr><th>MODULE</th><th>DESCRIPTION</th><th>STATUS</th></tr></thead>
+          <tbody>{d.focus.map((f) => <tr><td>{f.title.toUpperCase()}</td><td>{f.body}</td><td class="ok">NOMINAL</td></tr>)}</tbody>
+        </table>
+      </section>
+
+      <section class="block">
+        <h2>// ASSET REGISTER</h2>
+        <div class="grid">
+          {d.projects.map((p, i) => (
+            <a class="asset" href={`/projects/${p.id}`}>
+              <span class="code">{code(i)} · {p.category.toUpperCase()}</span>
+              <h3>{p.title.toUpperCase()}</h3>
+              <p>{p.tagline}</p>
+              <span class="stack">{p.stack.join(' / ')}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section class="block">
+        <h2>// TRANSMISSION LOG</h2>
+        <ul class="log">
+          {d.posts.map((p) => <li><time>{p.date.toISOString().slice(0, 10)}</time><a href={`/blog/${p.id}`}>{p.title.toUpperCase()}</a></li>)}
+        </ul>
+      </section>
+
+      <section class="priority">
+        <p class="flash">PRIORITY ONE</p>
+        <p>ESTABLISH CONTACT WITH OPERATOR. {d.ctaBody.toUpperCase()}</p>
+        <a href={`mailto:${site.email}`}>&gt; OPEN CHANNEL: {site.email.toUpperCase()}</a>
+      </section>
+    </main>
+  </div>
+</PreviewShell>
+
+<style>
+  .al {
+    --bg: #030a05; --fg: #8dffa8; --dim: #3f8f57; --line: #1d4a2b; --amber: #ffb000;
+    min-height: 100vh; position: relative; overflow: hidden;
+    background: radial-gradient(ellipse at 50% 40%, #07190c 0%, var(--bg) 70%);
+    color: var(--fg);
+    font: 400 15px/1.6 'Share Tech Mono', ui-monospace, monospace;
+    text-shadow: 0 0 6px rgb(141 255 168 / 0.45);
+    padding: 0 clamp(1rem, 4vw, 3rem) 5rem;
+  }
+  .scan { position: fixed; inset: 0; pointer-events: none; z-index: 5; background: repeating-linear-gradient(to bottom, rgb(0 0 0 / 0.35) 0 1px, transparent 1px 3px); }
+  .al a { color: inherit; text-decoration: none; }
+  .al a:hover { background: var(--fg); color: var(--bg); text-shadow: none; }
+  .top { max-width: 72rem; margin: 0 auto; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 1rem 0; border-bottom: 1px solid var(--line); font-size: 0.8rem; letter-spacing: 0.15em; }
+  .top nav { display: flex; gap: 1.5rem; }
+  .ready i { animation: blink 1s steps(1) infinite; margin-left: 0.3rem; }
+  main { max-width: 72rem; margin: 0 auto; }
+  .hero { position: relative; padding-block: clamp(4rem, 10vw, 8rem) 3rem; }
+  h1 { font: 400 clamp(1.5rem, 5vw, 3.6rem)/1.25 'Michroma', sans-serif; letter-spacing: 0.5em; margin: 0 0 1.5rem; max-width: calc(100% - 13rem); }
+  h1 .word { display: block; white-space: nowrap; }
+  h1 .word span { display: inline-block; }
+  .sub { color: var(--dim); letter-spacing: 0.3em; font-size: 0.8rem; margin: 0 0 3rem; }
+  .console { max-width: 44rem; border-left: 2px solid var(--line); padding-left: 1.2rem; }
+  .console p { margin: 0 0 0.8rem; }
+  .q { color: var(--dim); }
+  .amber { color: var(--amber); text-shadow: 0 0 6px rgb(255 176 0 / 0.5); }
+  .tracker { position: absolute; right: 0; top: 4rem; width: 11rem; aspect-ratio: 1; border-radius: 50%; border: 1px solid var(--dim); overflow: hidden; background: repeating-radial-gradient(circle, transparent 0 1.3rem, var(--line) 1.3rem calc(1.3rem + 1px)); }
+  .tracker span { position: absolute; bottom: 0.6rem; width: 100%; text-align: center; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--dim); }
+  .sweep { position: absolute; inset: 0; background: conic-gradient(from 0deg, rgb(141 255 168 / 0.35), transparent 25%); }
+  .blip { position: absolute; left: 62%; top: 30%; width: 8px; height: 8px; border-radius: 50%; background: var(--fg); box-shadow: 0 0 10px var(--fg); }
+  .block { margin-top: 4rem; }
+  h2 { font: 400 0.95rem 'Michroma', sans-serif; letter-spacing: 0.3em; color: var(--dim); margin: 0 0 1.2rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { text-align: left; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--dim); font-weight: 400; letter-spacing: 0.2em; font-size: 0.75rem; }
+  td:first-child { white-space: nowrap; }
+  .ok { color: var(--fg); letter-spacing: 0.15em; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: 1rem; }
+  .asset { display: grid; gap: 0.4rem; padding: 1rem 1.1rem; border: 1px solid var(--line); position: relative; }
+  .asset::before, .asset::after { content: ''; position: absolute; width: 10px; height: 10px; border: 2px solid var(--fg); }
+  .asset::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+  .asset::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+  .code { color: var(--dim); font-size: 0.75rem; letter-spacing: 0.2em; }
+  .asset h3 { font: 400 1rem 'Michroma', sans-serif; letter-spacing: 0.15em; margin: 0; }
+  .asset p { margin: 0; color: var(--fg); opacity: 0.85; }
+  .stack { color: var(--dim); font-size: 0.75rem; }
+  .log { list-style: none; padding: 0; margin: 0; }
+  .log li { display: grid; grid-template-columns: 8rem 1fr; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px dashed var(--line); }
+  .log time { color: var(--dim); }
+  .priority { margin-top: 4rem; padding: 1.5rem; border: 2px solid var(--amber); color: var(--amber); text-shadow: 0 0 8px rgb(255 176 0 / 0.5); }
+  .priority p { margin: 0 0 0.8rem; }
+  .flash { font: 400 1.4rem 'Michroma', sans-serif; letter-spacing: 0.4em; }
+  .priority a:hover { background: var(--amber); }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (prefers-reduced-motion: no-preference) {
+    h1 .word span { animation: bar 1.6s steps(1) both; animation-delay: calc(var(--i) * 90ms); }
+    .sweep { animation: spin 3s linear infinite; }
+    .blip { animation: ping 3s ease-out infinite; }
+    .flash { animation: blink 1.2s steps(1) infinite; }
+    .al { animation: flicker 6s steps(1) infinite; }
+  }
+  @keyframes bar { 0% { opacity: 0; } 40% { opacity: 1; transform: scaleY(1.6); } 60% { transform: none; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes ping { 0%, 70% { opacity: 0; transform: scale(0.5); } 80% { opacity: 1; transform: scale(1.4); } 100% { opacity: 0.3; transform: scale(1); } }
+  @keyframes flicker { 0%, 96%, 100% { filter: none; } 97% { filter: brightness(1.25); } 98% { filter: brightness(0.85); } }
+  @media (max-width: 760px) { .tracker { position: static; width: 8rem; margin-top: 2rem; } h1 { letter-spacing: 0.25em; max-width: none; font-size: 7vw; } td:nth-child(2) { display: none; } th:nth-child(2) { display: none; } }
+</style>

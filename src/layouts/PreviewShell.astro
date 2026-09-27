@@ -1,9 +1,9 @@
 ---
 // Minimal document for the /editorial, /technical and /bold style previews.
 // Deliberately does NOT load the retro design system (global.css, CRT layers).
-interface Props { style: 'editorial' | 'technical' | 'bold'; title: string }
+interface Props { style: 'editorial' | 'technical' | 'bold' | 'alien' | 'bladerunner'; title: string }
 const { style, title } = Astro.props;
-const styles = ['editorial', 'technical', 'bold'] as const;
+const styles = ['editorial', 'technical', 'bold', 'alien', 'bladerunner'] as const;
 ---
 
 <!doctype html>

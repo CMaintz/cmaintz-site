@@ -20,8 +20,8 @@ live: https://www.illux.dk/illu-grafica/eye-on-the-ball/?material=17782-mat-fine
 metrics:
   - value: "3,000+"
     label: { en: products enriched, da: produkter beriget }
-  - value: "1,000+ h"
-    label: { en: manual work removed, da: manuelt arbejde sparet }
+  - value: "1,000+"
+    label: { en: hours of manual work removed, da: timers manuelt arbejde sparet }
   - value: "4"
     label: { en: languages per call, da: sprog pr. kald }
 ---

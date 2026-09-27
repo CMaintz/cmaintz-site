@@ -29,6 +29,8 @@ const DEFAULT_PAGES = [
   '/editorial',
   '/technical',
   '/bold',
+  '/alien',
+  '/bladerunner',
   '/nope',
 ];
 const VIEWPORTS = [
