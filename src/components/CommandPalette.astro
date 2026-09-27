@@ -2,6 +2,7 @@
 import { type Lang, localize, unlocalize, useT } from '../i18n/ui';
 import { getProjects, getPosts } from '../lib/content';
 import { site } from '../data/site';
+import { AREA_IDS, areas } from '../data/areas';
 
 interface Props { lang: Lang; switchPath?: string }
 const { lang, switchPath } = Astro.props;
@@ -16,6 +17,7 @@ const pages = (['/', '/about', '/projects', '/blog', '/services', '/contact', '/
   href: localize(p, lang),
 }));
 const projects = (await getProjects()).map((p) => ({ group: t('nav.projects'), label: p.data.title, hint: p.data.tagline[lang], href: localize(`/projects/${p.id}`, lang) }));
+const areaItems = AREA_IDS.map((id) => ({ group: t('wid.title'), label: areas[id].label[lang], hint: areas[id].intro[lang], href: localize(`/what-i-do/${id}`, lang) }));
 const posts = (await getPosts()).map((p) => ({ group: t('nav.blog'), label: p.data.title, hint: p.data.description, href: `/blog/${p.id}` }));
 const actions = [
   { group: 'run', label: t('theme.toggle'), hint: 'theme', action: 'theme' },
@@ -24,7 +26,7 @@ const actions = [
   { group: 'run', label: lang === 'da' ? 'Kopiér e-mail' : 'Copy email address', hint: site.email, action: 'copy-email' },
   { group: 'run', label: 'GitHub', hint: site.socials.github, href: site.socials.github },
 ];
-const items = [...pages, ...projects, ...posts, ...actions];
+const items = [...pages, ...areaItems, ...projects, ...posts, ...actions];
 ---
 
 <dialog class="cmdk win" aria-label={t('cmd.open')} data-items={JSON.stringify(items)} data-email={site.email}>

@@ -83,6 +83,7 @@ const personLd = {
       // Apply stored theme/CRT prefs before first paint (no flash).
       (() => {
         const d = document.documentElement;
+        d.classList.add('js');
         try {
           const theme = localStorage.getItem('theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
           d.dataset.theme = theme;

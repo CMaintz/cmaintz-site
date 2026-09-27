@@ -20,6 +20,8 @@ const DEFAULT_PAGES = [
   '/blog',
   '/blog/one-rule-set-three-placements',
   '/blog/hello-world',
+  '/what-i-do/devops',
+  '/da/what-i-do/ai',
   '/services',
   '/contact',
   '/now',

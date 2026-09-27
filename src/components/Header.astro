@@ -96,7 +96,7 @@ const other: Lang = lang === 'en' ? 'da' : 'en';
   }
   .name { font-size: 0.9rem; font-weight: 600; }
   .brand:hover { color: var(--fg); }
-  .brand:hover .logo { animation: glitch 300ms steps(3) 1; }
+  .brand:hover .logo { animation: glitch 300ms steps(3) infinite; }
   @keyframes glitch { 33% { transform: translate(-2px, 1px); } 66% { transform: translate(2px, -1px); filter: hue-rotate(60deg); } }
 
   .nav { margin-left: auto; }

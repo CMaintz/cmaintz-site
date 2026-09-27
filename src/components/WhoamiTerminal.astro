@@ -33,19 +33,19 @@ const link = (path: string) => localize(path, lang);
   </div>
 
   <div class="term__body mono" role="tabpanel" id="panel-whoami" aria-labelledby="tab-whoami">
-    <p><span class="accent">$</span> whoami</p>
+    <p><span class="accent">$</span> <span class="cmd">whoami</span></p>
     <p class="out"><a href={link('/about')}>christoffer maintz - developer, aarhus dk</a></p>
-    <p><span class="accent">$</span> cat focus.txt</p>
-    <p class="out">{areas.map((a, i) => <>{i > 0 && ' · '}<a href={link(`/projects#${a.id}`)}>{a.label}</a></>)}</p>
-    <p><span class="accent">$</span> ls ~/shipped</p>
+    <p><span class="accent">$</span> <span class="cmd">cat focus.txt</span></p>
+    <p class="out">{areas.map((a, i) => <>{i > 0 && ' · '}<a href={link(`/what-i-do/${a.id}`)}>{a.label}</a></>)}</p>
+    <p><span class="accent">$</span> <span class="cmd">ls ~/shipped</span></p>
     <p class="out hl">{shipped.map((s) => <><a href={link(`/projects/${s}`)}>{s}</a>{'  '}</>)}</p>
-    <p><span class="accent">$</span> gh repo list --public | wc -l</p>
+    <p><span class="accent">$</span> <span class="cmd">gh repo list --public | wc -l</span></p>
     <p class="out"><a href={github.profile.url}>{github.repos.length}</a></p>
     <p><span class="accent">$</span> <span class="cursor"></span></p>
   </div>
 
   <div class="term__body mono" role="tabpanel" id="panel-log" aria-labelledby="tab-log" hidden>
-    <p><span class="accent">$</span> git log --all-repos --latest</p>
+    <p><span class="accent">$</span> <span class="cmd">git log --all-repos --latest</span></p>
     <ul class="log">
       {pushes.map((p) => <li><span class="ago">{p.ago}</span><a class="hl" href={p.href}>{p.name}</a><span class="lang">{p.lang}</span></li>)}
     </ul>
@@ -65,6 +65,7 @@ const link = (path: string) => localize(path, lang);
       document.getElementById(t.getAttribute('aria-controls')!)!.hidden = !on;
     }
     tab.focus();
+    play(panelOf(tab));
   }
 
   function onKey(e: KeyboardEvent) {
@@ -77,6 +78,39 @@ const link = (path: string) => localize(path, lang);
     t.addEventListener('click', () => select(t));
     t.addEventListener('keydown', onKey);
   });
+
+  // Typing: commands appear character by character, output lines all at once.
+  const CHAR_MS = 28;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+  async function typeInto(el: HTMLElement) {
+    const text = el.textContent ?? '';
+    el.textContent = '';
+    for (const ch of text) {
+      el.textContent += ch;
+      await sleep(CHAR_MS);
+    }
+  }
+
+  async function playLine(line: HTMLElement) {
+    line.classList.remove('pending');
+    const cmd = line.querySelector<HTMLElement>('.cmd');
+    if (cmd) await typeInto(cmd);
+    await sleep(cmd ? 160 : 90);
+  }
+
+  async function play(panel: HTMLElement) {
+    if (panel.dataset.played) return;
+    const lines = [...panel.children] as HTMLElement[];
+    lines.forEach((l) => l.classList.add('pending'));
+    panel.dataset.played = '1';
+    if (reduce) return lines.forEach((l) => l.classList.remove('pending'));
+    for (const line of lines) await playLine(line);
+  }
+
+  const panelOf = (tab: HTMLButtonElement) => document.getElementById(tab.getAttribute('aria-controls')!)!;
+  play(panelOf(tabs[0]));
 </script>
 
 <style>
@@ -95,13 +129,7 @@ const link = (path: string) => localize(path, lang);
   .ago { color: var(--fg-faint); }
   .lang { color: var(--fg-dim); }
   .note { color: var(--fg-faint); font-size: 0.72rem; }
-  @media (prefers-reduced-motion: no-preference) {
-    #panel-whoami p { animation: type 0.01s steps(1) both; }
-    #panel-whoami p:nth-child(1) { animation-delay: 0.15s; } #panel-whoami p:nth-child(2) { animation-delay: 0.35s; }
-    #panel-whoami p:nth-child(3) { animation-delay: 0.65s; } #panel-whoami p:nth-child(4) { animation-delay: 0.85s; }
-    #panel-whoami p:nth-child(5) { animation-delay: 1.15s; } #panel-whoami p:nth-child(6) { animation-delay: 1.35s; }
-    #panel-whoami p:nth-child(7) { animation-delay: 1.65s; } #panel-whoami p:nth-child(8) { animation-delay: 1.85s; }
-    #panel-whoami p:nth-child(9) { animation-delay: 2.1s; }
-  }
-  @keyframes type { from { visibility: hidden; } to { visibility: visible; } }
+  /* With JS, lines stay hidden until the typing script reveals them. */
+  :global(.js) .term__body:not([data-played]) > * { visibility: hidden; }
+  .term__body > .pending { visibility: hidden; }
 </style>

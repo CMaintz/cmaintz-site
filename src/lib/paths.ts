@@ -1,5 +1,6 @@
 // getStaticPaths helpers shared by the en/da route wrappers.
 import { getProjects, getPosts, allTags } from './content';
+import { AREA_IDS } from '../data/areas';
 
 export async function projectPaths() {
   const projects = await getProjects();
@@ -24,4 +25,8 @@ export async function tagPaths() {
     params: { tag },
     props: { tag, posts: posts.filter((p) => p.data.tags.includes(tag)) },
   }));
+}
+
+export function areaPaths() {
+  return AREA_IDS.map((area) => ({ params: { area }, props: { area } }));
 }

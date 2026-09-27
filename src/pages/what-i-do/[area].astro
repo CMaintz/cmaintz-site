@@ -1,0 +1,9 @@
+---
+import WhatIDoView from '../../views/WhatIDoView.astro';
+import { areaPaths } from '../../lib/paths';
+
+export const getStaticPaths = areaPaths;
+const { area } = Astro.props;
+---
+
+<WhatIDoView lang="en" area={area} />

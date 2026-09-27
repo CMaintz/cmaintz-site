@@ -1,0 +1,96 @@
+---
+// One "What I do" area: principles, related projects, matching services and posts.
+import Base from '../layouts/Base.astro';
+import Window from '../components/Window.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import PostItem from '../components/PostItem.astro';
+import { type Lang, localize, useT } from '../i18n/ui';
+import { AREA_IDS, areas, type AreaId } from '../data/areas';
+import { services } from '../data/services';
+import { getProjects, projectsInArea, postsInArea } from '../lib/content';
+
+interface Props { lang: Lang; area: AreaId }
+const { lang, area } = Astro.props;
+const t = useT(lang);
+const a = areas[area];
+const projects = await projectsInArea(area);
+const posts = await postsInArea(area);
+const offers = services.filter((s) => s.areas.includes(area));
+const titles = new Map((await getProjects()).map((p) => [p.id, p.data.title]));
+const others = AREA_IDS.filter((id) => id !== area);
+---
+
+<Base lang={lang} title={a.label[lang]} description={a.intro[lang]}>
+  <section class="wrap head">
+    <a class="back mono" href={localize('/#focus-h', lang)}>← {t('wid.title')}</a>
+    <p class="eyebrow">~/what-i-do/{area}</p>
+    <h1 class="glow"><span class="glyph" aria-hidden="true">{a.glyph}</span>{a.label[lang]}</h1>
+    <p class="lede">{a.intro[lang]}</p>
+  </section>
+
+  <section class="wrap section" aria-labelledby="how-h">
+    <div class="section-head"><h2 id="how-h"><span class="idx">01</span>{t('wid.how')}</h2></div>
+    <div class="grid grid-2">
+      {a.principles.map((p, i) => (
+        <Window title={`rule_${String(i + 1).padStart(2, '0')}.txt`} class="reveal" as="article">
+          <h3>{p.title[lang]}</h3>
+          <p class="dim body">{p.body[lang]}</p>
+          {p.proof && titles.has(p.proof) && (
+            <p class="proof mono">{t('wid.seen_in')}: <a href={localize(`/projects/${p.proof}`, lang)}>{titles.get(p.proof)} →</a></p>
+          )}
+        </Window>
+      ))}
+    </div>
+  </section>
+
+  {projects.length > 0 && (
+    <section class="wrap section" aria-labelledby="built-h">
+      <div class="section-head"><h2 id="built-h"><span class="idx">02</span>{t('wid.built')}</h2></div>
+      <div class="grid grid-3">{projects.map((p, i) => <ProjectCard project={p} lang={lang} index={i} compact />)}</div>
+    </section>
+  )}
+
+  {offers.length > 0 && (
+    <section class="wrap section" aria-labelledby="offer-h">
+      <div class="section-head"><h2 id="offer-h"><span class="idx">03</span>{t('wid.for_you')}</h2></div>
+      <div class="grid grid-2">
+        {offers.map((s) => (
+          <Window title={`${s.id}.exe`} as="article" class="reveal">
+            <p class="from mono">{t('services.from')} <strong>{s.from[lang]}</strong></p>
+            <h3>{s.title[lang]}</h3>
+            <p class="dim body">{s.body[lang]}</p>
+          </Window>
+        ))}
+      </div>
+      <p class="cta"><a class="btn btn--primary" href={localize('/contact', lang) + '?topic=consulting'}>{t('wid.hire')} <span class="arrow">→</span></a>
+        <a class="btn" href={localize('/services', lang)}>{t('nav.services')}</a></p>
+    </section>
+  )}
+
+  <section class="wrap section" aria-labelledby="writing-h">
+    <div class="section-head"><h2 id="writing-h"><span class="idx">04</span>{t('wid.writing')}</h2></div>
+    {posts.length ? posts.map((p) => <PostItem post={p} lang={lang} />) : <p class="mono faint">{t('wid.no_posts')}</p>}
+  </section>
+
+  <nav class="wrap others mono" aria-label={t('wid.other')}>
+    <span class="faint">{t('wid.other')}:</span>
+    {others.map((id) => <a href={localize(`/what-i-do/${id}`, lang)}>{areas[id].glyph} {areas[id].label[lang]}</a>)}
+  </nav>
+</Base>
+
+<style>
+  .head { padding-block: clamp(3rem, 7vw, 5rem) 1rem; display: grid; gap: 1rem; }
+  .back { font-size: 0.82rem; color: var(--fg-dim); text-decoration: none; }
+  h1 { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .glyph { display: inline-grid; place-items: center; width: 1.2em; height: 1.2em; font-size: 0.75em; background: var(--accent); color: var(--accent-ink); text-shadow: none; box-shadow: 5px 5px 0 var(--shadow-c); }
+  h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+  .body { font-size: 0.97rem; }
+  .proof { margin-top: 0.9rem; font-size: 0.78rem; color: var(--fg-faint); }
+  .proof a { color: var(--accent); text-decoration: none; }
+  .from { font-size: 0.75rem; color: var(--fg-faint); margin-bottom: 0.4rem; }
+  .from strong { color: var(--fg); }
+  .cta { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.8rem; }
+  .others { display: flex; gap: 1.2rem; flex-wrap: wrap; font-size: 0.85rem; padding-top: 1.5rem; border-top: 2px dashed var(--line); }
+  .others a { color: var(--fg-dim); text-decoration: none; }
+  .others a:hover { color: var(--accent); }
+</style>
