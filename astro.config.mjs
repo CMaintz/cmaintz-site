@@ -54,7 +54,7 @@ export default defineConfig({
       // Contact form - see SETUP.md. All optional so the site builds without them.
       RESEND_API_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
       CONTACT_TO_EMAIL: envField.string({ context: 'server', access: 'public', default: 'cmaintz@outlook.com' }),
-      CONTACT_FROM_EMAIL: envField.string({ context: 'server', access: 'public', default: 'Website <onboarding@resend.dev>' }),
+      CONTACT_FROM_EMAIL: envField.string({ context: 'server', access: 'public', default: 'maintz.dev contact form <onboarding@resend.dev>' }),
       TURNSTILE_SECRET_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
       PUBLIC_TURNSTILE_SITE_KEY: envField.string({ context: 'client', access: 'public', optional: true }),
       // Comments (Supabase, preferred) - see SETUP.md. Public by design (RLS protects data).

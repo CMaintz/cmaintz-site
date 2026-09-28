@@ -38,7 +38,7 @@ Public repo `CMaintz/cmaintz-site`. CI (`ci.yml`) builds and runs `npm run check
 3. **You:** in your own terminal (not the chat `!`): `npx wrangler secret put RESEND_API_KEY --name cmaintz-site` and paste the key when prompted.
 4. **Claude:** submit the live form once and you confirm the mail arrived. This is the one path that hasn't been tested yet.
 
-Later, with a domain: verify it in Resend, then `npx wrangler secret put CONTACT_FROM_EMAIL --name cmaintz-site` (e.g. `Website <contact@yourdomain.dk>`) and update `CONTACT_TO_EMAIL` if you get a domain mailbox.
+Later, with a domain: verify it in Resend, then `npx wrangler secret put CONTACT_FROM_EMAIL --name cmaintz-site` (e.g. `maintz.dev contact form <contact@maintz.dev>`) and update `CONTACT_TO_EMAIL` if you get a domain mailbox.
 
 ## Phase 4 - Spam protection (Cloudflare Turnstile, optional)
 

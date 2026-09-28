@@ -11,6 +11,7 @@ export interface Inquiry {
 }
 
 const TOPICS = ['job', 'freelance', 'consulting', 'other'];
+const TOPIC_LABELS: Record<string, string> = { job: 'job opportunity', freelance: 'freelance project', consulting: 'consulting', other: 'message' };
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 const field = (form: FormData, key: string, max: number) =>
@@ -50,6 +51,8 @@ export async function passesTurnstile(form: FormData, secret: string | undefined
 
 export function formatInquiry(q: Inquiry) {
   const header = [
+    'Sent from the contact form on https://maintz.dev',
+    '',
     `Name: ${q.name}`,
     `Email: ${q.email}`,
     q.company && `Company: ${q.company}`,
@@ -73,7 +76,7 @@ export async function sendInquiry(q: Inquiry, cfg: MailConfig) {
       from: cfg.from,
       to: [cfg.to],
       reply_to: q.email,
-      subject: `[website] ${q.topic}: ${q.name}${q.company ? ` (${q.company})` : ''}`,
+      subject: `New inquiry via maintz.dev: ${TOPIC_LABELS[q.topic] ?? q.topic} from ${q.name}${q.company ? ` (${q.company})` : ''}`,
       text: formatInquiry(q),
     }),
   });
