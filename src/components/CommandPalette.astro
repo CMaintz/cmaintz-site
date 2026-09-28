@@ -1,6 +1,6 @@
 ---
 import { type Lang, localize, unlocalize, useT } from '../i18n/ui';
-import { getProjects, getPosts } from '../lib/content';
+import { getProjects, getPosts, github } from '../lib/content';
 import { site } from '../data/site';
 import { AREA_IDS, areas } from '../data/areas';
 
@@ -16,7 +16,8 @@ const pages = (['/', '/about', '/projects', '/blog', '/services', '/contact', '/
   hint: localize(p, lang),
   href: localize(p, lang),
 }));
-const projects = (await getProjects()).map((p) => ({ group: t('nav.projects'), label: p.data.title, hint: p.data.tagline[lang], href: localize(`/projects/${p.id}`, lang) }));
+const allProjects = await getProjects();
+const projects = allProjects.map((p) => ({ group: t('nav.projects'), label: p.data.title, hint: p.data.tagline[lang], alias: [p.id, ...p.data.repos].join(' '), href: localize(`/projects/${p.id}`, lang) }));
 const areaItems = AREA_IDS.map((id) => ({ group: t('wid.title'), label: areas[id].label[lang], hint: areas[id].intro[lang], href: localize(`/what-i-do/${id}`, lang) }));
 const posts = (await getPosts()).map((p) => ({ group: t('nav.blog'), label: p.data.title, hint: p.data.description, href: `/blog/${p.id}` }));
 const actions = [
@@ -28,7 +29,11 @@ const actions = [
   // Hidden: only appears when searched for.
   { group: 'secret', label: 'DOOM (1993)', hint: 'doom iddqd idkfa', action: 'doom' },
 ];
-const items = [...pages, ...areaItems, ...projects, ...posts, ...actions];
+// Public repos without a project page: typing their name goes to GitHub.
+const repoItems = github.repos
+  .filter((r) => !allProjects.some((p) => p.data.repos.includes(r.name)))
+  .map((r) => ({ group: 'repo', label: r.name, hint: r.url.replace('https://', ''), href: r.url }));
+const items = [...pages, ...areaItems, ...projects, ...repoItems, ...posts, ...actions];
 ---
 
 <dialog class="cmdk win" aria-label={t('cmd.open')} data-items={JSON.stringify(items)} data-email={site.email}>
@@ -44,7 +49,7 @@ const items = [...pages, ...areaItems, ...projects, ...posts, ...actions];
 </dialog>
 
 <script>
-  type Item = { group: string; label: string; hint?: string; href?: string; action?: string };
+  type Item = { group: string; label: string; hint?: string; alias?: string; href?: string; action?: string };
   const dlg = document.querySelector<HTMLDialogElement>('dialog.cmdk')!;
   const input = dlg.querySelector('input')!;
   const list = dlg.querySelector('ul')!;
@@ -66,10 +71,17 @@ const items = [...pages, ...areaItems, ...projects, ...posts, ...actions];
     return sc - s.length * 0.01;
   }
 
+  /** Exact name or alias (slug, repo name) wins outright; otherwise fuzzy score. */
+  function rank(q: string, it: Item) {
+    const names = [it.label.toLowerCase(), ...(it.alias ?? '').split(' ')];
+    if (names.includes(q)) return 1000;
+    return Math.max(score(q, it.label), score(q, it.alias ?? '') - 1, score(q, it.hint ?? '') - 2);
+  }
+
   function search(q: string): Item[] {
     if (!q) return items.filter((i) => i.group === 'go' || i.group === 'run');
     return items
-      .map((it) => ({ it, s: Math.max(score(q, it.label), score(q, it.hint ?? '') - 2) }))
+      .map((it) => ({ it, s: rank(q, it) }))
       .filter((r) => r.s >= 0)
       .sort((a, b) => b.s - a.s)
       .slice(0, 12)
