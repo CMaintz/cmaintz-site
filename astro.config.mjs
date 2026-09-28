@@ -14,7 +14,7 @@ import { loadEnv } from 'vite';
 // Build-time: canonical URLs, RSS, sitemap and OG tags. Read from the shell/CI env
 // or .env; set it to the workers.dev URL after the first deploy, then the domain.
 const fileEnv = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
-const SITE = process.env.SITE_URL ?? fileEnv.SITE_URL ?? 'https://cmaintz-site.example';
+const SITE = process.env.SITE_URL ?? fileEnv.SITE_URL ?? 'https://maintz.dev';
 
 export default defineConfig({
   site: SITE,

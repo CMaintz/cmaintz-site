@@ -1,0 +1,10 @@
+// Worker config. Astro's Cloudflare adapter merges this into dist/server/wrangler.json.
+{
+  "name": "cmaintz-site",
+  "compatibility_date": "2026-09-25",
+  // Custom domains: Cloudflare creates the DNS records and TLS certificates on deploy.
+  "routes": [
+    { "pattern": "maintz.dev", "custom_domain": true },
+    { "pattern": "www.maintz.dev", "custom_domain": true }
+  ]
+}

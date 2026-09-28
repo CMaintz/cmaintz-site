@@ -4,6 +4,8 @@ Choices made on your behalf while you were away. Each one says what I chose, why
 
 ## Project & stack
 
+- **Domain:** https://maintz.dev (and www.maintz.dev), attached as Worker custom domains in `wrangler.jsonc`. The workers.dev address is disabled so there's one canonical host.
+
 - **Name:** `cmaintz-site` (folder, npm package, Cloudflare Worker, GitHub repo). It's a personal professional site, not only a portfolio.
 - **Photo:** your photo from `tech_lexicon/about`, cropped gently to 4:5 (head and shoulders kept), 640x800 WebP + JPEG in `public/img/`, shown in the CRT frame on /about with faint scanlines that clear on hover.
 - **Formatter:** your global Claude Code hook `~/.claude/hooks/auto-format.sh` runs prettier after each file edit. I added `.prettierrc` (single quotes, 140 columns) so it matches this codebase.
