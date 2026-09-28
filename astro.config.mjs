@@ -60,7 +60,7 @@ export default defineConfig({
       // Comments (Supabase, preferred) - see SETUP.md. Public by design (RLS protects data).
       PUBLIC_SUPABASE_URL: envField.string({ context: 'client', access: 'public', optional: true }),
       PUBLIC_SUPABASE_ANON_KEY: envField.string({ context: 'client', access: 'public', optional: true }),
-      PUBLIC_SUPABASE_PROVIDERS: envField.string({ context: 'client', access: 'public', default: 'github,google' }),
+      PUBLIC_SUPABASE_PROVIDERS: envField.string({ context: 'client', access: 'public', default: 'github' }),
       // Comments (giscus fallback) - see SETUP.md.
       PUBLIC_GISCUS_REPO: envField.string({ context: 'client', access: 'public', optional: true }),
       PUBLIC_GISCUS_REPO_ID: envField.string({ context: 'client', access: 'public', optional: true }),
