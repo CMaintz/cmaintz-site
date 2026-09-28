@@ -7,6 +7,7 @@ import AreaChips from '../components/AreaChips.astro';
 import { type Lang, useT, formatDate } from '../i18n/ui';
 import { type Post, readingTime } from '../lib/content';
 import { site } from '../data/site';
+import { graph, breadcrumbLd, personLd, ogImageFor } from '../lib/seo';
 
 interface Props { post: Post; lang: Lang; prev?: Post; next?: Post }
 const { post, lang, prev, next } = Astro.props;
@@ -14,19 +15,21 @@ const t = useT(lang);
 const { Content, headings } = await render(post);
 const toc = headings.filter((h) => h.depth === 2);
 const mins = readingTime(post.body);
-const ld = {
-  '@context': 'https://schema.org',
+const posting = {
   '@type': 'BlogPosting',
+  image: new URL(ogImageFor('blog', post.id), Astro.site).toString(),
+  keywords: post.data.tags.join(', '),
   headline: post.data.title,
   description: post.data.description,
   datePublished: post.data.pubDate.toISOString(),
   dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
-  author: { '@type': 'Person', name: site.name, url: Astro.site?.toString() },
+  author: { '@id': `${Astro.site}#person` },
   inLanguage: post.data.lang,
 };
+const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog', '/blog'], [post.data.title, `/blog/${post.id}`]]));
 ---
 
-<Base lang={post.data.lang} title={post.data.title} description={post.data.description} type="article" alternates={false} langSwitchPath="/blog" publishedTime={post.data.pubDate} jsonLd={ld}>
+<Base lang={post.data.lang} title={post.data.title} description={post.data.description} type="article" alternates={false} langSwitchPath="/blog" publishedTime={post.data.pubDate} jsonLd={ld} ogImage={ogImageFor('blog', post.id)}>
   <div class="progress" aria-hidden="true"></div>
   <article class="wrap">
     <header class="head">

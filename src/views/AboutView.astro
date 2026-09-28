@@ -9,6 +9,7 @@ import { work, earlier, education, courses, skills, languages } from '../data/re
 import { github } from '../lib/content';
 import { site } from '../data/site';
 import { values } from '../data/values';
+import { graph, personLd } from '../lib/seo';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -27,6 +28,8 @@ const intro = {
   ],
 }[lang];
 
+const ld = graph({ '@type': 'ProfilePage', mainEntity: { '@id': `${Astro.site}#person` } }, personLd(Astro.site));
+
 const highlights = [
   { v: '1,000+', l: { en: 'hours of manual work removed at Illux', da: 'timers manuelt arbejde fjernet hos Illux' } },
   { v: '3,000+', l: { en: 'products enriched by AI in production', da: 'produkter beriget af AI i produktion' } },
@@ -35,7 +38,7 @@ const highlights = [
 ];
 ---
 
-<Base lang={lang} title={t('about.title')} description={t('about.lede')}>
+<Base lang={lang} title={t('about.title')} description={t('about.lede')} jsonLd={ld}>
   <section class="wrap head">
     <div>
       <p class="eyebrow">~/about</p>

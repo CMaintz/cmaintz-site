@@ -9,7 +9,7 @@
     <span class="win__title">doom.exe</span>
     <button class="win__meta close" type="button" aria-label="Close">✕ close</button>
   </div>
-  <div class="screen"></div>
+  <div class="screen" tabindex="-1" autofocus></div>
   <p class="hint mono">WASD move · ←→ turn · Space fire · E use · Shift run · Enter menu · <a href="/doom/NOTICE.txt">licences</a></p>
 </dialog>
 
@@ -19,7 +19,21 @@
   const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
   let progress = 0;
 
+  // Touch-only devices can't play it; don't make them download 6.5 MB to find out.
+  const keyboardless = () => matchMedia('(pointer: coarse)').matches && !matchMedia('(any-pointer: fine)').matches;
+
+  function noKeyboard() {
+    const msg = document.createElement('p');
+    msg.className = 'nokb';
+    msg.textContent = 'DOOM needs a keyboard. Come back on a computer and type "doom" again.';
+    return msg;
+  }
+
   function open() {
+    if (keyboardless()) {
+      screen.replaceChildren(noKeyboard());
+      return dlg.showModal();
+    }
     const frame = document.createElement('iframe');
     frame.src = '/doom/';
     frame.title = 'DOOM';
@@ -53,8 +67,10 @@
   .doom::backdrop { background: rgb(0 0 0 / 0.75); }
   .close { background: var(--bg-3); border: 0; font: inherit; color: var(--fg); cursor: pointer; text-transform: uppercase; }
   .close:hover { color: var(--accent); }
-  .screen { aspect-ratio: 4 / 3; background: #000; }
+  .screen { aspect-ratio: 4 / 3; background: #000; outline: none; }
+  @media (pointer: coarse) { .hint { display: none; } }
   .screen :global(iframe) { width: 100%; height: 100%; border: 0; display: block; }
+  .screen :global(.nokb) { margin: 0; height: 100%; display: grid; place-items: center; padding: 2rem; text-align: center; font: 1rem var(--font-mono); color: var(--accent); }
   .hint { font-size: 0.72rem; color: var(--fg-dim); padding: 0.5rem 0.8rem; margin: 0; border-top: 1px solid var(--line); }
   .hint a { color: var(--fg-dim); }
 </style>

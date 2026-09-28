@@ -28,9 +28,6 @@ const DEFAULT_PAGES = [
   '/uses',
   '/cv',
   '/search',
-  '/technical',
-  '/alien',
-  '/bladerunner',
   '/nope',
 ];
 const VIEWPORTS = [

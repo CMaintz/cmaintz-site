@@ -32,7 +32,7 @@ const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', '
       <div class="ctas">
         <a class="btn btn--primary" href={localize('/projects', lang)}>{t('home.cta.work')} <span class="arrow">→</span></a>
         <a class="btn" href={localize('/contact', lang)}>{t('home.cta.hire')}</a>
-        <button class="btn btn--ghost kb mono" type="button" data-cmdk-open><kbd>Ctrl</kbd>+<kbd>K</kbd></button>
+        <button class="btn btn--ghost kb mono" type="button" data-cmdk-open><kbd data-mod>Ctrl</kbd>+<kbd>K</kbd></button>
       </div>
     </div>
 
@@ -102,6 +102,7 @@ const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', '
   h1 { margin-bottom: 1.4rem; }
   .ctas { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2rem; align-items: center; }
   .kb { font-size: 0.75rem; color: var(--fg-dim); gap: 0.3rem; }
+  @media (hover: none) and (pointer: coarse) { .kb { display: none; } }
 
   .focus { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 0; border: 2px solid var(--line); background: var(--bg-2); }
   .focus__item { padding: 1.5rem; border-right: 1px dashed var(--line); display: flex; flex-direction: column; gap: 0.6rem; }

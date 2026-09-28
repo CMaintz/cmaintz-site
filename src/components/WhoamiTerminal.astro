@@ -91,7 +91,8 @@ const link = (path: string) => localize(path, lang);
   function runCommand(raw: string) {
     const cmd = raw.trim().toLowerCase();
     if (cmd === 'doom' || cmd === 'iddqd') {
-      dispatchEvent(new CustomEvent('doom:open'));
+      // Next tick, so this Enter keypress can't land on the new window's buttons.
+      setTimeout(() => dispatchEvent(new CustomEvent('doom:open')));
       return 'loading DOOM...';
     }
     return replies[cmd] ?? (cmd ? `command not found: ${cmd}` : '');
@@ -101,6 +102,7 @@ const link = (path: string) => localize(path, lang);
   const reply = document.querySelector<HTMLElement>('[data-reply]');
   shell?.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter') return;
+    e.preventDefault();
     reply!.textContent = runCommand(shell.value);
     shell.value = '';
   });
@@ -148,6 +150,7 @@ const link = (path: string) => localize(path, lang);
   .term__body p { white-space: pre-wrap; word-break: break-word; }
   .term__body .out { color: var(--fg-dim); margin-bottom: 0.35rem; }
   .term__body a { color: inherit; text-decoration: none; }
+  .hl a { display: inline-block; white-space: nowrap; }
   .term__body a:hover { color: var(--accent); text-decoration: underline; }
   .term__body .hl, .term__body .hl a { color: var(--accent-2); }
   .log { list-style: none; padding: 0; margin: 0.2rem 0 0.4rem; }

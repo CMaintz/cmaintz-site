@@ -87,6 +87,8 @@ Free tier: 2 active projects, 50,000 monthly active users, 500 MB database. Free
 | New blog post                                         | add `src/content/blog/<slug>.mdx` (see `hello-world.mdx`); `draft: true` hides it in production                |
 | Refresh GitHub data + READMEs                         | `npm run sync` (CI also opens a weekly PR)                                                                     |
 | Regenerate CV PDFs after editing `src/data/resume.ts` | `npm run build && npm run cv:pdf`                                                                              |
+| Regenerate share images (after a new post or project) | `npm run build && npm run og && npm run build` |
 | Add a looping clip to a project                       | `npm run clip -- <recording.mp4> <name> [start] [end]`, then `video: /media/<name>` in the project frontmatter |
+| Redeploy the www redirect (rarely needed)             | `npx wrangler deploy --config redirect-www/wrangler.jsonc` |
 | Visual / interaction smoke tests                      | `npm run build && npm run shots && npm run smoke`                                                              |
 | Change pricing                                        | `HOURLY_RATE_DKK` and `fixed(...)` in `src/data/services.ts`                                                   |

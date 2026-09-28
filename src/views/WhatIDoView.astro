@@ -8,6 +8,7 @@ import { type Lang, localize, useT } from '../i18n/ui';
 import { AREA_IDS, areas, type AreaId } from '../data/areas';
 import { services } from '../data/services';
 import { getProjects, projectsInArea, postsInArea } from '../lib/content';
+import { graph, breadcrumbLd, personLd, ogImageFor } from '../lib/seo';
 
 interface Props { lang: Lang; area: AreaId }
 const { lang, area } = Astro.props;
@@ -18,9 +19,14 @@ const posts = await postsInArea(area);
 const offers = services.filter((s) => s.areas.includes(area));
 const titles = new Map((await getProjects()).map((p) => [p.id, p.data.title]));
 const others = AREA_IDS.filter((id) => id !== area);
+const ld = graph(
+  { '@type': 'Service', name: a.label.en, description: a.intro.en, provider: { '@id': `${Astro.site}#person` }, areaServed: 'DK' },
+  personLd(Astro.site),
+  breadcrumbLd(Astro.site, [['What I do', '/#focus-h'], [a.label.en, `/what-i-do/${area}`]]),
+);
 ---
 
-<Base lang={lang} title={a.label[lang]} description={a.intro[lang]}>
+<Base lang={lang} title={a.label[lang]} description={a.intro[lang]} jsonLd={ld} ogImage={ogImageFor('areas', area)}>
   <section class="wrap head">
     <a class="back mono" href={localize('/#focus-h', lang)}>← {t('wid.title')}</a>
     <p class="eyebrow">~/what-i-do/{area}</p>

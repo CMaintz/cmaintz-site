@@ -5,6 +5,7 @@ import Window from '../components/Window.astro';
 import DemoFrame from '../components/DemoFrame.astro';
 import ProjectClip from '../components/ProjectClip.astro';
 import AreaChips from '../components/AreaChips.astro';
+import { graph, breadcrumbLd, personLd, ogImageFor } from '../lib/seo';
 import { type Lang, localize, useT, formatDate } from '../i18n/ui';
 import { type Project, projectRepoStats, projectPeriod } from '../lib/content';
 
@@ -15,9 +16,19 @@ const { Content } = await render(p);
 const stats = projectRepoStats(p);
 const period = projectPeriod(p, lang, lang === 'da' ? 'nu' : 'now');
 const readme = stats?.primary.readmeHtml;
+const work = {
+  '@type': stats ? 'SoftwareSourceCode' : 'CreativeWork',
+  name: p.data.title,
+  description: p.data.summary.en,
+  url: new URL(`/projects/${p.id}`, Astro.site).toString(),
+  creator: { '@id': `${Astro.site}#person` },
+  keywords: p.data.stack.join(', '),
+  ...(stats && { codeRepository: stats.primary.url, programmingLanguage: stats.languages.map((l) => l.name) }),
+};
+const ld = graph(work, personLd(Astro.site), breadcrumbLd(Astro.site, [['Projects', '/projects'], [p.data.title, `/projects/${p.id}`]]));
 ---
 
-<Base lang={lang} title={p.data.title} description={p.data.summary[lang]} type="article">
+<Base lang={lang} title={p.data.title} description={p.data.summary[lang]} type="article" jsonLd={ld} ogImage={ogImageFor('projects', p.id)}>
   <article>
     <header class="wrap head">
       <a class="back mono" href={localize('/projects', lang)}>← {t('project.back')}</a>

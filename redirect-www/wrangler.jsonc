@@ -1,0 +1,9 @@
+// Tiny separate Worker whose only job is the www -> apex redirect.
+// Deploy: npx wrangler deploy --config redirect-www/wrangler.jsonc
+{
+  "name": "maintz-www-redirect",
+  "main": "index.js",
+  "compatibility_date": "2026-09-25",
+  "workers_dev": false,
+  "routes": [{ "pattern": "www.maintz.dev", "custom_domain": true }]
+}

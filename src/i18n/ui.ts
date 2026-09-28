@@ -152,7 +152,6 @@ export const ui = {
     'notfound.home': 'Back to home',
     'footer.built': 'Built with Astro. No trackers.',
     'footer.synced': 'GitHub synced',
-    'footer.styles': 'Style previews',
     skip: 'Skip to content',
   },
   da: {
@@ -307,7 +306,6 @@ export const ui = {
     'notfound.home': 'Tilbage til forsiden',
     'footer.built': 'Bygget med Astro. Ingen trackere.',
     'footer.synced': 'GitHub synkroniseret',
-    'footer.styles': 'Stil-prøver',
     skip: 'Spring til indhold',
   },
 } as const;

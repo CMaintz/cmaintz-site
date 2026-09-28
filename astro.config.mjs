@@ -44,7 +44,6 @@ export default defineConfig({
     mdx(),
     sitemap({
       i18n: { defaultLocale: 'en', locales: { en: 'en', da: 'da' } },
-      filter: (page) => !/\/(technical|alien|bladerunner)\/?$/.test(page),
     }),
   ],
   markdown: {

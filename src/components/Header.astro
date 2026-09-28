@@ -34,7 +34,7 @@ const other: Lang = lang === 'en' ? 'da' : 'en';
 
     <div class="tools">
       <button class="tool cmdk" type="button" data-cmdk-open aria-label={t('cmd.open')}>
-        <span class="mono">⌘K</span>
+        <span class="mono keys"><span data-mod>Ctrl</span> K</span><span class="icon" aria-hidden="true">⌕</span>
       </button>
       <a class="tool lang mono" href={localize(switchPath ?? here, other)} hreflang={other} lang={other} aria-label={`${t('lang.label')}: ${other.toUpperCase()}`}>
         <span class:list={{ on: lang === 'en' }}>EN</span><span class="sep">/</span><span class:list={{ on: lang === 'da' }}>DA</span>
@@ -139,5 +139,9 @@ const other: Lang = lang === 'en' ? 'da' : 'en';
     .menu { display: block; }
     .name { display: none; }
   }
-  @media (max-width: 380px) { .cmdk { display: none; } }
+  .cmdk .icon { display: none; font-size: 1rem; }
+  @media (hover: none) and (pointer: coarse) {
+    .cmdk .keys { display: none; }
+    .cmdk .icon { display: inline; }
+  }
 </style>
