@@ -2,7 +2,7 @@
 //   public/og.png                          site default
 //   public/og/{projects,blog,areas}/<id>.png one per page, from the built HTML
 // Usage: npm run build && npm run og && npm run build (the second build picks them up).
-import { chromium } from 'playwright';
+import { launchBrowser } from './lib/browser.mjs';
 import { existsSync, mkdirSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -56,21 +56,24 @@ async function render(page, html, path) {
   await page.screenshot({ path });
 }
 
-async function main() {
-  const browser = await chromium.launch({ channel: process.env.PW_CHANNEL ?? 'msedge' });
-  const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
-  await render(
-    page,
-    template({ label: 'DEVELOPER · AARHUS', title: 'Christoffer Maintz', text: 'DevOps · Developer Experience · Platform · AI' }),
-    'public/og.png',
-  );
+const DEFAULT_CARD = { label: 'DEVELOPER · AARHUS', title: 'Christoffer Maintz', text: 'DevOps · Developer Experience · Platform · AI' };
+
+async function renderPages(page) {
   const pages = KINDS.flatMap(pagesOf);
   for (const p of pages) {
     mkdirSync(`public/og/${p.kind.out}`, { recursive: true });
     await render(page, template({ label: p.kind.label, title: p.title, text: p.text }), `public/og/${p.kind.out}/${p.id}.png`);
   }
+  return pages.length;
+}
+
+async function main() {
+  const browser = await launchBrowser();
+  const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
+  await render(page, template(DEFAULT_CARD), 'public/og.png');
+  const count = await renderPages(page);
   await browser.close();
-  console.log(`wrote public/og.png + ${pages.length} page images - rebuild so pages pick them up`);
+  console.log(`wrote public/og.png + ${count} page images - rebuild so pages pick them up`);
 }
 
 await main();

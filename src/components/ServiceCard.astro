@@ -1,0 +1,35 @@
+---
+// One service as a retro window: glyph, starting price, title, body and,
+// optionally, its deliverables as a checklist.
+import Window from './Window.astro';
+import { type Lang, useT } from '../i18n/ui';
+import type { Service } from '../data/services';
+
+interface Props { service: Service; lang: Lang; deliverables?: boolean; level?: 2 | 3 }
+// level 2 on /services (cards are the page's sections), 3 under an area page's section heading.
+const { service: s, lang, deliverables = true, level = 2 } = Astro.props;
+const Heading = `h${level}` as 'h2' | 'h3';
+const t = useT(lang);
+const items = deliverables ? s.deliverables[lang] : [];
+---
+
+<Window title={`${s.id}.exe`} as="article" class="svc reveal">
+  <div class="svc__top">
+    <span class="glyph" aria-hidden="true">{s.glyph}</span>
+    <span class="from mono">{t('services.from')} <strong>{s.from[lang]}</strong></span>
+  </div>
+  <Heading class:list={['title', `title--${level}`]}>{s.title[lang]}</Heading>
+  <p class="dim">{s.body[lang]}</p>
+  {items.length > 0 && <ul class="deliv mono">{items.map((d) => <li>{d}</li>)}</ul>}
+</Window>
+
+<style>
+  .svc :global(.win__body) { display: grid; gap: 0.8rem; height: 100%; align-content: start; }
+  .svc__top { display: flex; justify-content: space-between; align-items: center; }
+  .glyph { width: 2.4rem; height: 2.4rem; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-size: 1.2rem; box-shadow: 3px 3px 0 var(--shadow-c); }
+  .from { font-size: 0.75rem; color: var(--fg-faint); }
+  .from strong { color: var(--fg); }
+  .title--3 { font-size: 1.2rem; }
+  .deliv { list-style: none; padding: 0; margin: 0.3rem 0 0; display: grid; gap: 0.3rem; font-size: 0.8rem; }
+  .deliv li::before { content: '[x] '; color: var(--accent-2); }
+</style>

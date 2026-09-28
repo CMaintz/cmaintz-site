@@ -7,7 +7,7 @@ npm install
 npm run dev        # http://localhost:4321
 npm run build      # site + search index -> dist/
 npm run preview    # Workers runtime locally
-npm run check      # types + function-length rule (<= 18 lines)
+npm run check      # types, code-size rules (functions <= 18 lines, files <= 300), comments SQL tests
 npm run shots      # screenshot smoke test (desktop + mobile)
 ```
 

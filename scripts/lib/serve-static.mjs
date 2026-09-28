@@ -5,7 +5,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../dist/client');
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../../dist/client');
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css',

@@ -1,0 +1,46 @@
+/* Long-form content: blog posts, case studies and GitHub READMEs. */
+
+/* ── Prose (blog posts, case studies) ───────────────────────── */
+.prose { max-width: 44rem; font-size: 1.075rem; }
+.prose > * + * { margin-top: 1.15em; }
+.prose h2 { font-size: 1.65rem; margin-top: 2.4em; padding-top: 0.2em; }
+.prose h2::before { content: '## '; font: 500 0.8em var(--font-mono); color: var(--accent); }
+.prose h3 { font-size: 1.25rem; margin-top: 1.8em; }
+.prose h3::before { content: '### '; font: 500 0.8em var(--font-mono); color: var(--fg-faint); }
+.prose a { color: var(--accent); }
+.prose a:hover { background: var(--accent); color: var(--accent-ink); text-decoration: none; }
+.prose ul, .prose ol { padding-left: 1.3em; }
+.prose li + li { margin-top: 0.4em; }
+.prose ul { list-style: none; }
+.prose ul > li { position: relative; }
+.prose ul > li::before { content: '▪'; position: absolute; left: -1.1em; color: var(--accent); }
+.prose strong { color: var(--fg); font-weight: 700; }
+.prose :not(pre) > code {
+  font: 500 0.86em var(--font-mono);
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  padding: 0.08em 0.35em;
+  overflow-wrap: anywhere;
+}
+.prose blockquote {
+  margin-inline: 0; padding: 0.8rem 1.1rem;
+  border-left: 4px solid var(--accent-2);
+  background: var(--bg-2);
+  color: var(--fg-dim);
+}
+.prose table { width: 100%; border-collapse: collapse; font-size: 0.95rem; display: block; overflow-x: auto; }
+.prose th, .prose td { border: 1px solid var(--line); padding: 0.5rem 0.75rem; text-align: left; vertical-align: top; }
+.prose th { background: var(--bg-3); font: 600 0.8rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.04em; }
+.prose img { border: 2px solid var(--line); }
+.prose .katex-display { overflow-x: auto; overflow-y: hidden; padding-block: 0.4rem; }
+.prose pre.mermaid, .prose .mermaid { background: var(--bg-2); border: 2px solid var(--line); padding: 1rem; display: flex; justify-content: center; overflow-x: auto; }
+.prose .expressive-code { margin-block: 1.6em; }
+
+/* README HTML from GitHub */
+.readme { max-width: none; font-size: 0.98rem; }
+.readme pre { background: var(--bg-3); border: 1px solid var(--line); padding: 1rem; overflow-x: auto; font: 0.85rem/1.55 var(--font-mono); }
+.readme pre code { background: none; border: 0; padding: 0; }
+.readme h1 { font-size: 1.8rem; }
+.readme .anchor, .readme .octicon { display: none; }
+.readme img { display: inline-block; border: 0; }
+.readme .markdown-heading { display: block; }

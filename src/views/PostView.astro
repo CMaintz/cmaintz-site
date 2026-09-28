@@ -2,11 +2,12 @@
 import 'katex/dist/katex.min.css';
 import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import Pager from '../components/Pager.astro';
 import Comments from '../components/Comments.astro';
 import AreaChips from '../components/AreaChips.astro';
 import { type Lang, useT, formatDate } from '../i18n/ui';
 import { type Post, readingTime } from '../lib/content';
-import { site } from '../data/site';
 import { graph, breadcrumbLd, personLd, ogImageFor } from '../lib/seo';
 
 interface Props { post: Post; lang: Lang; prev?: Post; next?: Post }
@@ -31,21 +32,18 @@ const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog
 
 <Base lang={post.data.lang} title={post.data.title} description={post.data.description} type="article" alternates={false} langSwitchPath="/blog" publishedTime={post.data.pubDate} jsonLd={ld} ogImage={ogImageFor('blog', post.id)}>
   <div class="progress" aria-hidden="true"></div>
-  <article class="wrap">
-    <header class="head">
-      <a class="back mono" href="/blog">← {t('blog.back')}</a>
-      <p class="meta mono">
+  <article>
+    <PageHead as="header" back={{ href: '/blog', label: t('blog.back') }} title={post.data.title} lede={post.data.description} glow>
+      <p slot="before" class="meta mono">
         <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate, lang, { year: 'numeric', month: 'long', day: 'numeric' })}</time>
         <span>·</span><span>{mins} {t('blog.read')}</span>
         {post.data.updatedDate && <><span>·</span><span>{t('blog.updated')} {formatDate(post.data.updatedDate, lang)}</span></>}
       </p>
-      <h1 class="glow">{post.data.title}</h1>
-      <p class="lede">{post.data.description}</p>
       <AreaChips areas={post.data.areas} lang={lang} />
       <ul class="chips">{post.data.tags.map((tag) => <li><a class="chip" href={`/blog/tags/${tag}`}>#{tag}</a></li>)}</ul>
-    </header>
+    </PageHead>
 
-    <div class="layout">
+    <div class="wrap layout">
       <div class="prose reading" data-pagefind-body>
         <Content />
       </div>
@@ -57,12 +55,13 @@ const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog
       )}
     </div>
 
-    {post.data.comments && <Comments lang={lang} slug={post.id} />}
+    {post.data.comments && <div class="wrap"><Comments lang={lang} slug={post.id} /></div>}
 
-    <nav class="pager mono" aria-label="Posts">
-      {prev ? <a href={`/blog/${prev.id}`}>← {prev.data.title}</a> : <span></span>}
-      {next ? <a href={`/blog/${next.id}`}>{next.data.title} →</a> : <span></span>}
-    </nav>
+    <Pager
+      label="Posts"
+      prev={prev && { href: `/blog/${prev.id}`, label: prev.data.title }}
+      next={next && { href: `/blog/${next.id}`, label: next.data.title }}
+    />
   </article>
 </Base>
 
@@ -72,10 +71,9 @@ const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog
     .progress { animation: grow linear both; animation-timeline: scroll(root); }
   }
   @keyframes grow { to { transform: scaleX(1); } }
-  .head { max-width: 50rem; padding-block: clamp(2.5rem, 6vw, 4.5rem) 2.5rem; display: grid; gap: 1rem; }
-  .back { font-size: 0.82rem; color: var(--fg-dim); text-decoration: none; }
   .meta { display: flex; gap: 0.6rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--fg-faint); }
-  h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
+  article :global(.page-head h1) { font-size: clamp(2.2rem, 5vw, 3.6rem); }
+  article :global(.page-head) { max-width: 54rem; margin-inline: auto 0; }
   .layout { display: grid; grid-template-columns: minmax(0, 44rem) 1fr; gap: 3rem; align-items: start; }
   /* Reading panel sits above the CRT scanline/vignette layers (z 49-50), so long
      text stays crisp while the rest of the page keeps the effect. */
@@ -84,8 +82,5 @@ const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog
   .toc ol { list-style: none; padding: 0; margin: 0.6rem 0 0; display: grid; gap: 0.45rem; }
   .toc a { text-decoration: none; color: var(--fg-dim); }
   .toc a:hover { color: var(--accent); }
-  .pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: 3rem; padding-top: 1.5rem; border-top: 2px dashed var(--line); font-size: 0.85rem; }
-  .pager a { text-decoration: none; color: var(--fg-dim); }
-  .pager a:hover { color: var(--accent); }
   @media (max-width: 1000px) { .layout { grid-template-columns: minmax(0, 1fr); } .toc { display: none; } }
 </style>

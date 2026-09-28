@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { type Lang, useT, formatDate } from '../i18n/ui';
 import { getProjects, github } from '../lib/content';
@@ -15,12 +16,9 @@ const areaCounts = Object.fromEntries(AREA_IDS.map((a) => [a, projects.filter((p
 ---
 
 <Base lang={lang} title={t('projects.title')} description={t('projects.lede')}>
-  <section class="wrap head">
-    <p class="eyebrow">~/projects</p>
-    <h1>{t('projects.title')}</h1>
-    <p class="lede">{t('projects.lede')}</p>
+  <PageHead eyebrow="~/projects" title={t('projects.title')} lede={t('projects.lede')}>
     <p class="mono faint small">{t('footer.synced')}: {formatDate(new Date(github.syncedAt), lang)} · {github.repos.length} public repos</p>
-  </section>
+  </PageHead>
 
   <section class="wrap">
     <div class="filters mono" role="toolbar" aria-label="Filter">
@@ -51,8 +49,6 @@ const areaCounts = Object.fromEntries(AREA_IDS.map((a) => [a, projects.filter((p
 </script>
 
 <style>
-  .head { padding-block: clamp(3rem, 7vw, 5rem) 2rem; display: grid; gap: 1rem; }
-  .small { font-size: 0.78rem; }
   .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; }
   .filters.areas { margin-bottom: 2rem; }
   .filters.areas button { color: var(--accent); }

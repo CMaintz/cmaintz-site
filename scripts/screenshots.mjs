@@ -2,9 +2,8 @@
 // fails on console errors or horizontal overflow. Uses system Edge (no
 // browser download needed). Usage: npm run build && npm run shots [-- /path ...]
 // Env: THEME=dark|light, SHOT_DIR, FULL=0 (viewport only), REDUCED=1, PW_CHANNEL.
-import { chromium } from 'playwright';
 import { mkdirSync } from 'node:fs';
-import { serve } from './serve-static.mjs';
+import { withSiteBrowser } from './lib/browser.mjs';
 
 const PORT = 4322;
 const OUT = process.env.SHOT_DIR ?? 'screenshots';
@@ -114,14 +113,11 @@ async function checkViewport(browser, vp, pages) {
 async function main() {
   const pages = process.argv.slice(2).length ? process.argv.slice(2) : DEFAULT_PAGES;
   mkdirSync(OUT, { recursive: true });
-  const server = await serve(PORT);
-  const browser = await chromium.launch({
-    channel: process.env.PW_CHANNEL ?? 'msedge',
+  const failures = await withSiteBrowser(PORT, async (browser) => {
+    let n = 0;
+    for (const vp of VIEWPORTS) n += await checkViewport(browser, vp, pages);
+    return n;
   });
-  let failures = 0;
-  for (const vp of VIEWPORTS) failures += await checkViewport(browser, vp, pages);
-  await browser.close();
-  server.close();
   process.exit(failures ? 1 : 0);
 }
 

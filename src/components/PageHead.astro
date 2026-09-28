@@ -1,0 +1,39 @@
+---
+// Standard page header: optional back link, eyebrow path, title (optionally
+// with a glyph box), lede. Anything page-specific goes in the default slot.
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+  glyph?: string;
+  back?: { href: string; label: string };
+  glow?: boolean;
+  as?: 'section' | 'header';
+}
+const { eyebrow, title, lede, glyph, back, glow = Boolean(glyph), as: Tag = 'section' } = Astro.props;
+---
+
+<Tag class:list={['wrap page-head', { 'has-aside': Astro.slots.has('aside') }]}>
+  <div class="page-head__main">
+    {back && <a class="back mono" href={back.href}>← {back.label}</a>}
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <slot name="before" />
+    <h1 class:list={{ glow, 'has-glyph': glyph }}>
+      {glyph && <span class="glyph" aria-hidden="true">{glyph}</span>}
+      {title}
+    </h1>
+    {lede && <p class="lede">{lede}</p>}
+    <slot />
+  </div>
+  <slot name="aside" />
+</Tag>
+
+<style>
+  .page-head { padding-block: clamp(3rem, 7vw, 5rem) 2rem; }
+  .page-head__main { display: grid; gap: 1rem; }
+  .has-aside { display: grid; grid-template-columns: 1fr auto; gap: 3rem; align-items: center; }
+  @media (max-width: 860px) { .has-aside { grid-template-columns: 1fr; } }
+  .back { font-size: 0.82rem; color: var(--fg-dim); text-decoration: none; }
+  .has-glyph { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  .glyph { display: inline-grid; place-items: center; width: 1.2em; height: 1.2em; font-size: 0.8em; background: var(--accent); color: var(--accent-ink); text-shadow: none; box-shadow: 5px 5px 0 var(--shadow-c); }
+</style>

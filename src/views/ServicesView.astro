@@ -1,5 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import ServiceCard from '../components/ServiceCard.astro';
 import Window from '../components/Window.astro';
 import { type Lang, localize, useT } from '../i18n/ui';
 import { services, workLanguages, process, HOURLY_RATE_DKK } from '../data/services';
@@ -11,27 +13,11 @@ const t = useT(lang);
 ---
 
 <Base lang={lang} title={t('services.title')} description={t('services.lede')}>
-  <section class="wrap head">
-    <p class="eyebrow">~/services</p>
-    <h1>{t('services.title')}</h1>
-    <p class="lede">{t('services.lede')}</p>
-  </section>
+  <PageHead eyebrow="~/services" title={t('services.title')} lede={t('services.lede')} />
 
   <section class="wrap">
     <div class="grid grid-2">
-      {services.map((s) => (
-        <Window title={s.id + '.exe'} as="article" class="svc reveal">
-          <div class="svc__top">
-            <span class="glyph" aria-hidden="true">{s.glyph}</span>
-            <span class="from mono">{t('services.from')} <strong>{s.from[lang]}</strong></span>
-          </div>
-          <h2>{s.title[lang]}</h2>
-          <p class="dim">{s.body[lang]}</p>
-          {s.deliverables[lang].length > 0 && (
-            <ul class="deliv mono">{s.deliverables[lang].map((d) => <li>{d}</li>)}</ul>
-          )}
-        </Window>
-      ))}
+      {services.map((s) => <ServiceCard service={s} lang={lang} />)}
     </div>
   </section>
 
@@ -42,9 +28,9 @@ const t = useT(lang);
       <p class="dim">{t('services.pricing.body').replace('{rate}', String(HOURLY_RATE_DKK))}</p>
     </Window>
     <div>
-      <h2 class="mono small-h">{t('services.languages')}</h2>
+      <h2 class="mono label-h">{t('services.languages')}</h2>
       <ul class="chips">{workLanguages.map((l) => <li class="chip">{l}</li>)}</ul>
-      <h2 class="mono small-h spaced">{t('services.process')}</h2>
+      <h2 class="mono label-h spaced">{t('services.process')}</h2>
       <ol class="steps">
         {process[lang].map((p, i) => (
           <li><span class="n mono">{String(i + 1).padStart(2, '0')}</span><div><strong>{p.step}</strong><p class="dim">{p.body}</p></div></li>
@@ -64,19 +50,9 @@ const t = useT(lang);
 </Base>
 
 <style>
-  .head { padding-block: clamp(3rem, 7vw, 5rem) 2rem; display: grid; gap: 1rem; }
-  .svc :global(.win__body) { display: grid; gap: 0.8rem; height: 100%; align-content: start; }
-  .svc__top { display: flex; justify-content: space-between; align-items: center; }
-  .glyph { width: 2.4rem; height: 2.4rem; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-size: 1.2rem; box-shadow: 3px 3px 0 var(--shadow-c); }
-  .from { font-size: 0.75rem; color: var(--fg-faint); }
-  .from strong { color: var(--fg); }
-  .svc h2 { font-size: 1.35rem; }
-  .deliv { list-style: none; padding: 0; margin: 0.3rem 0 0; display: grid; gap: 0.3rem; font-size: 0.8rem; }
-  .deliv li::before { content: '[x] '; color: var(--accent-2); }
   .two { display: grid; grid-template-columns: 1fr 1.2fr; gap: 3rem; align-items: start; }
   .price { font: 800 3.5rem var(--font-sans); color: var(--accent); letter-spacing: -0.04em; margin-block: 0.4rem; }
   .price span { font: 500 1rem var(--font-mono); color: var(--fg-dim); letter-spacing: 0; }
-  .small-h { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-faint); margin-bottom: 0.8rem; }
   .spaced { margin-top: 2rem; }
   .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
   .steps li { display: grid; grid-template-columns: 2.5rem 1fr; gap: 0.8rem; }

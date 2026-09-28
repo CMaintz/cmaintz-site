@@ -7,7 +7,7 @@ const { project: p, lang, index, compact = false } = Astro.props;
 const t = useT(lang);
 const stats = projectRepoStats(p);
 const href = localize(`/projects/${p.id}`, lang);
-const period = projectPeriod(p, lang, lang === 'da' ? 'nu' : 'now');
+const period = projectPeriod(p, lang);
 ---
 
 <article class="card reveal" data-category={p.data.category} data-areas={p.data.areas.join(' ')}>

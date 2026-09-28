@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
 import PostItem from '../components/PostItem.astro';
 import { type Lang, localize, useT } from '../i18n/ui';
 import { type Post, getPosts, allTags } from '../lib/content';
@@ -14,16 +15,13 @@ const title = tag ? `${t('blog.tagged')} #${tag}` : t('blog.title');
 ---
 
 <Base lang={lang} title={title} description={t('blog.lede')}>
-  <section class="wrap head">
-    <p class="eyebrow">~/blog{tag ? `/tags/${tag}` : ''}</p>
-    <h1>{title}</h1>
-    <p class="lede">{t('blog.lede')}</p>
+  <PageHead eyebrow={`~/blog${tag ? `/tags/${tag}` : ''}`} title={title} lede={t('blog.lede')}>
     <p class="links mono">
       <a href="/rss.xml">◉ {t('blog.rss')}</a>
       <a href={localize('/search', lang)}>⌕ {t('nav.search')}</a>
       {lang === 'da' && <span class="faint">{t('blog.en_only')}</span>}
     </p>
-  </section>
+  </PageHead>
   <section class="wrap layout">
     <div>
       {posts.length ? posts.map((p) => <PostItem post={p} lang={lang} />) : <p class="dim">{t('blog.empty')}</p>}
@@ -41,7 +39,6 @@ const title = tag ? `${t('blog.tagged')} #${tag}` : t('blog.title');
 </Base>
 
 <style>
-  .head { padding-block: clamp(3rem, 7vw, 5rem) 1.5rem; display: grid; gap: 1rem; }
   .links { display: flex; gap: 1.2rem; flex-wrap: wrap; font-size: 0.82rem; }
   .links a { color: var(--accent); text-decoration: none; }
   .layout { display: grid; grid-template-columns: 1fr 15rem; gap: 3rem; align-items: start; }

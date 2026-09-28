@@ -1,7 +1,7 @@
 // Records the Tech Atlas explorer (2D force graph -> by depth -> 3D) and hands
 // the capture to encode-clip.mjs. Tech Atlas refuses to render inside iframes
 // (anti-clickjacking), so a clip + live link replaces an embedded demo.
-import { chromium } from 'playwright';
+import { launchBrowser } from './lib/browser.mjs';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import ffmpeg from 'ffmpeg-static';
@@ -58,7 +58,7 @@ const CONCAT_TO_MP4 = [
 ];
 
 async function record() {
-  const browser = await chromium.launch({ channel: process.env.PW_CHANNEL ?? 'msedge' });
+  const browser = await launchBrowser();
   const ctx = await browser.newContext({ viewport: VIEWPORT });
   await ctx.addInitScript(() => localStorage.setItem('atlas.tour.done', '1'));
   const page = await ctx.newPage();
