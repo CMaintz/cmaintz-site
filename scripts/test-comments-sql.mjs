@@ -45,7 +45,8 @@ const insert = (db, role, user, slug, body, extra = '') =>
 async function setup() {
   const db = new PGlite();
   await db.exec(AUTH_STUB);
-  await db.exec(readFileSync('supabase/migrations/0001_site_comments.sql', 'utf8'));
+  for (const f of ['0001_site_comments.sql', '0002_site_comments_initials.sql'])
+    await db.exec(readFileSync(`supabase/migrations/${f}`, 'utf8'));
   return db;
 }
 
@@ -54,8 +55,10 @@ async function checks(db) {
     'anon cannot insert': await fails(insert(db, 'anon', null, 'hello-world', 'hi there')),
     'author fields cannot be forged': await fails(insert(db, 'authenticated', ALICE, 'hello-world', 'hi there', 'Mallory')),
     'signed-in insert works': !(await fails(insert(db, 'authenticated', ALICE, 'hello-world', 'Great post!'))),
-    'author name comes from auth.users':
-      (await as(db, 'anon', null, 'select author_name from public.site_comments')).rows[0]?.author_name === 'Alice A',
+    'only initials are stored, no avatar': (
+      await as(db, 'anon', null, 'select author_name, author_avatar from public.site_comments')
+    ).rows.every((r) => r.author_name === 'A.A.' && r.author_avatar === null),
+    'single-word names give one initial': (await db.query("select public.site_comments_initials('bob') as i")).rows[0].i === 'B.',
     'bad slug rejected': await fails(insert(db, 'authenticated', BOB, '../etc', 'hello')),
     'too-short body rejected': await fails(insert(db, 'authenticated', BOB, 'hello-world', ' x ')),
     'cannot delete others': (await as(db, 'authenticated', BOB, 'delete from public.site_comments returning id')).rows.length === 0,

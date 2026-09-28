@@ -5,6 +5,8 @@ Choices made on your behalf while you were away. Each one says what I chose, why
 ## Project & stack
 
 - **Domain:** https://maintz.dev, attached as a Worker custom domain in `wrangler.jsonc`. www.maintz.dev is a tiny separate Worker (`redirect-www/`) that 301-redirects to maintz.dev. The workers.dev address is disabled so there's one canonical host.
+- **Email:** christoffer@maintz.dev is shown on the site. Cloudflare Email Routing forwards it to cmaintz@outlook.com (receive-only for now). The contact form still sends to Outlook directly until Resend verifies maintz.dev.
+- **Comment privacy:** only the commenter's initials are stored and shown (migration `0002`), never full names or avatars.
 - **SEO:** robots.txt, sitemap, canonical + hreflang, descriptions clipped to ~158 characters, schema.org JSON-LD (Person, WebSite, ProfilePage, BlogPosting, SoftwareSourceCode, Service, BreadcrumbList) and a share image per project, post and area (`npm run og`).
 
 - **Name:** `cmaintz-site` (folder, npm package, Cloudflare Worker, GitHub repo). It's a personal professional site, not only a portfolio.

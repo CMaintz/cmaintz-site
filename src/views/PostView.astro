@@ -46,7 +46,7 @@ const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog
     </header>
 
     <div class="layout">
-      <div class="prose" data-pagefind-body>
+      <div class="prose reading" data-pagefind-body>
         <Content />
       </div>
       {toc.length > 2 && (
@@ -77,6 +77,9 @@ const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog
   .meta { display: flex; gap: 0.6rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--fg-faint); }
   h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
   .layout { display: grid; grid-template-columns: minmax(0, 44rem) 1fr; gap: 3rem; align-items: start; }
+  /* Reading panel sits above the CRT scanline/vignette layers (z 49-50), so long
+     text stays crisp while the rest of the page keeps the effect. */
+  .reading { position: relative; z-index: 51; background: var(--bg); box-shadow: 0 0 0 1.2rem var(--bg); }
   .toc { position: sticky; top: 5rem; font-size: 0.8rem; border-left: 2px solid var(--line); padding-left: 1rem; }
   .toc ol { list-style: none; padding: 0; margin: 0.6rem 0 0; display: grid; gap: 0.45rem; }
   .toc a { text-decoration: none; color: var(--fg-dim); }

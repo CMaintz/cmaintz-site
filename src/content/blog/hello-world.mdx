@@ -1,21 +1,25 @@
 ---
 title: Hello, world - booting up
-description: A new home for my work and writing, and a quick tour of what this blog can render.
+description: A new home for my work, my ramblings and rants, and the longer versions of things I post elsewhere. Plus a look at what I built under the hood.
 pubDate: 2026-09-27
 tags: [meta, astro]
 ---
 
 import Callout from '../../components/Callout.astro';
 
-This is the first post on the new site. It'll be a place for notes on developer tooling, CI and quality gates, platform work, and building things with AI - the stuff I spend most of my time on.
+This is the first post on my new site, and it's going to be a home for a bit of everything. Notes on developer tooling, CI and quality gates, platform work and building with AI, sure. But also my ramblings, the occasional rant, and the extended versions of things I post on LinkedIn and elsewhere, for when a few paragraphs just aren't enough.
 
-The site itself is built with [Astro](https://astro.build), deployed on Cloudflare, and pulls project data straight from my GitHub repositories at build time. The retro look is deliberate: old-school boxes and a pixelated background, paired with modern typography and interactions.
+## Why it looks like this
 
-## What posts can do
+I've always loved the retro-futuristic technology of Alien, Blade Runner and the like. The scanlines, the bloom of a CRT, chunky terminals with a blinking cursor, screens that look like they were built to be used rather than admired. So that's what this site is built around: old-school windows and a pixelated field humming in the background, with thoroughly modern plumbing underneath. (Behind longer text like this, the scanlines politely step aside, so it stays readable.)
 
-Code, with titles, line markers and diffs:
+## Under the hood
 
-```ts title="src/lib/github.ts" {3}
+The site is built with [Astro](https://astro.build) and runs on Cloudflare's edge. Project pages pull their data straight from my GitHub repositories when the site is built: languages, stars, topics and the READMEs themselves, so nothing drifts out of date. Everything is in English and Danish, and it's all checked by the same kind of deterministic quality gate I'd put on any team's code.
+
+I wanted proper tooling for technical writing, so posts here support code with titles, highlighted lines and diffs:
+
+```ts title="src/lib/content.ts" {3}
 export function repo(name: string) {
   const r = snapshot.repos.find((x) => x.name === name);
   if (!r) throw new Error(`Unknown repo: ${name}`);
@@ -28,13 +32,13 @@ export function repo(name: string) {
 + uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v5
 ```
 
-Math, inline like $O(n \log n)$ or as a block:
+Maths, inline like $O(n \log n)$ or as a block:
 
 $$
 \text{cost} = \sum_{i=1}^{n} p_i \cdot c_i
 $$
 
-Diagrams, written as text:
+Diagrams written as plain text:
 
 ```mermaid
 sequenceDiagram
@@ -44,14 +48,17 @@ sequenceDiagram
   Gate-->>Dev: exit 0
 ```
 
-And callouts:
-
-<Callout type="tip" title="Tip">
-Press <kbd>Ctrl</kbd> + <kbd>K</kbd> (or <kbd>⌘</kbd> + <kbd>K</kbd>) anywhere on the site to open the command palette.
+<Callout type="tip" title="And callouts">
+  For the bits that deserve to stand out.
 </Callout>
 
-<Callout type="warn">
-The CRT effects can be switched off from the palette or the toggle in the header.
-</Callout>
+## Things worth poking at
+
+A few details I had far too much fun building:
+
+- **A command palette.** Press <kbd>Ctrl</kbd> + <kbd>K</kbd> (<kbd>⌘</kbd> + <kbd>K</kbd> on a Mac) anywhere. Fuzzy search across every page, project and post, arrow keys to pick, <kbd>Tab</kbd> to complete.
+- **A terminal that's actually a (tiny) shell.** The one on the front page types itself out, but the last prompt takes input. Try `help`.
+- **Comments with a conscience.** Sign in with GitHub or Google, and only your initials are ever stored or shown. Your name never leaves the sign-in.
+- **A secret or two.** Some of them are older than the web itself.
 
 More soon.

@@ -9,8 +9,9 @@ export const site = {
   },
   location: 'Aarhus, Denmark',
   timezone: 'Europe/Copenhagen',
-  // Swap to the domain mailbox once it exists (also CONTACT_TO_EMAIL in SETUP.md).
-  email: 'cmaintz@outlook.com',
+  // Public address; Cloudflare Email Routing forwards it to Outlook. The contact
+  // form still delivers to CONTACT_TO_EMAIL (Outlook) until Resend verifies maintz.dev.
+  email: 'christoffer@maintz.dev',
   available: true,
   socials: {
     github: 'https://github.com/CMaintz',

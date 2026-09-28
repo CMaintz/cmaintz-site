@@ -15,7 +15,6 @@ interface Comment {
   id: string;
   user_id: string;
   author_name: string;
-  author_avatar: string | null;
   body: string;
   created_at: string;
 }
@@ -56,25 +55,22 @@ function h(tag: string, cls = '', text = '') {
   return el;
 }
 
-/** Only https avatars from the auth provider are shown. */
-const safeAvatar = (url: string | null) => (url && url.startsWith('https://') ? url : null);
+/** Mirrors public.site_comments_initials(): "Christoffer Maintz" -> "C.M.". */
+function initials(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return 'Anon.';
+  const first = parts[0][0].toUpperCase() + '.';
+  return parts.length > 1 ? first + parts[parts.length - 1][0].toUpperCase() + '.' : first;
+}
 
 async function fetchComments(client: SupabaseClient, slug: string) {
   const { data, error } = await client
     .from('site_comments')
-    .select('id, user_id, author_name, author_avatar, body, created_at')
+    .select('id, user_id, author_name, body, created_at')
     .eq('post_slug', slug)
     .order('created_at', { ascending: true });
   if (error) throw error;
   return (data ?? []) as Comment[];
-}
-
-function renderAvatar(c: Comment) {
-  const src = safeAvatar(c.author_avatar);
-  if (!src) return h('span', 'avatar avatar--blank', c.author_name.slice(0, 1).toUpperCase());
-  const img = h('img', 'avatar') as HTMLImageElement;
-  Object.assign(img, { src, alt: '', width: 32, height: 32, loading: 'lazy', referrerPolicy: 'no-referrer' });
-  return img;
 }
 
 function renderComment(c: Comment, userId: string | null, cfg: Config, onDelete: (id: string) => void) {
@@ -82,7 +78,7 @@ function renderComment(c: Comment, userId: string | null, cfg: Config, onDelete:
   const meta = h('p', 'comment__meta');
   const time = h('time', '', new Date(c.created_at).toLocaleDateString(document.documentElement.lang === 'da' ? 'da-DK' : 'en-GB'));
   time.setAttribute('datetime', c.created_at);
-  meta.append(renderAvatar(c), h('strong', '', c.author_name), time);
+  meta.append(h('span', 'badge-initials', c.author_name), time);
   if (c.user_id === userId) meta.append(deleteButton(c.id, cfg, onDelete));
   li.append(meta, h('p', 'comment__body', c.body));
   return li;
@@ -126,7 +122,7 @@ function renderSignedIn(auth: HTMLElement, form: HTMLFormElement, client: Supaba
   out.type = 'button';
   out.addEventListener('click', () => client.auth.signOut());
   const p = h('p', 'dim', `${cfg.text.as} `);
-  p.append(h('strong', '', displayName(user)), ' · ', out);
+  p.append(h('strong', '', initials(displayName(user))), ' · ', out);
   auth.replaceChildren(p);
 }
 
