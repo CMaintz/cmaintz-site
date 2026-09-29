@@ -68,17 +68,25 @@ interface MailConfig {
   from: string;
 }
 
+function inquirySubject(q: Inquiry) {
+  const company = q.company ? ` (${q.company})` : '';
+  return `New inquiry via maintz.dev: ${TOPIC_LABELS[q.topic] ?? q.topic} from ${q.name}${company}`;
+}
+
+/** The Resend payload for one inquiry; replies go straight to the sender. */
+const inquiryEmail = (q: Inquiry, cfg: MailConfig) => ({
+  from: cfg.from,
+  to: [cfg.to],
+  reply_to: q.email,
+  subject: inquirySubject(q),
+  text: formatInquiry(q),
+});
+
 export async function sendInquiry(q: Inquiry, cfg: MailConfig) {
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${cfg.apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      from: cfg.from,
-      to: [cfg.to],
-      reply_to: q.email,
-      subject: `New inquiry via maintz.dev: ${TOPIC_LABELS[q.topic] ?? q.topic} from ${q.name}${q.company ? ` (${q.company})` : ''}`,
-      text: formatInquiry(q),
-    }),
+    body: JSON.stringify(inquiryEmail(q, cfg)),
   });
   return res.ok;
 }

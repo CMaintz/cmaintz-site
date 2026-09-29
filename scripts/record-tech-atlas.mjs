@@ -31,14 +31,21 @@ async function tour(page) {
 }
 
 /** Writes frames plus an ffmpeg concat list that keeps their real timing. */
-function writeFrames(frames) {
+function resetDir() {
   rmSync(RAW, { recursive: true, force: true });
   mkdirSync(RAW, { recursive: true });
-  const lines = frames.flatMap((f, i) => {
-    const name = `f${String(i).padStart(5, '0')}.jpg`;
-    writeFileSync(`${RAW}/${name}`, Buffer.from(f.data, 'base64'));
-    return [`file '${name}'`, `duration ${((frames[i + 1]?.t ?? f.t + 1) - f.t).toFixed(3)}`];
-  });
+}
+
+/** Saves frame i; returns its concat-list entry (lasts until the next frame). */
+function writeFrame(f, i, frames) {
+  const name = `f${String(i).padStart(5, '0')}.jpg`;
+  writeFileSync(`${RAW}/${name}`, Buffer.from(f.data, 'base64'));
+  return [`file '${name}'`, `duration ${((frames[i + 1]?.t ?? f.t + 1) - f.t).toFixed(3)}`];
+}
+
+function writeFrames(frames) {
+  resetDir();
+  const lines = frames.flatMap(writeFrame);
   writeFileSync(`${RAW}/frames.txt`, lines.join('\n') + '\n');
 }
 
@@ -57,12 +64,18 @@ const CONCAT_TO_MP4 = [
   `${RAW}/raw.mp4`,
 ];
 
-async function record() {
-  const browser = await launchBrowser();
+/** Opens the explorer with its onboarding tour already dismissed. */
+async function openExplorer(browser) {
   const ctx = await browser.newContext({ viewport: VIEWPORT });
   await ctx.addInitScript(() => localStorage.setItem('atlas.tour.done', '1'));
   const page = await ctx.newPage();
   await page.goto(URL, { waitUntil: 'networkidle' });
+  return page;
+}
+
+async function record() {
+  const browser = await launchBrowser();
+  const page = await openExplorer(browser);
   const frames = [];
   const cdp = await startScreencast(page, frames);
   await tour(page);

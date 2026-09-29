@@ -104,11 +104,10 @@ function providerButton(client: SupabaseClient, provider: string) {
   return btn;
 }
 
-function renderSignedOut(auth: HTMLElement, form: HTMLFormElement, client: SupabaseClient, cfg: Config) {
-  form.hidden = true;
+function signedOutView(client: SupabaseClient, cfg: Config) {
   const row = h('div', 'providers');
   row.append(...cfg.providers.map((p) => providerButton(client, p)));
-  auth.replaceChildren(h('p', 'dim', cfg.text.signin), row);
+  return [h('p', 'dim', cfg.text.signin), row];
 }
 
 function displayName(user: User) {
@@ -116,14 +115,17 @@ function displayName(user: User) {
   return m.full_name ?? m.name ?? m.user_name ?? user.email ?? '';
 }
 
-function renderSignedIn(auth: HTMLElement, form: HTMLFormElement, client: SupabaseClient, cfg: Config, user: User) {
-  form.hidden = false;
+function signOutButton(client: SupabaseClient, cfg: Config) {
   const out = h('button', 'linkish', cfg.text.signout) as HTMLButtonElement;
   out.type = 'button';
   out.addEventListener('click', () => client.auth.signOut());
+  return out;
+}
+
+function signedInView(client: SupabaseClient, cfg: Config, user: User) {
   const p = h('p', 'dim', `${cfg.text.as} `);
-  p.append(h('strong', '', initials(displayName(user))), ' · ', out);
-  auth.replaceChildren(p);
+  p.append(h('strong', '', initials(displayName(user))), ' · ', signOutButton(client, cfg));
+  return [p];
 }
 
 interface Ui {
@@ -139,13 +141,21 @@ function queryUi(root: HTMLElement): Ui {
   return { root, list: q('[data-list]'), auth: q('[data-auth]'), form: q('form'), status: q('[data-status]') };
 }
 
+/** Shows the sign-in state; the form only exists for signed-in users. */
+function renderAuth(ui: Ui, client: SupabaseClient, cfg: Config, user: User | null) {
+  ui.form.hidden = !user;
+  ui.auth.replaceChildren(...(user ? signedInView(client, cfg, user) : signedOutView(client, cfg)));
+}
+
+async function renderComments(ui: Ui, client: SupabaseClient, cfg: Config, userId: string | null) {
+  const onDelete = (id: string) => remove(ui, client, cfg, id);
+  renderList(ui.list, await fetchComments(client, cfg.slug), userId, cfg, onDelete);
+}
+
 async function refresh(ui: Ui, client: SupabaseClient, cfg: Config) {
   const { data } = await client.auth.getUser();
-  const user = data.user;
-  if (user) renderSignedIn(ui.auth, ui.form, client, cfg, user);
-  else renderSignedOut(ui.auth, ui.form, client, cfg);
-  const onDelete = (id: string) => remove(ui, client, cfg, id);
-  renderList(ui.list, await fetchComments(client, cfg.slug), user?.id ?? null, cfg, onDelete);
+  renderAuth(ui, client, cfg, data.user);
+  await renderComments(ui, client, cfg, data.user?.id ?? null);
 }
 
 async function remove(ui: Ui, client: SupabaseClient, cfg: Config, id: string) {
@@ -154,19 +164,25 @@ async function remove(ui: Ui, client: SupabaseClient, cfg: Config, id: string) {
   await refresh(ui, client, cfg);
 }
 
+const insertComment = (client: SupabaseClient, cfg: Config, body: string) =>
+  client.from('site_comments').insert({ post_slug: cfg.slug, body: body.trim() });
+
 async function submit(ui: Ui, client: SupabaseClient, cfg: Config) {
   const field = ui.form.querySelector('textarea')!;
-  const { error } = await client.from('site_comments').insert({ post_slug: cfg.slug, body: field.value.trim() });
+  const { error } = await insertComment(client, cfg, field.value);
   ui.status.textContent = error ? `${cfg.text.error} (${error.message})` : '';
   if (!error) field.value = '';
   await refresh(ui, client, cfg);
 }
 
-function bind(ui: Ui, client: SupabaseClient, cfg: Config) {
+function bindForm(ui: Ui, client: SupabaseClient, cfg: Config) {
   ui.form.addEventListener('submit', (e) => {
     e.preventDefault();
     submit(ui, client, cfg);
   });
+}
+
+function bindAuthChanges(ui: Ui, client: SupabaseClient, cfg: Config) {
   client.auth.onAuthStateChange(() => {
     setTimeout(() => refresh(ui, client, cfg), 0);
   });
@@ -177,7 +193,8 @@ export async function mountComments(root: HTMLElement) {
   const ui = queryUi(root);
   try {
     const client = await getClient(cfg);
-    bind(ui, client, cfg);
+    bindForm(ui, client, cfg);
+    bindAuthChanges(ui, client, cfg);
     await refresh(ui, client, cfg);
   } catch {
     ui.status.textContent = cfg.text.error;

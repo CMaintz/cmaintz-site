@@ -37,10 +37,14 @@ const areaCounts = Object.fromEntries(AREA_IDS.map((a) => [a, projects.filter((p
 <script>
   const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
   const cards = document.querySelectorAll<HTMLElement>('[data-projects] > [data-category]');
+  const matches = (c: HTMLElement, f: string) => f === 'all' || c.dataset.category === f || (c.dataset.areas ?? '').split(' ').includes(f);
+  const pressButton = (f: string) => buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === f)));
+  const filterCards = (f: string) => cards.forEach((c) => (c.hidden = !matches(c, f)));
+  const setHash = (f: string) => history.replaceState(null, '', f === 'all' ? location.pathname : `#${f}`);
   const apply = (f: string) => {
-    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === f)));
-    cards.forEach((c) => (c.hidden = f !== 'all' && c.dataset.category !== f && !(c.dataset.areas ?? '').split(' ').includes(f)));
-    history.replaceState(null, '', f === 'all' ? location.pathname : `#${f}`);
+    pressButton(f);
+    filterCards(f);
+    setHash(f);
   };
   buttons.forEach((b) => b.addEventListener('click', () => apply(b.dataset.filter!)));
   addEventListener('hashchange', () => apply(location.hash.slice(1) || 'all'));

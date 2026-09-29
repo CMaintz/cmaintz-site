@@ -57,57 +57,75 @@ const link = (path: string) => localize(path, lang);
 
 <script>
   const tabs = [...document.querySelectorAll<HTMLButtonElement>('.term [role="tab"]')];
+  const panelOf = (tab: HTMLButtonElement) => document.getElementById(tab.getAttribute('aria-controls')!)!;
 
-  function select(tab: HTMLButtonElement) {
+  // ── Tabs ──
+  /** Marks one tab as current and shows only its panel. */
+  function showTab(tab: HTMLButtonElement) {
     for (const t of tabs) {
       const on = t === tab;
       t.setAttribute('aria-selected', String(on));
       t.tabIndex = on ? 0 : -1;
-      document.getElementById(t.getAttribute('aria-controls')!)!.hidden = !on;
+      panelOf(t).hidden = !on;
     }
+  }
+
+  function select(tab: HTMLButtonElement) {
+    showTab(tab);
     tab.focus();
     play(panelOf(tab));
   }
 
-  function onKey(e: KeyboardEvent) {
+  function neighbourTab(current: HTMLButtonElement, step: number) {
+    const i = tabs.indexOf(current);
+    return tabs[(i + step + tabs.length) % tabs.length];
+  }
+
+  function onTabKey(e: KeyboardEvent) {
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-    const i = tabs.indexOf(e.currentTarget as HTMLButtonElement);
-    select(tabs[(i + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length]);
+    select(neighbourTab(e.currentTarget as HTMLButtonElement, e.key === 'ArrowRight' ? 1 : -1));
   }
 
   tabs.forEach((t) => {
     t.addEventListener('click', () => select(t));
-    t.addEventListener('keydown', onKey);
+    t.addEventListener('keydown', onTabKey);
   });
 
-  // A tiny shell on the last prompt. Mostly here for one secret command.
+  // ── The tiny shell on the last prompt. Mostly here for one secret command. ──
   const replies: Record<string, string> = {
     help: 'commands: whoami, ls, contact, help ... and maybe something from 1993',
     whoami: 'christoffer maintz',
     ls: 'illux-product-ai  foundry  jev-triage  jev-guard  jev-sort  jobbuddy  tech-atlas',
     contact: 'christoffer@maintz.dev',
+    doom: 'loading DOOM...',
+    iddqd: 'loading DOOM...',
   };
+  const DOOM_COMMANDS = new Set(['doom', 'iddqd']);
 
-  function runCommand(raw: string) {
-    const cmd = raw.trim().toLowerCase();
-    if (cmd === 'doom' || cmd === 'iddqd') {
-      // Next tick, so this Enter keypress can't land on the new window's buttons.
-      setTimeout(() => dispatchEvent(new CustomEvent('doom:open')));
-      return 'loading DOOM...';
-    }
-    return replies[cmd] ?? (cmd ? `command not found: ${cmd}` : '');
-  }
+  const replyFor = (cmd: string) => replies[cmd] ?? (cmd ? `command not found: ${cmd}` : '');
+
+  /** Next tick, so the Enter keypress can't land on the new window's buttons. */
+  const openDoom = () => setTimeout(() => dispatchEvent(new CustomEvent('doom:open')));
 
   const shell = document.querySelector<HTMLInputElement>('[data-shell]');
   const reply = document.querySelector<HTMLElement>('[data-reply]');
-  shell?.addEventListener('keydown', (e) => {
+
+  function execute(raw: string) {
+    const cmd = raw.trim().toLowerCase();
+    reply!.textContent = replyFor(cmd);
+    if (DOOM_COMMANDS.has(cmd)) openDoom();
+  }
+
+  function onShellKey(e: KeyboardEvent) {
     if (e.key !== 'Enter') return;
     e.preventDefault();
-    reply!.textContent = runCommand(shell.value);
-    shell.value = '';
-  });
+    execute(shell!.value);
+    shell!.value = '';
+  }
 
-  // Typing: commands appear character by character, output lines all at once.
+  shell?.addEventListener('keydown', onShellKey);
+
+  // ── Typing: commands appear character by character, output lines all at once. ──
   const CHAR_MS = 28;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -128,16 +146,17 @@ const link = (path: string) => localize(path, lang);
     await sleep(cmd ? 160 : 90);
   }
 
+  const setPending = (lines: HTMLElement[], pending: boolean) => lines.forEach((l) => l.classList.toggle('pending', pending));
+
   async function play(panel: HTMLElement) {
     if (panel.dataset.played) return;
-    const lines = [...panel.children] as HTMLElement[];
-    lines.forEach((l) => l.classList.add('pending'));
     panel.dataset.played = '1';
-    if (reduce) return lines.forEach((l) => l.classList.remove('pending'));
+    const lines = [...panel.children] as HTMLElement[];
+    setPending(lines, !reduce);
+    if (reduce) return;
     for (const line of lines) await playLine(line);
   }
 
-  const panelOf = (tab: HTMLButtonElement) => document.getElementById(tab.getAttribute('aria-controls')!)!;
   play(panelOf(tabs[0]));
 </script>
 

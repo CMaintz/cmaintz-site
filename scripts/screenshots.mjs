@@ -34,6 +34,13 @@ const VIEWPORTS = [
   { name: 'mobile', width: 390, height: 844 },
 ];
 
+function collectErrors(page) {
+  const errors = [];
+  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
+  page.on('pageerror', (e) => errors.push(String(e)));
+  return errors;
+}
+
 async function newPage(browser, viewport) {
   const ctx = await browser.newContext({
     viewport,
@@ -45,10 +52,7 @@ async function newPage(browser, viewport) {
     } catch {}
   }, THEME);
   const page = await ctx.newPage();
-  const errors = [];
-  page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
-  page.on('pageerror', (e) => errors.push(String(e)));
-  return { ctx, page, errors };
+  return { ctx, page, errors: collectErrors(page) };
 }
 
 function shotName(vp, path) {

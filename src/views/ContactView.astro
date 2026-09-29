@@ -67,10 +67,13 @@ const topics = ['job', 'freelance', 'consulting', 'other'] as const;
     button!.textContent = busy ? button!.dataset.busy! : button!.dataset.label!;
   }
 
+  /** Fallback when sending fails: write to me directly. */
+  const mailtoLink = () => Object.assign(document.createElement('a'), { href: `mailto:${form!.dataset.email}`, textContent: form!.dataset.email! });
+
   function showResult(ok: boolean) {
     status!.dataset.state = ok ? 'ok' : 'err';
     status!.textContent = ok ? status!.dataset.ok! : `${status!.dataset.err} `;
-    if (!ok) status!.append(Object.assign(document.createElement('a'), { href: `mailto:${form!.dataset.email}`, textContent: form!.dataset.email! }));
+    if (!ok) status!.append(mailtoLink());
   }
 
   async function post(data: FormData) {

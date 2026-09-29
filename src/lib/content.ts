@@ -42,14 +42,12 @@ export async function getPosts() {
   return posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 }
 
-export function readingTime(body: string | undefined) {
-  const words = (body ?? '')
-    .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/<[^>]+>/g, ' ')
-    .split(/\s+/)
-    .filter(Boolean).length;
-  return Math.max(1, Math.round(words / 220));
-}
+/** Prose only: code fences and HTML tags don't count as reading. */
+const proseOf = (body: string) => body.replace(/```[\s\S]*?```/g, ' ').replace(/<[^>]+>/g, ' ');
+
+const wordCount = (text: string) => text.split(/\s+/).filter(Boolean).length;
+
+export const readingTime = (body: string | undefined) => Math.max(1, Math.round(wordCount(proseOf(body ?? '')) / 220));
 
 export function allTags(posts: Post[]) {
   const counts = new Map<string, number>();

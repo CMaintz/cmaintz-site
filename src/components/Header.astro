@@ -63,18 +63,23 @@ const other: Lang = lang === 'en' ? 'da' : 'en';
 <script>
   const root = document.documentElement;
   const save = (k: string, v: string) => { try { localStorage.setItem(k, v); } catch {} };
-  document.querySelector('[data-theme-toggle]')?.addEventListener('click', () => {
-    const next = root.dataset.theme === 'light' ? 'dark' : 'light';
-    root.dataset.theme = next;
-    save('theme', next);
-    window.dispatchEvent(new CustomEvent('themechange'));
-  });
-  document.querySelector('[data-crt-toggle]')?.addEventListener('click', () => {
-    const next = root.dataset.crt === 'off' ? 'on' : 'off';
-    root.dataset.crt = next;
-    save('crt', next);
-    window.dispatchEvent(new CustomEvent('crtchange'));
-  });
+  /** Flips a root data-* setting between two values and returns the new one. */
+  function flip(key: 'theme' | 'crt', [a, b]: [string, string]) {
+    const next = root.dataset[key] === a ? b : a;
+    root.dataset[key] = next;
+    return next;
+  }
+
+  /** Wires a header button to a persisted setting; others listen for `${key}change`. */
+  function bindToggle(key: 'theme' | 'crt', values: [string, string]) {
+    document.querySelector(`[data-${key}-toggle]`)?.addEventListener('click', () => {
+      save(key, flip(key, values));
+      window.dispatchEvent(new CustomEvent(`${key}change`));
+    });
+  }
+
+  bindToggle('theme', ['light', 'dark']);
+  bindToggle('crt', ['off', 'on']);
 </script>
 
 <style>

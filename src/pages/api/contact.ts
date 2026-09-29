@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { RESEND_API_KEY, TURNSTILE_SECRET_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL } from 'astro:env/server';
-import { parseInquiry, validationError, isHoneypotHit, passesTurnstile, sendInquiry } from '../../lib/contact';
+import { parseInquiry, validationError, isHoneypotHit, passesTurnstile, sendInquiry, type Inquiry } from '../../lib/contact';
 
 export const prerender = false;
 
@@ -14,15 +14,26 @@ function reply(req: Request, status: number, error?: string) {
   return Response.redirect(url, 303);
 }
 
-async function handle(request: Request, form: FormData, ip: string | null) {
-  if (isHoneypotHit(form)) return reply(request, 200);
-  if (!(await passesTurnstile(form, TURNSTILE_SECRET_KEY, ip))) return reply(request, 403, 'captcha');
-  const inquiry = parseInquiry(form);
+type Outcome = { status: number; error?: string };
+
+/** Bots get a silent 200 (honeypot) or a 403 (captcha); humans get null. */
+async function botOutcome(form: FormData, ip: string | null): Promise<Outcome | null> {
+  if (isHoneypotHit(form)) return { status: 200 };
+  if (!(await passesTurnstile(form, TURNSTILE_SECRET_KEY, ip))) return { status: 403, error: 'captcha' };
+  return null;
+}
+
+async function deliver(inquiry: Inquiry): Promise<Outcome> {
   const invalid = validationError(inquiry);
-  if (invalid) return reply(request, 400, invalid);
-  if (!RESEND_API_KEY) return reply(request, 503, 'not_configured');
+  if (invalid) return { status: 400, error: invalid };
+  if (!RESEND_API_KEY) return { status: 503, error: 'not_configured' };
   const sent = await sendInquiry(inquiry, { apiKey: RESEND_API_KEY, to: CONTACT_TO_EMAIL, from: CONTACT_FROM_EMAIL });
-  return reply(request, sent ? 200 : 502, sent ? undefined : 'send_failed');
+  return sent ? { status: 200 } : { status: 502, error: 'send_failed' };
+}
+
+async function handle(request: Request, form: FormData, ip: string | null) {
+  const { status, error } = (await botOutcome(form, ip)) ?? (await deliver(parseInquiry(form)));
+  return reply(request, status, error);
 }
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
