@@ -1,38 +1,16 @@
 // Runs supabase/migrations/0001_site_comments.sql against an in-process Postgres
 // (PGlite) with a minimal stand-in for Supabase's auth schema and roles, then
 // checks the security rules as anon / authenticated users.
-import { PGlite } from '@electric-sql/pglite';
-import { readFileSync } from 'node:fs';
+import { as, fails, freshDb, report } from './lib/pglite.mjs';
 
 const ALICE = '00000000-0000-0000-0000-00000000000a';
 const BOB = '00000000-0000-0000-0000-00000000000b';
 
-const AUTH_STUB = `
-  create role anon nologin; create role authenticated nologin;
-  create schema auth;
-  grant usage on schema auth, public to anon, authenticated;
-  create table auth.users (id uuid primary key, raw_user_meta_data jsonb);
-  create function auth.uid() returns uuid language sql stable as $$
-    select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
+const USERS = `
   insert into auth.users values
     ('${ALICE}', '{"full_name":"Alice A","avatar_url":"https://example.com/a.png"}'),
     ('${BOB}', '{"user_name":"bob"}');`;
 
-/** Runs sql as a role (and optional user), always resetting afterwards. */
-async function as(db, role, user, sql, params) {
-  await db.exec(`set role ${role}; select set_config('request.jwt.claim.sub', '${user ?? ''}', false);`);
-  try {
-    return await db.query(sql, params);
-  } finally {
-    await db.exec('reset role;');
-  }
-}
-
-const fails = (p) =>
-  p.then(
-    () => false,
-    () => true,
-  );
 const insert = (db, role, user, slug, body, extra = '') =>
   as(
     db,
@@ -42,13 +20,7 @@ const insert = (db, role, user, slug, body, extra = '') =>
     extra ? [slug, body, extra] : [slug, body],
   );
 
-async function setup() {
-  const db = new PGlite();
-  await db.exec(AUTH_STUB);
-  for (const f of ['0001_site_comments.sql', '0002_site_comments_initials.sql'])
-    await db.exec(readFileSync(`supabase/migrations/${f}`, 'utf8'));
-  return db;
-}
+const setup = () => freshDb(['0001_site_comments.sql', '0002_site_comments_initials.sql'], USERS);
 
 async function checks(db) {
   return {
@@ -91,6 +63,4 @@ async function rateLimited(db) {
   return fails(insert(db, 'authenticated', BOB, 'hello-world', 'one too many'));
 }
 
-const results = await checks(await setup());
-for (const [name, ok] of Object.entries(results)) console.log(`${ok ? 'ok  ' : 'FAIL'} ${name}`);
-process.exit(Object.values(results).every(Boolean) ? 0 : 1);
+report(await checks(await setup()));

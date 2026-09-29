@@ -15,6 +15,7 @@ import Footer from '../components/Footer.astro';
 import PixelField from '../components/PixelField.astro';
 import CommandPalette from '../components/CommandPalette.astro';
 import DoomLauncher from '../components/DoomLauncher.astro';
+import LinkBeacon from '../components/LinkBeacon.astro';
 import { site } from '../data/site';
 import { type Lang, localize, unlocalize, useT } from '../i18n/ui';
 import { clipDescription, graph, personLd, websiteLd } from '../lib/seo';
@@ -100,6 +101,7 @@ const metaDescription = clipDescription(description);
     <Footer lang={lang} />
     <CommandPalette lang={lang} switchPath={langSwitchPath} />
     <DoomLauncher />
+    <LinkBeacon />
     <script is:inline>
       // Shortcut hints say Ctrl by default; Apple keyboards use Command.
       if (/Mac|iPhone|iPad/.test(navigator.userAgentData?.platform ?? navigator.platform)) {
