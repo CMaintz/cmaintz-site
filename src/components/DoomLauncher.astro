@@ -10,7 +10,7 @@
     <button class="win__meta close" type="button" aria-label="Close">✕ close</button>
   </div>
   <div class="screen" tabindex="-1" autofocus></div>
-  <p class="hint mono">WASD move · ←→ turn · Space fire · E use · Shift run · Enter menu · <a href="/doom/NOTICE.txt">licences</a></p>
+  <p class="hint mono">WASD move · ←→ turn · Space fire · E use · Shift run · Esc menu · click to capture mouse · <a href="/doom/NOTICE.txt">licences</a></p>
 </dialog>
 
 <script>
@@ -62,15 +62,20 @@
 
   const onKey = (e: KeyboardEvent) => konamiComplete(e.key) && open();
 
+  /** The game page posts doom:quit when the player quits from its menu. */
+  const isQuit = (e: MessageEvent) => e.origin === location.origin && e.data?.type === 'doom:quit';
+
   addEventListener('doom:open', open);
   addEventListener('keydown', onKey);
+  addEventListener('message', (e) => isQuit(e) && close());
   dlg.querySelector('.close')!.addEventListener('click', close);
   // Esc belongs to the game menu, so it must not close the window.
   dlg.addEventListener('cancel', (e) => e.preventDefault());
 </script>
 
 <style>
-  .doom { width: min(960px, calc(100vw - 2rem)); padding: 0; margin: auto; color: var(--fg); }
+  /* Sized by width and height so the whole window fits a laptop screen without scrolling. */
+  .doom { width: min(960px, calc(100vw - 2rem), calc((100dvh - 7.5rem) * 4 / 3)); max-width: none; overflow: hidden; padding: 0; margin: auto; color: var(--fg); }
   .doom::backdrop { background: rgb(0 0 0 / 0.75); }
   .close { background: var(--bg-3); border: 0; font: inherit; color: var(--fg); cursor: pointer; text-transform: uppercase; }
   .close:hover { color: var(--accent); }
