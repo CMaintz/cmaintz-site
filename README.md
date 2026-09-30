@@ -2,6 +2,10 @@
 
 Personal site of Christoffer Maintz: projects, blog, CV, services and contact. Built with Astro, deployed on Cloudflare Workers, in a retro-future / CRT style.
 
+**Live:** https://maintz.dev
+
+![The maintz.dev home page in the dark theme](docs/screenshot-home.png)
+
 ```sh
 npm install
 npm run dev        # http://localhost:4321
@@ -12,7 +16,6 @@ npm run shots      # screenshot smoke test (desktop + mobile)
 ```
 
 - **SETUP.md** - domain, deploy, contact form, comments, analytics, content workflows.
-- **DECISIONS.md** - what was decided and why, and what still needs your confirmation.
 
 ## Where things live
 
@@ -27,5 +30,8 @@ npm run shots      # screenshot smoke test (desktop + mobile)
 | `src/i18n/ui.ts`                             | English/Danish UI strings                                            |
 | `src/views/`                                 | Page bodies shared by `/x` and `/da/x` routes                        |
 | `src/styles/global.css`                      | Retro design tokens and primitives                                   |
-| `src/pages/{editorial,technical,bold}.astro` | Alternative homepage style previews                                  |
 | `scripts/`                                   | GitHub sync, CV PDF, OG image, screenshots, function-length check    |
+
+## License
+
+MIT, see [LICENSE](LICENSE).
