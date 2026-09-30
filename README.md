@@ -13,6 +13,8 @@ npm run build      # site + search index -> dist/
 npm run preview    # Workers runtime locally
 npm run check      # types, code-size rules (functions <= 18 lines, files <= 300), comments SQL tests
 npm run shots      # screenshot smoke test (desktop + mobile)
+npm test           # unit tests (Vitest); npm run test:coverage for coverage
+npm run smoke      # interaction smoke test against the build (Playwright)
 ```
 
 - **SETUP.md** - domain, deploy, contact form, comments, analytics, content workflows.

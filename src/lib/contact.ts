@@ -40,14 +40,26 @@ export function validationError(q: Inquiry): string | null {
 /** Bots fill the hidden "website" field; humans never see it. */
 export const isHoneypotHit = (form: FormData) => String(form.get('website') ?? '') !== '';
 
-export async function passesTurnstile(form: FormData, secret: string | undefined, ip: string | null) {
-  if (!secret) return true;
+/**
+ * Turnstile is off when neither key is set. If the widget is shown (site key set) but the
+ * secret is missing, or Siteverify can't be reached, it fails closed.
+ */
+export async function passesTurnstile(form: FormData, secret: string | undefined, ip: string | null, siteKey?: string) {
+  if (!secret) {
+    if (siteKey) console.error('contact: PUBLIC_TURNSTILE_SITE_KEY is set but TURNSTILE_SECRET_KEY is missing');
+    return !siteKey;
+  }
   const body = new URLSearchParams({ secret, response: String(form.get('cf-turnstile-response') ?? '') });
   if (ip) body.set('remoteip', ip);
-  const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body });
-  const json = (await res.json()) as { success?: boolean };
-  return json.success === true;
+  try {
+    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body });
+    return ((await res.json()) as { success?: boolean }).success === true;
+  } catch {
+    return false;
+  }
 }
+
+const optionalLine = (label: string, value: string) => (value ? [`${label}: ${value}`] : []);
 
 export function formatInquiry(q: Inquiry) {
   const header = [
@@ -55,10 +67,10 @@ export function formatInquiry(q: Inquiry) {
     '',
     `Name: ${q.name}`,
     `Email: ${q.email}`,
-    q.company && `Company: ${q.company}`,
+    ...optionalLine('Company', q.company),
     `Topic: ${q.topic}`,
-    q.budget && `Budget: ${q.budget}`,
-  ].filter(Boolean);
+    ...optionalLine('Budget', q.budget),
+  ];
   return `${header.join('\n')}\n\n${q.message}`;
 }
 

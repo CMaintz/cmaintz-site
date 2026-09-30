@@ -23,7 +23,13 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - run: npm test
       - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Interaction smoke test
+        run: npm run smoke
+        env:
+          PW_CHANNEL: chromium
 
   refresh-github-data:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
