@@ -20,3 +20,6 @@ screenshots/
 
 .DS_Store
 supabase/.temp/
+
+# owner-only working notes (decision logs etc.)
+.local/
