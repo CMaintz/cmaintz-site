@@ -1,0 +1,17 @@
+---
+// Previous / next links at the bottom of posts and projects.
+interface Link { href: string; label: string }
+interface Props { prev?: Link; next?: Link; label: string }
+const { prev, next, label } = Astro.props;
+---
+
+<nav class="wrap pager mono" aria-label={label}>
+  {prev ? <a href={prev.href}>← {prev.label}</a> : <span></span>}
+  {next ? <a href={next.href}>{next.label} →</a> : <span></span>}
+</nav>
+
+<style>
+  .pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: 3.5rem; padding-top: 1.5rem; border-top: 2px dashed var(--line); font-size: 0.85rem; }
+  .pager a { text-decoration: none; color: var(--fg-dim); }
+  .pager a:hover { color: var(--accent); }
+</style>

@@ -5,7 +5,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../dist/client');
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '../../dist/client');
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css',
@@ -39,18 +39,21 @@ async function resolveFile(urlPath) {
   return null;
 }
 
+/** Unknown paths fall back to the built 404 page (with a 404 status). */
+async function respond(req, res) {
+  const file = (await resolveFile(req.url ?? '/')) ?? join(ROOT, '404.html');
+  const is404 = file.endsWith('404.html') && !req.url?.includes('404');
+  try {
+    const body = await readFile(file);
+    res.writeHead(is404 ? 404 : 200, { 'content-type': TYPES[extname(file)] ?? 'application/octet-stream' });
+    res.end(body);
+  } catch {
+    res.writeHead(404).end('not found');
+  }
+}
+
 export function serve(port = 4322) {
-  const server = createServer(async (req, res) => {
-    const file = (await resolveFile(req.url ?? '/')) ?? join(ROOT, '404.html');
-    const is404 = file.endsWith('404.html') && !req.url?.includes('404');
-    try {
-      const body = await readFile(file);
-      res.writeHead(is404 ? 404 : 200, { 'content-type': TYPES[extname(file)] ?? 'application/octet-stream' });
-      res.end(body);
-    } catch {
-      res.writeHead(404).end('not found');
-    }
-  });
+  const server = createServer(respond);
   return new Promise((r) => server.listen(port, () => r(server)));
 }
 

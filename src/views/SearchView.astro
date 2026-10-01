@@ -25,11 +25,15 @@ const note = lang === 'da' ? 'Søgeindekset bygges ved `npm run build`; i dev-mo
     el.classList.add('unavailable');
   }
 
+  async function createUI() {
+    const PagefindUI = await loadPagefind();
+    new PagefindUI({ element: '#search', showSubResults: true, showImages: false, resetStyles: false });
+  }
+
   async function mount() {
     const el = document.getElementById('search')!;
     try {
-      const PagefindUI = await loadPagefind();
-      new PagefindUI({ element: '#search', showSubResults: true, showImages: false, resetStyles: false });
+      await createUI();
       el.querySelector<HTMLInputElement>('input')?.focus();
     } catch {
       showUnavailable(el);

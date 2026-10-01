@@ -14,11 +14,11 @@
     "shots": "node scripts/screenshots.mjs",
     "cv:pdf": "node scripts/cv-pdf.mjs",
     "og": "node scripts/og-image.mjs",
-    "check": "astro check && node scripts/check-fn-length.mjs && node scripts/test-comments-sql.mjs",
-    "lint:fn": "node scripts/check-fn-length.mjs",
+    "check": "astro check && node scripts/check-code-size.mjs && node scripts/test-comments-sql.mjs",
     "smoke": "node scripts/smoke-interactions.mjs",
     "test:comments": "node scripts/test-comments-sql.mjs",
-    "clip": "node scripts/encode-clip.mjs"
+    "clip": "node scripts/encode-clip.mjs",
+    "lint:size": "node scripts/check-code-size.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.3",

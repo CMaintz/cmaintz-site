@@ -29,17 +29,21 @@
     return msg;
   }
 
-  function open() {
-    if (keyboardless()) {
-      screen.replaceChildren(noKeyboard());
-      return dlg.showModal();
-    }
+  function gameFrame() {
     const frame = document.createElement('iframe');
     frame.src = '/doom/';
     frame.title = 'DOOM';
-    screen.replaceChildren(frame);
+    return frame;
+  }
+
+  /** The game, or a polite note on devices without a keyboard. */
+  const screenContent = () => (keyboardless() ? noKeyboard() : gameFrame());
+
+  function open() {
+    const content = screenContent();
+    screen.replaceChildren(content);
     dlg.showModal();
-    frame.focus();
+    content.focus();
   }
 
   /** Closing removes the iframe, which stops the game and frees its memory. */
@@ -48,15 +52,18 @@
     screen.replaceChildren();
   }
 
-  function trackKonami(e: KeyboardEvent) {
-    progress = e.key === KONAMI[progress] ? progress + 1 : e.key === KONAMI[0] ? 1 : 0;
-    if (progress < KONAMI.length) return;
+  /** Advances through the code; true when the last key completes it. */
+  function konamiComplete(key: string) {
+    progress = key === KONAMI[progress] ? progress + 1 : key === KONAMI[0] ? 1 : 0;
+    if (progress < KONAMI.length) return false;
     progress = 0;
-    open();
+    return true;
   }
 
+  const onKey = (e: KeyboardEvent) => konamiComplete(e.key) && open();
+
   addEventListener('doom:open', open);
-  addEventListener('keydown', trackKonami);
+  addEventListener('keydown', onKey);
   dlg.querySelector('.close')!.addEventListener('click', close);
   // Esc belongs to the game menu, so it must not close the window.
   dlg.addEventListener('cancel', (e) => e.preventDefault());

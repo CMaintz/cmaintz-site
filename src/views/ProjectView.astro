@@ -1,6 +1,9 @@
 ---
 import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import Pager from '../components/Pager.astro';
+import StatGrid from '../components/StatGrid.astro';
 import Window from '../components/Window.astro';
 import DemoFrame from '../components/DemoFrame.astro';
 import ProjectClip from '../components/ProjectClip.astro';
@@ -14,7 +17,7 @@ const { project: p, lang, prev, next } = Astro.props;
 const t = useT(lang);
 const { Content } = await render(p);
 const stats = projectRepoStats(p);
-const period = projectPeriod(p, lang, lang === 'da' ? 'nu' : 'now');
+const period = projectPeriod(p, lang);
 const readme = stats?.primary.readmeHtml;
 const work = {
   '@type': stats ? 'SoftwareSourceCode' : 'CreativeWork',
@@ -30,18 +33,21 @@ const ld = graph(work, personLd(Astro.site), breadcrumbLd(Astro.site, [['Project
 
 <Base lang={lang} title={p.data.title} description={p.data.summary[lang]} type="article" jsonLd={ld} ogImage={ogImageFor('projects', p.id)}>
   <article>
-    <header class="wrap head">
-      <a class="back mono" href={localize('/projects', lang)}>← {t('project.back')}</a>
-      <p class="eyebrow">{t(`projects.cat.${p.data.category}`)}</p>
-      <h1 class="glow"><span class="glyph" aria-hidden="true">{p.data.glyph}</span>{p.data.title}</h1>
-      <p class="lede">{p.data.tagline[lang]}</p>
+    <PageHead
+      as="header"
+      back={{ href: localize('/projects', lang), label: t('project.back') }}
+      eyebrow={t(`projects.cat.${p.data.category}`)}
+      glyph={p.data.glyph}
+      title={p.data.title}
+      lede={p.data.tagline[lang]}
+    >
       <AreaChips areas={p.data.areas} lang={lang} />
       <div class="actions">
         {p.data.live && <a class="btn btn--primary" href={p.data.live} rel="noopener">{t('project.live')} ↗</a>}
         {stats && <a class="btn" href={stats.primary.url} rel="noopener">{t('project.repo')} ↗</a>}
         {stats && stats.repos.slice(1).map((r) => <a class="btn" href={r.url} rel="noopener">{r.name} ↗</a>)}
       </div>
-    </header>
+    </PageHead>
 
     <div class="wrap layout">
       <aside class="meta">
@@ -68,10 +74,10 @@ const ld = graph(work, personLd(Astro.site), breadcrumbLd(Astro.site, [['Project
               </ul>
             </div>
           )}
-          {!stats && <p class="faint small mono">{t('project.private')}</p>}
+          {!stats && <p class="faint small mono private">{t('project.private')}</p>}
         </Window>
         <div class="stack">
-          <h2 class="mono small-h">{t('project.stack')}</h2>
+          <h2 class="mono label-h">{t('project.stack')}</h2>
           <ul class="chips">{p.data.stack.map((s) => <li class="chip">{s}</li>)}</ul>
           {stats && stats.primary.topics.length > 0 && (
             <ul class="chips topics">{stats.primary.topics.slice(0, 12).map((s) => <li class="chip">#{s}</li>)}</ul>
@@ -81,11 +87,7 @@ const ld = graph(work, personLd(Astro.site), breadcrumbLd(Astro.site, [['Project
 
       <div class="main">
         {p.data.metrics.length > 0 && (
-          <div class="metrics">
-            {p.data.metrics.map((m) => (
-              <div class="metric"><span class="v glow">{m.value}</span><span class="l mono">{m.label[lang]}</span></div>
-            ))}
-          </div>
+          <StatGrid class="project-stats" stats={p.data.metrics.map((m) => ({ value: m.value, label: m.label[lang] }))} />
         )}
 
         <p class="summary">{p.data.summary[lang]}</p>
@@ -108,18 +110,15 @@ const ld = graph(work, personLd(Astro.site), breadcrumbLd(Astro.site, [['Project
       </div>
     </div>
 
-    <nav class="wrap pager mono" aria-label="Projects">
-      {prev ? <a href={localize(`/projects/${prev.id}`, lang)}>← {prev.data.title}</a> : <span></span>}
-      {next ? <a href={localize(`/projects/${next.id}`, lang)}>{next.data.title} →</a> : <span></span>}
-    </nav>
+    <Pager
+      label="Projects"
+      prev={prev && { href: localize(`/projects/${prev.id}`, lang), label: prev.data.title }}
+      next={next && { href: localize(`/projects/${next.id}`, lang), label: next.data.title }}
+    />
   </article>
 </Base>
 
 <style>
-  .head { padding-block: clamp(2.5rem, 6vw, 4.5rem) 2.5rem; display: grid; gap: 1rem; }
-  .back { font-size: 0.82rem; color: var(--fg-dim); text-decoration: none; }
-  h1 { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-  .glyph { display: inline-grid; place-items: center; width: 1.2em; height: 1.2em; font-size: 0.8em; background: var(--accent); color: var(--accent-ink); text-shadow: none; box-shadow: 5px 5px 0 var(--shadow-c); }
   .actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 0.5rem; }
   .layout { display: grid; grid-template-columns: 19rem 1fr; gap: clamp(1.5rem, 4vw, 3.5rem); align-items: start; }
   .meta { position: sticky; top: 5rem; display: grid; gap: 1.5rem; }
@@ -132,24 +131,16 @@ const ld = graph(work, personLd(Astro.site), breadcrumbLd(Astro.site, [['Project
   .langs ul { list-style: none; padding: 0; margin: 0.6rem 0 0; font-size: 0.75rem; display: grid; gap: 0.2rem; }
   .langs li { display: flex; align-items: center; gap: 0.45rem; }
   .langs i { width: 0.55rem; height: 0.55rem; display: inline-block; }
-  .small { font-size: 0.8rem; margin-top: 1rem; }
-  .small-h { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-faint); margin-bottom: 0.6rem; }
+  .private { margin-top: 1rem; }
   .topics { margin-top: 0.5rem; }
   .topics .chip { color: var(--accent-2); border-style: dashed; }
-  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); border: 2px solid var(--line); background: var(--bg-2); margin-bottom: 2rem; }
-  .metric { padding: 1.1rem 1.3rem; border-right: 1px dashed var(--line); display: grid; gap: 0.2rem; }
-  .metric:last-child { border-right: 0; }
-  .metric .v { font: 800 2rem var(--font-sans); color: var(--accent); letter-spacing: -0.03em; }
-  .metric .l { font-size: 0.72rem; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+  :global(.project-stats) { margin-bottom: 2rem; }
   .summary { font-size: 1.15rem; line-height: 1.6; max-width: 44rem; margin-bottom: 2rem; }
   .note { font-size: 0.8rem; color: var(--fg-faint); border: 1px dashed var(--line); padding: 0.5rem 0.8rem; }
   .readme-box { margin-top: 3rem; }
   .readme-box summary { cursor: pointer; list-style: none; }
   .readme-box summary::-webkit-details-marker { display: none; }
   .readme-box[open] .win__meta { transform: rotate(180deg); }
-  .pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: 4rem; padding-top: 1.5rem; border-top: 2px dashed var(--line); font-size: 0.85rem; }
-  .pager a { text-decoration: none; color: var(--fg-dim); }
-  .pager a:hover { color: var(--accent); }
   @media (max-width: 900px) {
     .layout { grid-template-columns: 1fr; }
     .meta { position: static; }

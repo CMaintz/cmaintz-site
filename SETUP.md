@@ -9,7 +9,7 @@ npm install
 npm run dev        # http://localhost:4321 (search only works after a build)
 npm run build      # site + search index -> dist/
 npm run preview    # the built site in the real Workers runtime
-npm run check      # types + <=18-line functions + comments SQL security tests
+npm run check      # types, code-size rules (functions <= 18 lines, files <= 300, no fooAndBar names), comments SQL tests
 ```
 
 Build-time values (`SITE_URL`, every `PUBLIC_*`) are baked in when the site is built. Put them in `.env` for local builds, and in Cloudflare's **build** variables for deploys. Changing one means rebuilding. Server secrets (`RESEND_API_KEY`, `TURNSTILE_SECRET_KEY`) are Worker **secrets** and don't need a rebuild.

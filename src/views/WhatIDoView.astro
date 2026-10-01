@@ -1,6 +1,8 @@
 ---
 // One "What I do" area: principles, related projects, matching services and posts.
 import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import ServiceCard from '../components/ServiceCard.astro';
 import Window from '../components/Window.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import PostItem from '../components/PostItem.astro';
@@ -27,12 +29,13 @@ const ld = graph(
 ---
 
 <Base lang={lang} title={a.label[lang]} description={a.intro[lang]} jsonLd={ld} ogImage={ogImageFor('areas', area)}>
-  <section class="wrap head">
-    <a class="back mono" href={localize('/#focus-h', lang)}>← {t('wid.title')}</a>
-    <p class="eyebrow">~/what-i-do/{area}</p>
-    <h1 class="glow"><span class="glyph" aria-hidden="true">{a.glyph}</span>{a.label[lang]}</h1>
-    <p class="lede">{a.intro[lang]}</p>
-  </section>
+  <PageHead
+    back={{ href: localize('/#focus-h', lang), label: t('wid.title') }}
+    eyebrow={`~/what-i-do/${area}`}
+    glyph={a.glyph}
+    title={a.label[lang]}
+    lede={a.intro[lang]}
+  />
 
   <section class="wrap section" aria-labelledby="how-h">
     <div class="section-head"><h2 id="how-h"><span class="idx">01</span>{t('wid.how')}</h2></div>
@@ -60,13 +63,7 @@ const ld = graph(
     <section class="wrap section" aria-labelledby="offer-h">
       <div class="section-head"><h2 id="offer-h"><span class="idx">03</span>{t('wid.for_you')}</h2></div>
       <div class="grid grid-2">
-        {offers.map((s) => (
-          <Window title={`${s.id}.exe`} as="article" class="reveal">
-            <p class="from mono">{t('services.from')} <strong>{s.from[lang]}</strong></p>
-            <h3>{s.title[lang]}</h3>
-            <p class="dim body">{s.body[lang]}</p>
-          </Window>
-        ))}
+        {offers.map((s) => <ServiceCard service={s} lang={lang} deliverables={false} level={3} />)}
       </div>
       <p class="cta"><a class="btn btn--primary" href={localize('/contact', lang) + '?topic=consulting'}>{t('wid.hire')} <span class="arrow">→</span></a>
         <a class="btn" href={localize('/services', lang)}>{t('nav.services')}</a></p>
@@ -85,16 +82,10 @@ const ld = graph(
 </Base>
 
 <style>
-  .head { padding-block: clamp(3rem, 7vw, 5rem) 1rem; display: grid; gap: 1rem; }
-  .back { font-size: 0.82rem; color: var(--fg-dim); text-decoration: none; }
-  h1 { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-  .glyph { display: inline-grid; place-items: center; width: 1.2em; height: 1.2em; font-size: 0.75em; background: var(--accent); color: var(--accent-ink); text-shadow: none; box-shadow: 5px 5px 0 var(--shadow-c); }
   h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
   .body { font-size: 0.97rem; }
   .proof { margin-top: 0.9rem; font-size: 0.78rem; color: var(--fg-faint); }
   .proof a { color: var(--accent); text-decoration: none; }
-  .from { font-size: 0.75rem; color: var(--fg-faint); margin-bottom: 0.4rem; }
-  .from strong { color: var(--fg); }
   .cta { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.8rem; }
   .others { display: flex; gap: 1.2rem; flex-wrap: wrap; font-size: 0.85rem; padding-top: 1.5rem; border-top: 2px dashed var(--line); }
   .others a { color: var(--fg-dim); text-decoration: none; }

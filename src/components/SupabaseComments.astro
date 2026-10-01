@@ -24,7 +24,7 @@ const text = {
   <div class="auth" data-auth></div>
   <form class="form" hidden>
     <label class="visually-hidden" for="comment-body">{t('comments.placeholder')}</label>
-    <textarea id="comment-body" name="body" rows="4" minlength="2" maxlength="4000" required placeholder={t('comments.placeholder')}></textarea>
+    <textarea class="field" id="comment-body" name="body" rows="4" minlength="2" maxlength="4000" required placeholder={t('comments.placeholder')}></textarea>
     <button class="btn btn--primary btn--sm" type="submit">{t('comments.post')}</button>
   </form>
   <p class="status mono" data-status role="status"></p>
@@ -61,8 +61,6 @@ const text = {
   .auth :global(.providers) { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.6rem; }
   .form { display: grid; gap: 0.7rem; justify-items: start; margin-top: 1rem; }
   .form[hidden] { display: none; }
-  .form textarea { width: 100%; font: 1rem var(--font-sans); color: var(--fg); background: var(--bg); border: 2px solid var(--line); padding: 0.65rem 0.75rem; resize: vertical; }
-  .form textarea:focus { outline: none; border-color: var(--accent); box-shadow: 4px 4px 0 var(--accent); }
   .status { font-size: 0.8rem; color: var(--warn); min-height: 1em; margin-top: 0.5rem; }
   .privacy { font-size: 0.75rem; margin-top: 0.8rem; }
 </style>

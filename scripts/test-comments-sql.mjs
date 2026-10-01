@@ -68,12 +68,22 @@ async function checks(db) {
   };
 }
 
-async function moderationChecks(db) {
+async function hiddenAreInvisible(db) {
   await db.exec("update public.site_comments set status = 'hidden'");
-  const hiddenInvisible = (await as(db, 'anon', null, 'select * from public.site_comments')).rows.length === 0;
+  const invisible = (await as(db, 'anon', null, 'select * from public.site_comments')).rows.length === 0;
   await db.exec("update public.site_comments set status = 'visible'");
-  const ownDelete = (await as(db, 'authenticated', ALICE, 'delete from public.site_comments returning id')).rows.length === 1;
-  return { 'hidden comments are invisible': hiddenInvisible, 'authors can delete own': ownDelete };
+  return invisible;
+}
+
+async function authorsCanDeleteOwn(db) {
+  return (await as(db, 'authenticated', ALICE, 'delete from public.site_comments returning id')).rows.length === 1;
+}
+
+async function moderationChecks(db) {
+  return {
+    'hidden comments are invisible': await hiddenAreInvisible(db),
+    'authors can delete own': await authorsCanDeleteOwn(db),
+  };
 }
 
 async function rateLimited(db) {

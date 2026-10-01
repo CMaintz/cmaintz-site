@@ -1,8 +1,7 @@
 // Interaction smoke test against the built site: command palette, theme and
 // CRT toggles, project filters, click-to-load demo, language switch.
 // Usage: npm run build && node scripts/smoke-interactions.mjs
-import { chromium } from 'playwright';
-import { serve } from './serve-static.mjs';
+import { withSiteBrowser } from './lib/browser.mjs';
 
 const PORT = 4325;
 const BASE = `http://localhost:${PORT}`;
@@ -89,13 +88,12 @@ async function run(page, [name, check]) {
 }
 
 async function main() {
-  const server = await serve(PORT);
-  const browser = await chromium.launch({ channel: process.env.PW_CHANNEL ?? 'msedge' });
-  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-  const results = [];
-  for (const entry of Object.entries(CHECKS)) results.push(await run(page, entry));
-  await browser.close();
-  server.close();
+  const results = await withSiteBrowser(PORT, async (browser) => {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    const out = [];
+    for (const entry of Object.entries(CHECKS)) out.push(await run(page, entry));
+    return out;
+  });
   process.exit(results.every(Boolean) ? 0 : 1);
 }
 

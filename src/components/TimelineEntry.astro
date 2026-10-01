@@ -1,0 +1,17 @@
+---
+// One entry on the /about timeline: date range above a retro window.
+// Must sit inside an <ol class="timeline"> (styles live in global.css).
+import Window from './Window.astro';
+
+interface Props { when: string; title: string }
+const { when, title } = Astro.props;
+---
+
+<li class="reveal">
+  <div class="when mono">{when}</div>
+  <Window title={title} as="article"><slot /></Window>
+</li>
+
+<style>
+  .when { font-size: 0.8rem; color: var(--fg-faint); text-transform: uppercase; letter-spacing: 0.05em; }
+</style>

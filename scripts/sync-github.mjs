@@ -67,14 +67,13 @@ async function fetchReadmeHtml(repo) {
 function absolutizeLinks(html, repo, branch) {
   const blob = `https://github.com/${LOGIN}/${repo}/blob/${branch}/`;
   const raw = `https://raw.githubusercontent.com/${LOGIN}/${repo}/${branch}/`;
-  return (
-    html
-      .replace(/(<img[^>]*?\ssrc=")(?!https?:|data:|\/\/)\.?\/?([^"]+)"/g, `$1${raw}$2"`)
-      .replace(/(<a[^>]*?\shref=")(?!https?:|#|mailto:|\/\/)\.?\/?([^"]+)"/g, `$1${blob}$2"`)
-      // GitHub's user-content anchor prefix breaks in-page links outside github.com.
-      .replace(/id="user-content-/g, 'id="')
-  );
+  return html
+    .replace(/(<img[^>]*?\ssrc=")(?!https?:|data:|\/\/)\.?\/?([^"]+)"/g, `$1${raw}$2"`)
+    .replace(/(<a[^>]*?\shref=")(?!https?:|#|mailto:|\/\/)\.?\/?([^"]+)"/g, `$1${blob}$2"`);
 }
+
+/** GitHub's user-content anchor prefix breaks in-page links outside github.com. */
+const fixAnchors = (html) => html.replace(/id="user-content-/g, 'id="');
 
 /** Site style rule: plain hyphens only, no em/en dashes. */
 const DASHES = new RegExp(`[${String.fromCharCode(0x2013, 0x2014)}]`, 'g'); // en + em dash
@@ -109,7 +108,7 @@ function repoMetadata(r) {
 
 async function toRepo(r) {
   const html = await fetchReadmeHtml(r.name);
-  const readme = html && normalizeDashes(absolutizeLinks(html, r.name, r.defaultBranchRef?.name ?? 'main'));
+  const readme = html && normalizeDashes(fixAnchors(absolutizeLinks(html, r.name, r.defaultBranchRef?.name ?? 'main')));
   return { ...repoMetadata(r), readmeHtml: readme };
 }
 

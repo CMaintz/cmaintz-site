@@ -1,5 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import StatGrid from '../components/StatGrid.astro';
+import TimelineEntry from '../components/TimelineEntry.astro';
 import Window from '../components/Window.astro';
 import Portrait from '../components/Portrait.astro';
 import JobEntry from '../components/JobEntry.astro';
@@ -39,30 +42,21 @@ const highlights = [
 ---
 
 <Base lang={lang} title={t('about.title')} description={t('about.lede')} jsonLd={ld}>
-  <section class="wrap head">
-    <div>
-      <p class="eyebrow">~/about</p>
-      <h1>{t('about.title')}</h1>
-      <p class="lede">{t('about.lede')}</p>
-      <div class="actions">
-        <a class="btn btn--primary" href={lang === 'da' ? '/cv-da.pdf' : '/cv.pdf'} download>{t('about.download')} ↓</a>
-        <a class="btn" href={localize('/cv', lang)}>{t('about.print')}</a>
-        <a class="btn btn--ghost" href={localize('/contact', lang)}>{t('nav.contact')} →</a>
-      </div>
+  <PageHead eyebrow="~/about" title={t('about.title')} lede={t('about.lede')}>
+    <div class="actions">
+      <a class="btn btn--primary" href={lang === 'da' ? '/cv-da.pdf' : '/cv.pdf'} download>{t('about.download')} ↓</a>
+      <a class="btn" href={localize('/cv', lang)}>{t('about.print')}</a>
+      <a class="btn btn--ghost" href={localize('/contact', lang)}>{t('nav.contact')} →</a>
     </div>
-    <Portrait alt={lang === 'da' ? 'Portræt af Christoffer Maintz' : 'Portrait of Christoffer Maintz'} />
-  </section>
+    <Portrait slot="aside" alt={lang === 'da' ? 'Portræt af Christoffer Maintz' : 'Portrait of Christoffer Maintz'} />
+  </PageHead>
 
   <section class="wrap intro">
     <div class="prose">
       {intro.map((p) => <p>{p}</p>)}
       <p class="mono faint small">{t('about.funfact')}</p>
     </div>
-    <div class="stats">
-      {highlights.map((h) => (
-        <div class="stat"><span class="v glow">{h.v}</span><span class="l mono">{h.l[lang]}</span></div>
-      ))}
-    </div>
+    <StatGrid stacked stats={highlights.map((h) => ({ value: h.v, label: h.l[lang] }))} />
   </section>
 
   <section class="wrap section values-sec" aria-labelledby="values-h">
@@ -87,13 +81,10 @@ const highlights = [
     <div class="section-head"><h2 id="edu-h"><span class="idx">03</span>{t('about.education')}</h2></div>
     <ol class="timeline">
       {education.map((e) => (
-        <li class="reveal">
-          <div class="when mono">{monthRange(e.start, e.end, lang)}</div>
-          <Window title={e.institution} as="article">
-            <h3>{e.degree[lang]}</h3>
-            {e.note && <p class="dim">{e.note[lang]}</p>}
-          </Window>
-        </li>
+        <TimelineEntry when={monthRange(e.start, e.end, lang)} title={e.institution}>
+          <h3>{e.degree[lang]}</h3>
+          {e.note && <p class="dim">{e.note[lang]}</p>}
+        </TimelineEntry>
       ))}
     </ol>
     <p class="courses mono">
@@ -124,32 +115,20 @@ const highlights = [
 </Base>
 
 <style>
-  .head { display: grid; grid-template-columns: 1fr auto; gap: 3rem; align-items: center; padding-block: clamp(3rem, 7vw, 5rem) 2rem; }
-  .head > div { display: grid; gap: 1rem; }
   .actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 0.8rem; }
   .intro { display: grid; grid-template-columns: 1fr 18rem; gap: 3rem; align-items: start; padding-block: 1.5rem; }
-  .stats { display: grid; border: 2px solid var(--line); background: var(--bg-2); }
-  .stat { display: grid; padding: 1rem 1.2rem; border-bottom: 1px dashed var(--line); }
-  .stat:last-child { border-bottom: 0; }
-  .stat .v { font: 800 1.8rem var(--font-sans); color: var(--accent); letter-spacing: -0.03em; }
-  .stat .l { font-size: 0.72rem; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.04em; }
   .values-sec { padding-bottom: 0; }
   .values { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1.5rem 2.5rem; }
   .values li { display: grid; grid-template-columns: 2.4rem 1fr; gap: 0.8rem; }
   .values .n { color: var(--accent); font-size: 0.9rem; padding-top: 0.2rem; }
   .values h3 { font-size: 1.15rem; margin-bottom: 0.35rem; }
-  .timeline { list-style: none; margin: 0; padding: 0 0 0 1.5rem; border-left: 2px dashed var(--line); display: grid; gap: 2rem; }
-  .timeline > :global(li) { position: relative; display: grid; gap: 0.6rem; }
-  .timeline > :global(li)::before { content: ''; position: absolute; left: calc(-1.5rem - 7px); top: 0.3rem; width: 12px; height: 12px; background: var(--accent); box-shadow: var(--glow); }
-  .when { font-size: 0.8rem; color: var(--fg-faint); text-transform: uppercase; letter-spacing: 0.05em; }
   .timeline h3 { margin-bottom: 0.4rem; }
   .earlier { margin-top: 2rem; }
   .earlier summary { cursor: pointer; font-size: 0.85rem; color: var(--fg-dim); padding: 0.6rem 0.9rem; border: 1px dashed var(--line); display: inline-block; margin-bottom: 1.5rem; }
   .earlier summary:hover { color: var(--accent); border-color: var(--accent); }
   .courses { margin-top: 1.5rem; font-size: 0.85rem; color: var(--fg-dim); }
-  .small { font-size: 0.8rem; }
   @media (max-width: 860px) {
-    .head, .intro { grid-template-columns: 1fr; }
-    .head :global(.avatar) { order: -1; width: 8rem; }
+    .intro { grid-template-columns: 1fr; }
+    :global(.page-head .avatar) { order: -1; width: 8rem; }
   }
 </style>

@@ -1,0 +1,22 @@
+---
+// Big-number highlights: a row (project pages) or a stacked column (/about).
+interface Props { stats: { value: string; label: string }[]; stacked?: boolean; class?: string }
+const { stats, stacked = false, class: cls } = Astro.props;
+---
+
+<div class:list={['stat-grid', cls, { stacked }]}>
+  {stats.map((s) => (
+    <div class="stat"><span class="v glow">{s.value}</span><span class="l mono">{s.label}</span></div>
+  ))}
+</div>
+
+<style>
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); border: 2px solid var(--line); background: var(--bg-2); }
+  .stacked { grid-template-columns: 1fr; }
+  .stat { display: grid; gap: 0.2rem; padding: 1.1rem 1.3rem; border-right: 1px dashed var(--line); }
+  .stat:last-child { border-right: 0; }
+  .stacked .stat { border-right: 0; border-bottom: 1px dashed var(--line); padding: 1rem 1.2rem; }
+  .stacked .stat:last-child { border-bottom: 0; }
+  .v { font: 800 1.9rem var(--font-sans); color: var(--accent); letter-spacing: -0.03em; }
+  .l { font-size: 0.72rem; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+</style>

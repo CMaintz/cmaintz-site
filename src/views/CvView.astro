@@ -50,7 +50,7 @@ const L = {
       <h2>{L.projects}</h2>
       {projects.map((p) => (
         <div class="item">
-          <div class="row"><h3>{p.data.title} - {p.data.tagline[lang]}</h3><span class="date">{projectPeriod(p, lang, lang === 'da' ? 'nu' : 'present')}</span></div>
+          <div class="row"><h3>{p.data.title} - {p.data.tagline[lang]}</h3><span class="date">{projectPeriod(p, lang)}</span></div>
           <p>{p.data.summary[lang]}</p>
           <p class="tech">{p.data.stack.join(' · ')}</p>
         </div>
