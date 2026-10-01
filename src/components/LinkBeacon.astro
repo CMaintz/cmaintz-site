@@ -1,0 +1,18 @@
+---
+// Landing from a tracked application link (/r/<code> redirects here with
+// ?via=<code>): report it once, then clean the address bar. Stores nothing in
+// the browser. Link scanners rarely run scripts, so this marks a real visit.
+---
+
+<script>
+  function reportVia() {
+    const url = new URL(location.href);
+    const via = url.searchParams.get('via');
+    if (!via) return;
+    navigator.sendBeacon('/api/link-seen', via);
+    url.searchParams.delete('via');
+    history.replaceState(history.state, '', url);
+  }
+
+  reportVia();
+</script>

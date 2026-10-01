@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /doom/
+Disallow: /r/
 
 Sitemap: https://maintz.dev/sitemap-index.xml
