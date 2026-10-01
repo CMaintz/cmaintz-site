@@ -56,6 +56,12 @@
           canvas.focus();
           callMain(['-iwad', 'doom1.wad', '-window', '-nogui', '-nomusic', '-config', 'default.cfg']);
         },
+        // Quitting from the game menu: tell the launcher to close its window.
+        // Emscripten calls quit on every exit path; rethrow so the engine stops.
+        quit: function (status, toThrow) {
+          parent.postMessage({ type: 'doom:quit' }, location.origin);
+          throw toThrow;
+        },
         print: function () {},
         printErr: function () {},
         setStatus: function () {},
