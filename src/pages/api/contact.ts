@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { RESEND_API_KEY, TURNSTILE_SECRET_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL } from 'astro:env/server';
+import { PUBLIC_TURNSTILE_SITE_KEY } from 'astro:env/client';
 import { parseInquiry, validationError, isHoneypotHit, passesTurnstile, sendInquiry, type Inquiry } from '../../lib/contact';
 
 export const prerender = false;
@@ -19,7 +20,7 @@ type Outcome = { status: number; error?: string };
 /** Bots get a silent 200 (honeypot) or a 403 (captcha); humans get null. */
 async function botOutcome(form: FormData, ip: string | null): Promise<Outcome | null> {
   if (isHoneypotHit(form)) return { status: 200 };
-  if (!(await passesTurnstile(form, TURNSTILE_SECRET_KEY, ip))) return { status: 403, error: 'captcha' };
+  if (!(await passesTurnstile(form, TURNSTILE_SECRET_KEY, ip, PUBLIC_TURNSTILE_SITE_KEY))) return { status: 403, error: 'captcha' };
   return null;
 }
 

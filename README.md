@@ -1,8 +1,8 @@
 # cmaintz-site
 
-Personal site of Christoffer Maintz: projects, blog, CV, services and contact. Built with Astro, deployed on Cloudflare Workers, in a retro-future / CRT style.
+My personal site: projects, blog, CV, services and contact, in English and Danish. Astro on Cloudflare Workers, dressed up in a retro CRT look.
 
-**Live:** https://maintz.dev
+Live at https://maintz.dev. (If you find the Konami code works, that's on purpose.)
 
 ![The maintz.dev home page in the dark theme](docs/screenshot-home.png)
 
@@ -13,9 +13,11 @@ npm run build      # site + search index -> dist/
 npm run preview    # Workers runtime locally
 npm run check      # types, code-size rules (functions <= 18 lines, files <= 300), comments SQL tests
 npm run shots      # screenshot smoke test (desktop + mobile)
+npm test           # unit tests (Vitest); npm run test:coverage for coverage
+npm run smoke      # interaction smoke test against the build (Playwright)
 ```
 
-- **SETUP.md** - domain, deploy, contact form, comments, analytics, content workflows.
+Domain, deploy, contact form, comments, analytics and content workflows are in [SETUP.md](SETUP.md).
 
 ## Where things live
 

@@ -17,6 +17,7 @@ npm-debug.log*
 
 # local tooling output
 screenshots/
+coverage/
 
 .DS_Store
 supabase/.temp/
