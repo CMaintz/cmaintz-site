@@ -35,10 +35,10 @@ async function filterHides(page) {
 }
 
 async function demoLoads(page) {
-  await page.goto(`${BASE}/projects/reel-scout`);
+  await page.goto(`${BASE}/projects/movie-db`);
   await page.click('[data-demo] .load');
   const src = await page.getAttribute('[data-demo] iframe', 'src');
-  return src === 'https://cmaintz.github.io/reel-scout/';
+  return src === 'https://cmaintz.github.io/movie-db-webapp/';
 }
 
 async function langSwitches(page) {
@@ -66,7 +66,7 @@ async function paletteKeyboard(page) {
   await page.keyboard.press('Tab');
   const completed = await page.inputValue('dialog.cmdk input');
   await page.keyboard.press('Enter');
-  await page.waitForURL('**/projects/jev-**');
+  await page.waitForURL(/\/(projects|CMaintz)\/jev-/, { waitUntil: 'commit' });
   return completed === highlighted && highlighted.startsWith('jev-');
 }
 
@@ -79,7 +79,16 @@ async function terminalTabs(page) {
   return visible && links > 0 && (await page.isHidden('#panel-whoami'));
 }
 
-const CHECKS = { terminalTabs, paletteNavigates, paletteKeyboard, togglesFlip, filterHides, demoLoads, langSwitches, postLangSwitchLandsOnIndex };
+const CHECKS = {
+  terminalTabs,
+  paletteNavigates,
+  paletteKeyboard,
+  togglesFlip,
+  filterHides,
+  demoLoads,
+  langSwitches,
+  postLangSwitchLandsOnIndex,
+};
 
 async function run(page, [name, check]) {
   const ok = await check(page).catch((e) => (console.error(e.message), false));

@@ -12,7 +12,7 @@ category: personal
 order: 10
 featured: true
 role: Sole developer
-context: Personal project · ReelScout spin-off
+context: Personal project · MovieDB spin-off
 start: 2026-05
 end: 2026-06
 stack: [React 19, TypeScript, Vite, TanStack Query, Cloudflare Workers, Vitest]
