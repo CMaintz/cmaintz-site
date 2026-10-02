@@ -21,8 +21,8 @@ live: https://www.illux.dk/illu-grafica/eye-on-the-ball/?material=17782-mat-fine
 metrics:
   - value: "3,000+"
     label: { en: products enriched, da: produkter beriget }
-  - value: "1,000+"
-    label: { en: hours of manual work removed, da: timers manuelt arbejde sparet }
+  - value: "100s"
+    label: { en: of hours of manual work saved, da: af timers manuelt arbejde sparet }
   - value: "4"
     label: { en: languages per call, da: sprog pr. kald }
 ---
@@ -55,6 +55,6 @@ It started as an ambitious exam project where only part was expected to get buil
 
 ## Result
 
-For most of the catalogue it **eliminated manual enrichment work entirely** across **3,000+ products** at 15-20 minutes each: **1,000+ hours** on the existing catalogue alone. It became a **business-critical part of Illux's platform**, is still in daily use, and laid the foundation for an upcoming crowdsourced artwork platform. The visualization shipped with the new storefront, with the aim of lifting product-page conversion and reducing returns caused by size or appearance mismatch.
+For most of the catalogue it **eliminated manual enrichment work entirely** across **3,000+ products**, saving **hundreds of hours** of manual work. It became a **business-critical part of Illux's platform**, is still in daily use, and laid the foundation for an upcoming crowdsourced artwork platform. The visualization shipped with the new storefront, with the aim of lifting product-page conversion and reducing returns caused by size or appearance mismatch.
 
 > The public repository is the version handed in for my exam, not the polished version running for the customer.

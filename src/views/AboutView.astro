@@ -21,12 +21,12 @@ const t = useT(lang);
 const intro = {
   en: [
     'I’m a developer in Aarhus who likes the unglamorous machinery that decides whether a team ships fast and safely: the pipeline, the gate, the tooling, the paved road. Lately that includes making AI coding agents genuinely useful without letting them quietly lower the bar.',
-    'During my internship at WEXO I built a generative-AI platform for Shopware 6 as sole developer. It enriches a 3,000+ product catalogue in four languages, removed over a thousand hours of manual work, and is still business-critical today. I now work as a consultant on DevOps, automation and AI-assisted development, and build open-source developer tooling on the side: Foundry, a polyglot quality gate for AI-assisted development, and the jev-tools family.',
+    'During my internship at WEXO I built a generative-AI platform for Shopware 6 as sole developer. It enriches a 3,000+ product catalogue in four languages, has saved hundreds of hours of manual work, and is still business-critical today. I now work as a consultant on DevOps, automation and AI-assisted development, and build open-source developer tooling on the side: Foundry, a polyglot quality gate for AI-assisted development, and the jev-tools family.',
     'Before software I spent six years in retail leadership, which taught me more about processes, people and prioritising under pressure than any course. I’m looking for a role in DevOps, developer experience, platform engineering or AI enablement, and take on freelance work in the meantime.',
   ],
   da: [
     'Jeg er udvikler i Aarhus og holder af det uglamourøse maskineri, der afgør, om et team leverer hurtigt og sikkert: pipelinen, gaten, værktøjerne, den asfalterede vej. For nylig handler det også om at gøre AI-kodeagenter reelt nyttige uden at lade dem sænke barren i det stille.',
-    'I min praktik hos WEXO byggede jeg som eneste udvikler en generativ AI-platform til Shopware 6. Den beriger et katalog på 3.000+ produkter på fire sprog, har fjernet over tusind timers manuelt arbejde og er stadig forretningskritisk i dag. Nu arbejder jeg som konsulent med DevOps, automatisering og AI-assisted development og bygger open source-udviklerværktøjer ved siden af: Foundry, en sprog-agnostisk kvalitets-gate til AI-assisteret udvikling, og jev-tools-familien.',
+    'I min praktik hos WEXO byggede jeg som eneste udvikler en generativ AI-platform til Shopware 6. Den beriger et katalog på 3.000+ produkter på fire sprog, har sparet hundredvis af timers manuelt arbejde og er stadig forretningskritisk i dag. Nu arbejder jeg som konsulent med DevOps, automatisering og AI-assisted development og bygger open source-udviklerværktøjer ved siden af: Foundry, en sprog-agnostisk kvalitets-gate til AI-assisteret udvikling, og jev-tools-familien.',
     'Før software brugte jeg seks år på ledelse i detailhandlen, hvilket lærte mig mere om processer, mennesker og prioritering under pres end noget kursus. Jeg søger en rolle inden for DevOps, developer experience, platform engineering eller AI-enablement og tager freelanceopgaver i mellemtiden.',
   ],
 }[lang];
@@ -34,7 +34,7 @@ const intro = {
 const ld = graph({ '@type': 'ProfilePage', mainEntity: { '@id': `${Astro.site}#person` } }, personLd(Astro.site));
 
 const highlights = [
-  { v: '1,000+', l: { en: 'hours of manual work removed at Illux', da: 'timers manuelt arbejde fjernet hos Illux' } },
+  { v: '100s', l: { en: 'of hours of manual work saved at Illux', da: 'af timers manuelt arbejde sparet hos Illux' } },
   { v: '3,000+', l: { en: 'products enriched by AI in production', da: 'produkter beriget af AI i produktion' } },
   { v: '6+ yrs', l: { en: 'retail leadership before tech', da: 'ledelse i detail før tech' } },
   { v: String(github.repos.length), l: { en: 'public repositories', da: 'offentlige repositories' } },
