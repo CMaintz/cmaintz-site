@@ -14,7 +14,6 @@ featured: true
 role: Sole developer
 context: Personal project · MovieDB spin-off
 start: 2026-05
-end: 2026-06
 stack: [React 19, TypeScript, Vite, TanStack Query, Cloudflare Workers, Vitest]
 repos: [movie-wheel]
 demo: https://movie-wheel.cmaintz-site.workers.dev
@@ -25,5 +24,7 @@ live: https://movie-wheel.cmaintz-site.workers.dev
 
 - **Server-side TMDB proxy** - one platform-neutral core behind a Cloudflare Worker (a Vercel adapter works too). It injects the key, 403s foreign origins, allow-lists paths segment by segment, and rate-limits to 60/min per IP
 - **Genre combos** - Rom-Com, Horror Comedy, Action Thriller and more, each requiring both genres. TMDB can't express "(A and B) or C", so every selection is queried separately and mixed
-- **Tested wheel math** - landing angles are pure functions with a property test, which caught repeat spins landing on the wrong poster. 111 Vitest tests, ~94% line coverage, CI on every PR
+- **Better filters** - a minimum vote count (default 100) so a 9.0 with 12 votes stays off the wheel, and original language as a filter. Combos TV can't match are greyed out
+- **Result card** with the director (or creator for TV) and a trailer link
+- **Tested wheel math** - landing angles are pure functions with a property test, which caught repeat spins landing on the wrong poster. The shuffle is a proper Fisher-Yates. Vitest with an 88% line-coverage floor, CI on every PR
 - **Spin as a state machine** - `idle → loading → spinning → stopped`, eased with easeOutCubic, posters preloaded with `crossOrigin` so they can be drawn on the canvas
