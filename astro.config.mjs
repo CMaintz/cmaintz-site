@@ -22,6 +22,10 @@ export default defineConfig({
   trailingSlash: 'ignore',
   // No server sessions needed; avoids provisioning a KV namespace on Cloudflare.
   session: false,
+  redirects: {
+    '/projects/reel-scout': '/projects/movie-db',
+    '/da/projects/reel-scout': '/da/projects/movie-db',
+  },
   i18n: {
     locales: ['en', 'da'],
     defaultLocale: 'en',
