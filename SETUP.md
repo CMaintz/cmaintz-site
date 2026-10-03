@@ -27,9 +27,12 @@ Public repo `CMaintz/cmaintz-site`. CI (`ci.yml`) builds and runs `npm run check
 3. **Claude:** `npm run build && npx wrangler deploy`. Wrangler prints the live URL, `https://cmaintz-site.<your-subdomain>.workers.dev`.
 4. **Claude:** put that URL in `.env` as `SITE_URL=...`, rebuild, redeploy (so canonical links, RSS, sitemap and share cards point at the real host).
 
-### Automatic deploys from GitHub (optional, recommended)
+### Automatic deploys from GitHub
 
-**You:** Workers & Pages -> `cmaintz-site` -> Settings -> Builds -> Connect the GitHub repo. Build command `npm run build`, deploy command `npx wrangler deploy`. Under **Build variables**, add `SITE_URL` and every `PUBLIC_*` value you use. After that, every push to `main` deploys.
+The `deploy` job in `ci.yml` runs on every push to `main` once the build, tests and smoke test pass, so a broken build never ships. It needs:
+
+- **Secret** `CLOUDFLARE_API_TOKEN`: Cloudflare -> My Profile -> API Tokens -> Create Token -> "Edit Cloudflare Workers" template, scoped to this account and the `maintz.dev` zone.
+- **Variables** `CLOUDFLARE_ACCOUNT_ID`, `SITE_URL` and the `PUBLIC_*` values from `.env`. They end up in the client bundle anyway, so they're variables, not secrets. Add any new `PUBLIC_*` value to both the repo variables and the deploy job's `env`.
 
 ## Phase 3 - Contact form (Resend)
 
@@ -78,7 +81,6 @@ Free tier: 2 active projects, 50,000 monthly active users, 500 MB database. Free
 2. **You:** Workers & Pages -> `cmaintz-site` -> Settings -> Domains & Routes -> Add custom domain.
 3. **Claude:** `SITE_URL=https://yourdomain.dk`, rebuild, redeploy; add the domain to Turnstile hostnames and Supabase redirect URLs; verify it in Resend and switch the sender address.
 
-
 ## Phase 8 - Tracked application links
 
 One short link per job application (`maintz.dev/r/<code>`), so you can see whether it was opened. Codes and company labels live only in Supabase, never in this public repo.
@@ -99,9 +101,9 @@ What's stored per event: the code, hit or seen, a bot flag, the country Cloudfla
 | New blog post                                         | add `src/content/blog/<slug>.mdx` (see `hello-world.mdx`); `draft: true` hides it in production                |
 | Refresh GitHub data + READMEs                         | `npm run sync` (CI also opens a weekly PR)                                                                     |
 | Regenerate CV PDFs after editing `src/data/resume.ts` | `npm run build && npm run cv:pdf`                                                                              |
-| Regenerate share images (after a new post or project) | `npm run build && npm run og && npm run build` |
+| Regenerate share images (after a new post or project) | `npm run build && npm run og && npm run build`                                                                 |
 | Add a looping clip to a project                       | `npm run clip -- <recording.mp4> <name> [start] [end]`, then `video: /media/<name>` in the project frontmatter |
-| Redeploy the www redirect (rarely needed)             | `npx wrangler deploy --config redirect-www/wrangler.jsonc` |
+| Redeploy the www redirect (rarely needed)             | `npx wrangler deploy --config redirect-www/wrangler.jsonc`                                                     |
 | Visual / interaction smoke tests                      | `npm run build && npm run shots && npm run smoke`                                                              |
-| Tracked application links                             | `npm run links -- add "<label>" [/path]`, `npm run links -- list`                                          |
+| Tracked application links                             | `npm run links -- add "<label>" [/path]`, `npm run links -- list`                                              |
 | Change pricing                                        | `HOURLY_RATE_DKK` and `fixed(...)` in `src/data/services.ts`                                                   |
