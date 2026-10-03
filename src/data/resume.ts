@@ -67,7 +67,7 @@ export const work: Job[] = [
     highlights: {
       en: [
         'Built Illux Product AI end to end as sole developer: a Shopware 6 plugin generating multilingual descriptions, SEO, categories and tags from product images via generative-AI APIs behind a provider-agnostic abstraction layer.',
-        'Eliminated manual enrichment for most of a 3,000+ product catalogue at 15-20 minutes per product: 1,000+ hours on the existing catalogue alone. Business-critical and still in daily use.',
+        'Eliminated manual enrichment for most of a 3,000+ product catalogue, saving hundreds of hours of manual work. Business-critical and still in daily use.',
         'Asynchronous processing on Symfony Messenger + RabbitMQ with batching, retry with exponential backoff, idempotency, rate limiting and a full audit trail; configurable confidence model with human-in-the-loop approval.',
         'Artwork visualisation: shoppers preview art in curated rooms or a photo of their own, composited per scene and streamed live over server-sent events.',
         'Email template preview platform rendering transactional mail against real orders with client emulation, removing the need for manual test orders.',
@@ -75,7 +75,7 @@ export const work: Job[] = [
       ],
       da: [
         'Byggede Illux Product AI end-to-end som eneste udvikler: et Shopware 6-plugin, der genererer flersprogede beskrivelser, SEO, kategorier og tags ud fra produktbilleder via generative AI-API’er bag et provider-agnostisk abstraktionslag.',
-        'Eliminerede det manuelle berigelsesarbejde for størstedelen af et katalog på 3.000+ produkter med 15-20 min sparet pr. produkt: 1.000+ arbejdstimer alene på det eksisterende katalog. Forretningskritisk og fortsat i daglig drift.',
+        'Eliminerede det manuelle berigelsesarbejde for størstedelen af et katalog på 3.000+ produkter og sparede hundredvis af arbejdstimer. Forretningskritisk og fortsat i daglig drift.',
         'Asynkron behandling via Symfony Messenger + RabbitMQ med batching, retry med exponential backoff, idempotens, rate limiting og fuldt audit trail; konfigurerbar confidence-model med human-in-the-loop-godkendelse.',
         'Artwork-visualisering: kunder ser kunstværket i kuraterede rum eller et foto af deres eget, kompositeret pr. scene og streamet live via Server-Sent Events.',
         'Preview-system til e-mailskabeloner, der renderer transaktionsmails mod reelle ordrer med klient-emulering og fjerner behovet for manuelle testordrer.',
