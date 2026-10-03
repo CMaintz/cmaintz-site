@@ -31,6 +31,35 @@ jobs:
         env:
           PW_CHANNEL: chromium
 
+  # Deploys main to Cloudflare once the build, tests and smoke test pass.
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    environment:
+      name: production
+      url: https://maintz.dev
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          PUBLIC_SUPABASE_URL: ${{ vars.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ vars.PUBLIC_SUPABASE_ANON_KEY }}
+          PUBLIC_SUPABASE_PROVIDERS: ${{ vars.PUBLIC_SUPABASE_PROVIDERS }}
+      - run: npx wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+
   refresh-github-data:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
