@@ -12,10 +12,10 @@ category: open-source
 order: 5
 featured: true
 role: Sole developer
-context: jev-tools · open-source CLI
+context: jev-tools monorepo · open-source CLI and library (not published yet)
 start: 2026-09
 stack: [TypeScript, Node.js, Jev, JSONL, CSV]
-repos: [jev-sort]
+repos: [jev-tools]
 ---
 
 ## When to use it (honestly)
@@ -26,4 +26,6 @@ jev-sort earns its place at scale - 10k to 1M rows - where running an LLM per ro
 
 - Inline questions: `-q 'team:choice(billing,tech,sales)'`, `-q 'urgent:noul'`, `-q 'size:score(low,mid,high)'`
 - `--escalate 'conf<0.6'` writes uncertain rows to a review file
-- Streams stdin to stdout, so it composes with `jq`, `csvkit` and friends
+- `--reject-out` collects rows Jev couldn't answer, so nothing disappears silently
+- Streams stdin to stdout, so it composes with `jq`, `csvkit` and friends. Also usable as a library
+- Built on the shared `@cmaintz/jev-core` client in [jev-tools](https://github.com/CMaintz/jev-tools/tree/main/packages/sort)

@@ -12,10 +12,10 @@ category: open-source
 order: 3
 featured: true
 role: Sole developer
-context: jev-tools · open source
+context: jev-tools monorepo · GitHub Marketplace
 start: 2026-09
 stack: [TypeScript, GitHub Actions, Octokit, Jev, Cloudflare Workers AI]
-repos: [jev-triage]
+repos: [jev-tools, jev-triage]
 ---
 
 ## Why it exists
@@ -28,7 +28,9 @@ On every opened or edited issue, jev-triage asks a small set of bounded question
 
 ## Highlights
 
-- Typed, confidence-gated labels - never a silent wrong guess
-- A security-flag path that alerts rather than labels
-- Backlog mode to triage existing issues in bulk
+- Typed, confidence-gated labels, priority and a team mention. Routing is a plain map in code; Jev never picks the team
+- Low-confidence answers get `triage:needs-human`, or are re-asked to any OpenAI-compatible LLM, which leaves a one-line rationale
+- Duplicate detection: GitHub search finds candidates, Jev picks one or `none`, and nothing is auto-closed
+- Backlog sweep on a schedule, a security flag that alerts rather than labels, and a job summary with the estimated cost of the run
+- The code lives in [jev-tools](https://github.com/CMaintz/jev-tools/tree/main/packages/triage); the `jev-triage` repo is a thin wrapper so it can sit on the [Marketplace](https://github.com/marketplace/actions/jev-triage)
 - Gated by [Foundry](/projects/foundry), like every tool in the family
