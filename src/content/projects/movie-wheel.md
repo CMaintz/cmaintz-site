@@ -22,7 +22,7 @@ live: https://movie-wheel.cmaintz-site.workers.dev
 
 ## Highlights
 
-- **Server-side TMDB proxy** - one platform-neutral core behind a Cloudflare Worker (a Vercel adapter works too). It injects the key, 403s foreign origins, allow-lists paths segment by segment, and rate-limits to 60/min per IP
+- **Server-side TMDB proxy** - a platform-neutral core behind a Cloudflare Worker. It injects the key, 403s foreign origins, allow-lists paths segment by segment, and rate-limits to 60/min per IP
 - **Genre combos** - Rom-Com, Horror Comedy, Action Thriller and more, each requiring both genres. TMDB can't express "(A and B) or C", so every selection is queried separately and mixed
 - **Better filters** - a minimum vote count (default 100) so a 9.0 with 12 votes stays off the wheel, and original language as a filter. Combos TV can't match are greyed out
 - **Result card** with the director (or creator for TV) and a trailer link
