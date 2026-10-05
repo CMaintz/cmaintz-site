@@ -25,13 +25,22 @@ async function togglesFlip(page) {
   return (await theme()) !== before && crt === 'off';
 }
 
+/** Cards a filter leaves on screen, read from rendered visibility (a card's own display rule can override hidden). */
+async function shownAfter(page, filter, attr) {
+  await page.click(`[data-filter="${filter}"]`);
+  return page.$$eval(
+    '[data-projects] > [data-category]',
+    (cards, a) => cards.filter((c) => getComputedStyle(c).display !== 'none').map((c) => c.dataset[a]),
+    attr,
+  );
+}
+
 async function filterHides(page) {
   await page.goto(`${BASE}/projects`);
-  await page.click('[data-filter="academic"]');
-  const visible = await page.$$eval('[data-projects] > [data-category]', (cards) =>
-    cards.filter((c) => !c.hidden).map((c) => c.dataset.category),
-  );
-  return visible.length > 0 && visible.every((c) => c === 'academic');
+  const byCat = await shownAfter(page, 'academic', 'category');
+  const byArea = await shownAfter(page, 'ai', 'areas');
+  const catOk = byCat.length > 0 && byCat.every((c) => c === 'academic');
+  return catOk && byArea.length > 0 && byArea.every((a) => a.split(' ').includes('ai'));
 }
 
 /** Clicking load embeds the project's demo URL (read from the page, so moving a demo doesn't break this). */
