@@ -17,7 +17,7 @@ start: 2026-09
 stack: [Astro, TypeScript, Supabase, Cytoscape, Three.js, PL/pgSQL]
 repos: [tech-atlas]
 video: /media/tech-atlas-explorer
-live: https://atlas.maintz.dev/en/explorer/
+live: https://cmaintz.github.io/tech-atlas/en/explorer/
 ---
 
 ## What it is
