@@ -34,11 +34,13 @@ async function filterHides(page) {
   return visible.length > 0 && visible.every((c) => c === 'academic');
 }
 
+/** Clicking load embeds the project's demo URL (read from the page, so moving a demo doesn't break this). */
 async function demoLoads(page) {
   await page.goto(`${BASE}/projects/movie-db`);
+  const expected = await page.getAttribute('[data-demo]', 'data-demo');
   await page.click('[data-demo] .load');
   const src = await page.getAttribute('[data-demo] iframe', 'src');
-  return src === 'https://cmaintz.github.io/movie-db-webapp/';
+  return Boolean(expected?.startsWith('https://')) && src === expected;
 }
 
 async function langSwitches(page) {
