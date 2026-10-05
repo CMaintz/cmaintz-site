@@ -153,6 +153,7 @@ export const da: Record<keyof typeof en, string> = {
   'notfound.title': 'Signalet er tabt',
   'notfound.body': 'Siden findes ikke - eller den er flyttet.',
   'notfound.home': 'Tilbage til forsiden',
+  'notfound.floppy': 'Skift diskette',
   'footer.built': 'Bygget med Astro. Ingen trackere.',
   'footer.synced': 'GitHub synkroniseret',
   skip: 'Spring til indhold',

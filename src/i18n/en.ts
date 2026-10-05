@@ -149,6 +149,7 @@ export const en = {
   'notfound.title': 'Signal lost',
   'notfound.body': 'That page doesn’t exist - or it moved.',
   'notfound.home': 'Back to home',
+  'notfound.floppy': 'Swap floppy',
   'footer.built': 'Built with Astro. No trackers.',
   'footer.synced': 'GitHub synced',
   skip: 'Skip to content',
