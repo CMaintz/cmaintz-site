@@ -3,21 +3,22 @@ import type { AreaId } from './areas';
 
 type L = Record<Lang, string>;
 
-/** Single source for pricing: shown on /services, interpolated into the UI copy. */
-export const HOURLY_RATE_DKK = 400;
+/** Single source for the hourly rate: shown on /services, interpolated into the UI copy. */
+export const HOURLY_RATE_DKK = 750;
 
-const fixed = (dkk: number): L => ({
-  en: `${dkk.toLocaleString('en-GB')} DKK fixed`,
-  da: `${dkk.toLocaleString('da-DK')} kr. fast pris`,
-});
+/**
+ * How a service is priced. No fixed amounts: a fixed price depends on the
+ * complexity, so it's quoted after scoping. Labels live in the i18n files.
+ */
+export type Pricing = 'quote' | 'hourly' | 'either';
+
 export interface Service {
   id: string;
   glyph: string;
   title: L;
   body: L;
   deliverables: Record<Lang, string[]>;
-  /** Indicative starting price, DKK ex. VAT. */
-  from: L;
+  pricing: Pricing;
   areas: AreaId[];
 }
 
@@ -47,7 +48,7 @@ export const services: Service[] = [
         'Overdragelsesdokumentation',
       ],
     },
-    from: fixed(7000),
+    pricing: 'quote',
   },
   {
     id: 'ai-integration',
@@ -68,7 +69,7 @@ export const services: Service[] = [
       ],
       da: ['Feasibility-spike', 'Evaluering af prompts og modeller', 'Asynkron pipeline', 'Guardrails & fallbacks', 'Omkostningsestimat'],
     },
-    from: fixed(9000),
+    pricing: 'quote',
   },
   {
     id: 'ai-dev',
@@ -83,7 +84,7 @@ export const services: Service[] = [
       en: ['Claude Code / Codex setup', 'Custom skills & hooks', 'AGENTS.md conventions', 'Team workshop'],
       da: ['Opsætning af Claude Code / Codex', 'Skræddersyede skills & hooks', 'AGENTS.md-konventioner', 'Workshop for teamet'],
     },
-    from: fixed(4500),
+    pricing: 'quote',
   },
   {
     id: 'shopware',
@@ -98,7 +99,7 @@ export const services: Service[] = [
       en: ['Plugin architecture', 'Admin (Vue) & storefront (TS)', 'Tests', 'Deployment guide'],
       da: ['Plugin-arkitektur', 'Admin (Vue) & storefront (TS)', 'Tests', 'Deployment-guide'],
     },
-    from: { en: 'hourly', da: 'timebasis' },
+    pricing: 'hourly',
   },
   {
     id: 'fullstack',
@@ -113,7 +114,7 @@ export const services: Service[] = [
       en: ['Architecture & data model', 'API + frontend', 'CI/CD from day one', 'Docker-based deploy'],
       da: ['Arkitektur & datamodel', 'API + frontend', 'CI/CD fra dag ét', 'Docker-baseret deploy'],
     },
-    from: { en: 'hourly or fixed', da: 'timebasis eller fast pris' },
+    pricing: 'either',
   },
   {
     id: 'anything',
@@ -125,7 +126,7 @@ export const services: Service[] = [
       da: 'Mobil (Swift, Kotlin), desktop, integrationer, migreringer, code review, redning af legacy. Hvis det kan kompilere, er jeg interesseret - spørg.',
     },
     deliverables: { en: [], da: [] },
-    from: { en: 'hourly', da: 'timebasis' },
+    pricing: 'hourly',
   },
 ];
 

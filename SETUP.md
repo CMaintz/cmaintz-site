@@ -106,4 +106,4 @@ What's stored per event: the code, hit or seen, a bot flag, the country Cloudfla
 | Redeploy the www redirect (rarely needed)             | `npx wrangler deploy --config redirect-www/wrangler.jsonc`                                                     |
 | Visual / interaction smoke tests                      | `npm run build && npm run shots && npm run smoke`                                                              |
 | Tracked application links                             | `npm run links -- add "<label>" [/path]`, `npm run links -- list`                                              |
-| Change pricing                                        | `HOURLY_RATE_DKK` and `fixed(...)` in `src/data/services.ts`                                                   |
+| Change pricing                                        | `HOURLY_RATE_DKK` in `src/data/services.ts` (services show a pricing type, not amounts)                                                   |

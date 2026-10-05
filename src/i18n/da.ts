@@ -122,8 +122,10 @@ export const da: Record<keyof typeof en, string> = {
     'Tilgængelig for freelance- og konsulentopgaver sideløbende med jobsøgningen. Fast pris eller timebasis, remote eller on-site i Aarhus.',
   'services.pricing': 'Priser',
   'services.pricing.body':
-    'Timepris fra {rate} kr. ekskl. moms. Fastpris-tilbud på veldefinerede opgaver. Det første 30-minutters opkald er gratis.',
-  'services.from': 'fra',
+    'Timepris fra {rate} kr. ekskl. moms. Opgaver til fast pris får et tilbud efter afgrænsning, fordi prisen afhænger af kompleksiteten. Det første 30-minutters opkald er gratis.',
+  'services.pricing.quote': 'Tilbud efter kompleksitet',
+  'services.pricing.hourly': 'Timebasis',
+  'services.pricing.either': 'Timebasis eller tilbud',
   'services.languages': 'Sprog jeg arbejder i',
   'services.process': 'Sådan foregår det',
   'services.ask': 'Start en samtale',

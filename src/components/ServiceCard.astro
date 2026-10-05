@@ -1,5 +1,5 @@
 ---
-// One service as a retro window: glyph, starting price, title, body and,
+// One service as a retro window: glyph, how it's priced, title, body and,
 // optionally, its deliverables as a checklist.
 import Window from './Window.astro';
 import { type Lang, useT } from '../i18n/ui';
@@ -16,7 +16,7 @@ const items = deliverables ? s.deliverables[lang] : [];
 <Window title={`${s.id}.exe`} as="article" class="svc reveal">
   <div class="svc__top">
     <span class="glyph" aria-hidden="true">{s.glyph}</span>
-    <span class="from mono">{t('services.from')} <strong>{s.from[lang]}</strong></span>
+    <span class="pricing mono">{t(`services.pricing.${s.pricing}`)}</span>
   </div>
   <Heading class:list={['title', `title--${level}`]}>{s.title[lang]}</Heading>
   <p class="dim">{s.body[lang]}</p>
@@ -27,8 +27,7 @@ const items = deliverables ? s.deliverables[lang] : [];
   .svc :global(.win__body) { display: grid; gap: 0.8rem; height: 100%; align-content: start; }
   .svc__top { display: flex; justify-content: space-between; align-items: center; }
   .glyph { width: 2.4rem; height: 2.4rem; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-size: 1.2rem; box-shadow: 3px 3px 0 var(--shadow-c); }
-  .from { font-size: 0.75rem; color: var(--fg-faint); }
-  .from strong { color: var(--fg); }
+  .pricing { font-size: 0.75rem; color: var(--fg); }
   .title--3 { font-size: 1.2rem; }
   .deliv { list-style: none; padding: 0; margin: 0.3rem 0 0; display: grid; gap: 0.3rem; font-size: 0.8rem; }
   .deliv li::before { content: '[x] '; color: var(--accent-2); }
