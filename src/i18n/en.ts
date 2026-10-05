@@ -117,8 +117,11 @@ export const en = {
   'services.title': 'Services',
   'services.lede': 'Available for freelance and consulting alongside my job search. Fixed-scope or hourly, remote or on-site in Aarhus.',
   'services.pricing': 'Pricing',
-  'services.pricing.body': 'Hourly from {rate} DKK ex. VAT. Fixed-price quotes for well-scoped work. The first 30-minute call is free.',
-  'services.from': 'from',
+  'services.pricing.body':
+    'Hourly from {rate} DKK ex. VAT. Fixed-price work is quoted after scoping, because the price depends on the complexity. The first 30-minute call is free.',
+  'services.pricing.quote': 'Quoted by complexity',
+  'services.pricing.hourly': 'Hourly',
+  'services.pricing.either': 'Hourly or quoted',
   'services.languages': 'Languages I work in',
   'services.process': 'How it works',
   'services.ask': 'Start a conversation',
