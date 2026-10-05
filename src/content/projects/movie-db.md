@@ -15,8 +15,8 @@ context: Personal project
 start: 2025-04
 stack: [React 19, TypeScript, Vite, Tailwind CSS, TanStack Query, Firebase, LG webOS, Vitest]
 repos: [movie-db-webapp]
-demo: https://cmaintz.github.io/movie-db-webapp/
-live: https://cmaintz.github.io/movie-db-webapp/
+demo: https://moviedb.maintz.dev/
+live: https://moviedb.maintz.dev/
 ---
 
 ## The hard part

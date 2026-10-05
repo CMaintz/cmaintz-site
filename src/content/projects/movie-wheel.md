@@ -16,8 +16,8 @@ context: Personal project · MovieDB spin-off
 start: 2026-05
 stack: [React 19, TypeScript, Vite, TanStack Query, Cloudflare Workers, Vitest]
 repos: [movie-wheel]
-demo: https://movie-wheel.cmaintz-site.workers.dev
-live: https://movie-wheel.cmaintz-site.workers.dev
+demo: https://moviewheel.maintz.dev/
+live: https://moviewheel.maintz.dev/
 ---
 
 ## Highlights
