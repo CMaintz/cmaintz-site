@@ -4,7 +4,7 @@ import type { AreaId } from './areas';
 type L = Record<Lang, string>;
 
 /** Single source for the hourly rate: shown on /services, interpolated into the UI copy. */
-export const HOURLY_RATE_DKK = 750;
+export const HOURLY_RATE_DKK = 650;
 
 /**
  * How a service is priced. No fixed amounts: a fixed price depends on the
