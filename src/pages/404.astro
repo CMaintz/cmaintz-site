@@ -13,13 +13,35 @@ const td = useT('da');
     <p class="lede">{t('notfound.body')} <span lang="da" class="faint">/ {td('notfound.body')}</span></p>
     <pre class="mono log" aria-hidden="true">ERR_SIGNAL_LOST at {'<'}requested path{'>'}
   at router.resolve (router.ts:404)
-  at human.click (browser:1)</pre>
+  at human.click (browser:1)
+<span data-floppy class="cursor">Insert disk 2 of 2 and press [SWAP]</span></pre>
     <div class="ctas">
       <a class="btn btn--primary" href="/">{t('notfound.home')} →</a>
+      <button class="btn" type="button" data-floppy-swap>💾 {t('notfound.floppy')}</button>
       <button class="btn" type="button" data-cmdk-open>{t('nav.search')} (<span data-mod>Ctrl</span>+K)</button>
     </div>
   </section>
 </Base>
+
+<script>
+  const line = document.querySelector<HTMLElement>('[data-floppy]')!;
+  const REPLIES = [
+    (n: number) => `Reading disk ${n}... page not on this one either. Insert disk ${n + 1}`,
+    (n: number) => `Disk ${n}: DOOM shareware. Fun, but not your page. Insert disk ${n + 1}`,
+    (n: number) => `Disk ${n} is a mixtape. Insert disk ${n + 1}`,
+    () => 'Abort, Retry, Fail? (home is probably faster)',
+  ];
+  let disk = 2;
+
+  /** Each swap reads the next disk; the last reply sticks once the box runs out. */
+  function swap() {
+    const reply = REPLIES[Math.min(disk - 2, REPLIES.length - 1)];
+    line.textContent = reply(disk);
+    disk += 1;
+  }
+
+  document.querySelector('[data-floppy-swap]')!.addEventListener('click', swap);
+</script>
 
 <style>
   .nf { padding-block: clamp(4rem, 12vw, 9rem); display: grid; gap: 1.2rem; justify-items: start; }

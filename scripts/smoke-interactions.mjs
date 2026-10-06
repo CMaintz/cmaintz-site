@@ -43,6 +43,16 @@ async function filterHides(page) {
   return catOk && byArea.length > 0 && byArea.every((a) => a.split(' ').includes('ai'));
 }
 
+/** The 404 log's floppy swap reads the next disk, then settles on Abort/Retry/Fail. */
+async function floppySwaps(page) {
+  await page.goto(`${BASE}/no-such-page`);
+  const line = () => page.textContent('[data-floppy]');
+  await page.click('[data-floppy-swap]');
+  const first = (await line()).includes('Insert disk 3');
+  for (let i = 0; i < 5; i++) await page.click('[data-floppy-swap]');
+  return first && (await line()).startsWith('Abort, Retry, Fail?');
+}
+
 /** Clicking load embeds the project's demo URL (read from the page, so moving a demo doesn't break this). */
 async function demoLoads(page) {
   await page.goto(`${BASE}/projects/movie-db`);
@@ -96,6 +106,7 @@ const CHECKS = {
   paletteKeyboard,
   togglesFlip,
   filterHides,
+  floppySwaps,
   demoLoads,
   langSwitches,
   postLangSwitchLandsOnIndex,
