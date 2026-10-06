@@ -10,8 +10,8 @@ summary:
 category: academic
 order: 22
 role: Developer
-context: Datamatiker, 2nd-semester exam (Java)
-start: 2024-05
+context: Datamatiker, 1st-semester exam (Java)
+start: 2023-12
 dateApprox: true
 grade: 10/12
 stack: [Java, JavaFX, OOP, MVC]

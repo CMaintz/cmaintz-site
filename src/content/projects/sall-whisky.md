@@ -9,9 +9,9 @@ summary:
   da: Produktionsstyring for et rigtigt whiskydestilleri - fade, destillationer, lagerhierarki, modningshistorik og aftapning - med ægte produktionsregler, senere porteret fra JavaFX til Spring Boot REST-API og Angular-SPA.
 category: academic
 order: 20
-role: Developer
-context: Datamatiker, 3rd-semester exam (Java)
-start: 2024-09
+role: Developer in a group of 3, solo rewrite
+context: Datamatiker, 2nd-semester group exam (Java)
+start: 2024-05
 dateApprox: true
 grade: 10/12
 stack: [Java, JavaFX, Spring Boot, Spring Data JPA, Angular 17, H2]

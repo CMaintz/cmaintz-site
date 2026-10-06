@@ -9,8 +9,8 @@ summary:
   da: Et bookingsystem for Hørning Rideskole - heste, ryttere, tider, en mugningsordning med belønning og betaling - med et håndskrevet ADO.NET-datalag i stedet for en ORM.
 category: academic
 order: 24
-role: Developer
-context: Datamatiker, 4th-semester exam (Systems Development Methods)
+role: Developer in a group
+context: Datamatiker, 4th-semester group exam (Systems Development Methods)
 start: 2025-05
 dateApprox: true
 grade: 10/12

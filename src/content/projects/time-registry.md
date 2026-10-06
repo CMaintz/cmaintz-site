@@ -9,8 +9,8 @@ summary:
   da: Tidsregistrering med rigtige valideringsregler - overlap-detektion og loft på 37 timer om ugen - bag interface-kontrakter, så en WPF-klient og en ASP.NET MVC-webapp deler én kerne.
 category: academic
 order: 23
-role: Developer
-context: Datamatiker, 4th-semester exam (C#)
+role: Developer in a group
+context: Datamatiker, 4th-semester group exam (C#)
 start: 2025-05
 dateApprox: true
 grade: 7/12
