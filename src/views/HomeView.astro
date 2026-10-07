@@ -13,12 +13,12 @@ const { lang } = Astro.props;
 const t = useT(lang);
 const featured = await getFeaturedProjects(9);
 const posts = (await getPosts()).slice(0, 3);
-const focus = (['dx', 'devops', 'platform', 'ai'] as const).map((k, i) => ({
+const focus = (['backend', 'devops', 'platform', 'ai'] as const).map((k, i) => ({
   id: k,
   n: String(i + 1).padStart(2, '0'),
   title: t(`focus.${k}.title`),
   body: t(`focus.${k}.body`),
-  glyph: ['⌘', '⟳', '▦', '◈'][i],
+  glyph: ['▤', '⟳', '▦', '◈'][i],
 }));
 const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', 'Spring Boot', 'Symfony', 'Angular', 'React', 'Astro', 'GitHub Actions', 'mise', 'Docker', 'PostgreSQL', 'RabbitMQ', 'Cloudflare', 'Azure', 'Kubernetes', 'Claude Code', 'Semgrep'];
 ---

@@ -7,7 +7,7 @@ tagline:
 summary:
   en: A Jev-powered guardrail that judges every agent turn against the un-lintable rules in your CLAUDE.md or AGENTS.md, and tells the agent exactly which one it broke so it fixes it before moving on. About 300 ms and a fraction of a cent per turn.
   da: En Jev-baseret guardrail, der vurderer hver agent-tur mod de regler i din CLAUDE.md eller AGENTS.md, som ingen linter kan tjekke, og fortæller agenten præcis hvilken den brød, så den retter det, før den går videre. Cirka 300 ms og en brøkdel af en øre pr. tur.
-areas: [ai, dx]
+areas: [ai, devops]
 category: open-source
 order: 4
 featured: true

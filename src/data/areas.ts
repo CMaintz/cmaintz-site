@@ -3,7 +3,7 @@
 // Principles are drafts grounded in real work; `proof` names a project slug.
 import type { Lang } from '../i18n/ui';
 
-export const AREA_IDS = ['dx', 'devops', 'platform', 'ai'] as const;
+export const AREA_IDS = ['backend', 'devops', 'platform', 'ai'] as const;
 export type AreaId = (typeof AREA_IDS)[number];
 
 type L = Record<Lang, string>;
@@ -20,12 +20,54 @@ export interface Area {
 }
 
 export const areas: Record<AreaId, Area> = {
-  dx: {
-    glyph: '⌘',
-    label: { en: 'Developer Experience', da: 'Developer Experience' },
+  backend: {
+    glyph: '▤',
+    label: { en: 'Backend', da: 'Backend' },
     intro: {
-      en: 'Developers are fastest when the right thing is also the easy thing. I look for the friction that quietly eats a team’s week (slow feedback, flaky setup, manual steps) and remove it with tooling, not more documentation.',
-      da: 'Udviklere er hurtigst, når det rigtige også er det nemme. Jeg leder efter den friktion, der stille æder et teams uge (langsom feedback, ustabilt setup, manuelle trin), og fjerner den med værktøjer frem for mere dokumentation.',
+      en: 'Most of a product lives in its backend: the APIs, the data and the services behind them. I build those around the domain, so the business rules are easy to find, the data can be trusted and a slow dependency never takes the product down.',
+      da: 'Det meste af et produkt bor i backenden: API’erne, data og de services, der ligger bag. Jeg bygger dem omkring domænet, så forretningsreglerne er nemme at finde, data er til at stole på, og en langsom afhængighed aldrig vælter produktet.',
+    },
+    principles: [
+      {
+        title: { en: 'The domain model comes first', da: 'Domænemodellen kommer først' },
+        body: {
+          en: 'Real business rules live in a model that names them, behind an API with clear contracts and validation at the edge. Frameworks and databases plug in around it.',
+          da: 'Rigtige forretningsregler bor i en model, der navngiver dem, bag et API med klare kontrakter og validering ved kanten. Frameworks og databaser kobles på udenom.',
+        },
+        proof: 'sall-whisky',
+      },
+      {
+        title: { en: 'Know what the database is doing', da: 'Vid, hvad databasen laver' },
+        body: {
+          en: 'An ORM is a tool, not a hiding place. I design the schema, write SQL where it matters and use what Postgres already does, from full-text to vector search, before adding another service.',
+          da: 'En ORM er et værktøj, ikke et skjulested. Jeg designer skemaet, skriver SQL, hvor det betyder noget, og bruger det, Postgres allerede kan, fra fuldtekst- til vektorsøgning, før jeg tilføjer endnu en service.',
+        },
+        proof: 'jobbuddy',
+      },
+      {
+        title: { en: 'Resilient by default', da: 'Robust som standard' },
+        body: {
+          en: 'Slow or unreliable work goes on a queue, with retries and backoff, idempotency and an audit trail, so a flaky dependency never takes the product down.',
+          da: 'Langsomt eller ustabilt arbejde kommer i kø med retries og backoff, idempotens og audit trail, så en ustabil afhængighed aldrig vælter produktet.',
+        },
+        proof: 'illux-product-ai',
+      },
+      {
+        title: { en: 'Swappable edges', da: 'Udskiftelige kanter' },
+        body: {
+          en: 'Providers, databases and AI models sit behind ports and adapters, so changing vendor is a new adapter, not a rewrite.',
+          da: 'Udbydere, databaser og AI-modeller ligger bag porte og adaptere, så et leverandørskift er en ny adapter og ikke en omskrivning.',
+        },
+        proof: 'jobbuddy',
+      },
+    ],
+  },
+  devops: {
+    glyph: '⟳',
+    label: { en: 'DevOps & Developer Experience', da: 'DevOps & Developer Experience' },
+    intro: {
+      en: 'Developers are fastest when the right thing is also the easy thing. I build feedback loops and pipelines that are deterministic, fast and cheap to run, and hard to quietly weaken, including by AI agents.',
+      da: 'Udviklere er hurtigst, når det rigtige også er det nemme. Jeg bygger feedback-loops og pipelines, der er deterministiske, hurtige og billige at køre, og svære at svække i det stille, også for AI-agenter.',
     },
     principles: [
       {
@@ -36,38 +78,6 @@ export const areas: Record<AreaId, Area> = {
         },
         proof: 'foundry',
       },
-      {
-        title: { en: 'One command to a working setup', da: 'Én kommando til et fungerende setup' },
-        body: {
-          en: 'Pinned toolchains and reproducible environments end "works on my machine". A new developer should be productive on day one.',
-          da: 'Fastlåste toolchains og reproducerbare miljøer gør en ende på "det virker på min maskine". En ny udvikler skal være produktiv fra dag ét.',
-        },
-      },
-      {
-        title: { en: 'Remove steps instead of documenting them', da: 'Fjern trin i stedet for at dokumentere dem' },
-        body: {
-          en: 'Scaffolding, CLI tools and previews beat a wiki page listing twelve manual steps nobody reads.',
-          da: 'Scaffolding, CLI-værktøjer og previews slår en wiki-side med tolv manuelle trin, som ingen læser.',
-        },
-        proof: 'email-template-preview',
-      },
-      {
-        title: { en: 'Ask where the time goes first', da: 'Spørg først, hvor tiden går hen' },
-        body: {
-          en: 'Before picking tools I watch how the team actually works. The biggest win is often not the one anyone asked for.',
-          da: 'Før jeg vælger værktøjer, ser jeg på, hvordan teamet reelt arbejder. Den største gevinst er ofte ikke den, nogen bad om.',
-        },
-      },
-    ],
-  },
-  devops: {
-    glyph: '⟳',
-    label: { en: 'DevOps & CI/CD', da: 'DevOps & CI/CD' },
-    intro: {
-      en: 'A pipeline is a promise about quality that runs on every change. I build ones that are deterministic, fast, cheap to run and hard to quietly weaken, including by AI agents.',
-      da: 'En pipeline er et løfte om kvalitet, der kører på hver ændring. Jeg bygger pipelines, der er deterministiske, hurtige, billige at køre og svære at svække i det stille, også for AI-agenter.',
-    },
-    principles: [
       {
         title: { en: 'One rule set, three placements', da: 'Ét regelsæt, tre steder' },
         body: {
@@ -98,14 +108,21 @@ export const areas: Record<AreaId, Area> = {
           da: 'SHA-fastlåste actions, tokens med mindst mulige rettigheder, secret- og dependency-scanning og ingen langlivede nøgler i CI.',
         },
       },
+      {
+        title: { en: 'Ask where the time goes first', da: 'Spørg først, hvor tiden går hen' },
+        body: {
+          en: 'Before picking tools I watch how the team actually works. The biggest win is often not the one anyone asked for.',
+          da: 'Før jeg vælger værktøjer, ser jeg på, hvordan teamet reelt arbejder. Den største gevinst er ofte ikke den, nogen bad om.',
+        },
+      },
     ],
   },
   platform: {
     glyph: '▦',
     label: { en: 'Platform & Infrastructure', da: 'Platform & infrastruktur' },
     intro: {
-      en: 'Good platforms are paved roads: the safe, observable, repeatable way is also the quickest way to ship. I build the plumbing that makes that true, from queues and retries to config and policy as code.',
-      da: 'Gode platforme er asfalterede veje: den sikre, observerbare og gentagelige vej er også den hurtigste vej til produktion. Jeg bygger det VVS, der gør det muligt, fra køer og retries til config og policy som kode.',
+      en: 'Good platforms are paved roads: the safe, observable, repeatable way is also the quickest way to ship. I build the plumbing that makes that true, from pinned toolchains and scaffolding to config and policy as code.',
+      da: 'Gode platforme er asfalterede veje: den sikre, observerbare og gentagelige vej er også den hurtigste vej til produktion. Jeg bygger det VVS, der gør det muligt, fra fastlåste toolchains og scaffolding til config og policy som kode.',
     },
     principles: [
       {
@@ -116,28 +133,27 @@ export const areas: Record<AreaId, Area> = {
         },
       },
       {
+        title: { en: 'One command to a working setup', da: 'Én kommando til et fungerende setup' },
+        body: {
+          en: 'Pinned toolchains and reproducible environments end "works on my machine". A new developer should be productive on day one.',
+          da: 'Fastlåste toolchains og reproducerbare miljøer gør en ende på "det virker på min maskine". En ny udvikler skal være produktiv fra dag ét.',
+        },
+      },
+      {
+        title: { en: 'Remove steps instead of documenting them', da: 'Fjern trin i stedet for at dokumentere dem' },
+        body: {
+          en: 'Scaffolding, CLI tools and previews beat a wiki page listing twelve manual steps nobody reads.',
+          da: 'Scaffolding, CLI-værktøjer og previews slår en wiki-side med tolv manuelle trin, som ingen læser.',
+        },
+        proof: 'email-template-preview',
+      },
+      {
         title: { en: 'Everything as code', da: 'Alt som kode' },
         body: {
           en: 'Pipelines, configuration and policy live in the repo, reviewed and versioned like any other change.',
           da: 'Pipelines, konfiguration og politikker ligger i repoet og bliver reviewet og versioneret som enhver anden ændring.',
         },
         proof: 'foundry',
-      },
-      {
-        title: { en: 'Resilient by default', da: 'Robust som standard' },
-        body: {
-          en: 'Slow or unreliable work goes on a queue, with retries and backoff, idempotency and an audit trail, so a flaky dependency never takes the product down.',
-          da: 'Langsomt eller ustabilt arbejde kommer i kø med retries og backoff, idempotens og audit trail, så en ustabil afhængighed aldrig vælter produktet.',
-        },
-        proof: 'illux-product-ai',
-      },
-      {
-        title: { en: 'Swappable edges', da: 'Udskiftelige kanter' },
-        body: {
-          en: 'Providers, databases and AI models sit behind ports and adapters, so changing vendor is a new adapter, not a rewrite.',
-          da: 'Udbydere, databaser og AI-modeller ligger bag porte og adaptere, så et leverandørskift er en ny adapter og ikke en omskrivning.',
-        },
-        proof: 'jobbuddy',
       },
     ],
   },

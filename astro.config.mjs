@@ -38,6 +38,8 @@ export default defineConfig({
   // No server sessions needed; avoids provisioning a KV namespace on Cloudflare.
   session: false,
   redirects: {
+    '/what-i-do/dx': '/what-i-do/devops',
+    '/da/what-i-do/dx': '/da/what-i-do/devops',
     '/projects/reel-scout': '/projects/movie-explorer',
     '/da/projects/reel-scout': '/da/projects/movie-explorer',
     '/projects/movie-db': '/projects/movie-explorer',
