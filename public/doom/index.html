@@ -69,6 +69,15 @@
       addEventListener('click', function () {
         canvas.focus();
       });
+      // Doom's menus step the cursor on mouse *motion*, not position, so an uncaptured
+      // pointer drifts the highlight around. Only hand motion to the engine once it's captured.
+      addEventListener(
+        'mousemove',
+        function (e) {
+          if (document.pointerLockElement !== canvas) e.stopImmediatePropagation();
+        },
+        true,
+      );
     </script>
     <script src="websockets-doom.js"></script>
   </body>
