@@ -26,7 +26,7 @@ const actions = [
   { group: 'run', label: `${t('lang.label')}: ${other.toUpperCase()}`, hint: 'lang', href: localize(switchPath ?? here, other) },
   { group: 'run', label: lang === 'da' ? 'Kopiér e-mail' : 'Copy email address', hint: site.email, action: 'copy-email' },
   { group: 'run', label: 'GitHub', hint: site.socials.github, href: site.socials.github },
-  // Hidden: only appears when searched for.
+  // Hidden: only appears when one of its hint words is typed in full.
   { group: 'secret', label: 'DOOM (1993)', hint: 'doom iddqd idkfa', action: 'doom' },
 ];
 // Public repos without a project page: typing their name goes to GitHub.
@@ -49,6 +49,8 @@ const items = [...pages, ...areaItems, ...projects, ...repoItems, ...posts, ...a
 </dialog>
 
 <script>
+  import { matchScore } from '../lib/palette-match';
+
   type Item = { group: string; label: string; hint?: string; alias?: string; href?: string; action?: string };
   const dlg = document.querySelector<HTMLDialogElement>('dialog.cmdk')!;
   const input = dlg.querySelector('input')!;
@@ -57,25 +59,13 @@ const items = [...pages, ...areaItems, ...projects, ...repoItems, ...posts, ...a
   let results: Item[] = [];
   let sel = 0;
 
-  // Subsequence match with a bonus for word-start and contiguous hits.
-  function score(q: string, s: string) {
-    s = s.toLowerCase();
-    let i = 0, sc = 0, prev = -2;
-    for (const ch of q) {
-      const j = s.indexOf(ch, i);
-      if (j < 0) return -1;
-      sc += j === prev + 1 ? 3 : 1;
-      if (j === 0 || s[j - 1] === ' ' || s[j - 1] === '/') sc += 2;
-      prev = j; i = j + 1;
-    }
-    return sc - s.length * 0.01;
-  }
-
-  /** Exact name or alias (slug, repo name) wins outright; otherwise fuzzy score. */
+  /** Exact name or alias (slug, repo name) wins outright; otherwise label, alias, then hint. */
   function rank(q: string, it: Item) {
+    // Secrets never fuzzy-match: only a full keyword from the hint reveals them.
+    if (it.group === 'secret') return (it.hint ?? '').split(' ').includes(q) ? 1000 : -1;
     const names = [it.label.toLowerCase(), ...(it.alias ?? '').split(' ')];
     if (names.includes(q)) return 1000;
-    return Math.max(score(q, it.label), score(q, it.alias ?? '') - 1, score(q, it.hint ?? '') - 2);
+    return Math.max(matchScore(q, it.label), matchScore(q, it.alias ?? '') - 1, matchScore(q, it.hint ?? '', false) - 5);
   }
 
   function search(q: string): Item[] {
