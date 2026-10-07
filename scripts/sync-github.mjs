@@ -122,8 +122,11 @@ function buildSnapshot(user, repos) {
   };
 }
 
+/** Skips forks and the profile README repo (named after the account), which isn't a project. */
+const isOwnProject = (r) => !r.isFork && r.name.toLowerCase() !== LOGIN.toLowerCase();
+
 const user = await graphql();
-const repos = await Promise.all(user.repositories.nodes.filter((r) => !r.isFork).map(toRepo));
+const repos = await Promise.all(user.repositories.nodes.filter(isOwnProject).map(toRepo));
 console.log(`fetched ${repos.length} READMEs`);
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, JSON.stringify(buildSnapshot(user, repos), null, 2) + '\n');
