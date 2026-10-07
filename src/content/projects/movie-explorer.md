@@ -1,5 +1,5 @@
 ---
-title: MovieDB
+title: Movie Explorer
 glyph: ▶
 tagline:
   en: One React codebase, running on the web and as an LG webOS TV app
@@ -14,7 +14,7 @@ role: Sole developer
 context: Personal project
 start: 2025-04
 stack: [React 19, TypeScript, Vite, Tailwind CSS, TanStack Query, Firebase, LG webOS, Vitest]
-repos: [movie-db-webapp]
+repos: [movie-explorer]
 demo: https://moviedb.maintz.dev/
 live: https://moviedb.maintz.dev/
 ---

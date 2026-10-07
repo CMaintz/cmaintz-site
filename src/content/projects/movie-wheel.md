@@ -7,12 +7,11 @@ tagline:
 summary:
   en: Filter, spin a 12-slot wheel and get a title plus where it streams. React on Cloudflare Workers, with the TMDB key kept server-side behind a rate-limited proxy that checks origin and path.
   da: Filtrér, drej et hjul med 12 felter og få en titel plus hvor den streames. React på Cloudflare Workers, hvor TMDB-nøglen bliver på serveren bag en rate-limited proxy, der tjekker origin og path.
-areas: [platform]
 category: personal
 order: 10
 featured: true
 role: Sole developer
-context: Personal project · MovieDB spin-off
+context: Personal project · Movie Explorer spin-off
 start: 2026-05
 stack: [React 19, TypeScript, Vite, TanStack Query, Cloudflare Workers, Vitest]
 repos: [movie-wheel]

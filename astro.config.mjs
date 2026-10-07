@@ -38,8 +38,16 @@ export default defineConfig({
   // No server sessions needed; avoids provisioning a KV namespace on Cloudflare.
   session: false,
   redirects: {
-    '/projects/reel-scout': '/projects/movie-db',
-    '/da/projects/reel-scout': '/da/projects/movie-db',
+    '/projects/reel-scout': '/projects/movie-explorer',
+    '/da/projects/reel-scout': '/da/projects/movie-explorer',
+    '/projects/movie-db': '/projects/movie-explorer',
+    '/da/projects/movie-db': '/da/projects/movie-explorer',
+    '/projects/jev-guard': '/projects/jev-tools',
+    '/da/projects/jev-guard': '/da/projects/jev-tools',
+    '/projects/jev-sort': '/projects/jev-tools',
+    '/da/projects/jev-sort': '/da/projects/jev-tools',
+    '/projects/jev-triage': '/projects/jev-tools',
+    '/da/projects/jev-triage': '/da/projects/jev-tools',
   },
   i18n: {
     locales: ['en', 'da'],
