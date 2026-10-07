@@ -17,7 +17,6 @@
   const dlg = document.querySelector<HTMLDialogElement>('dialog.doom')!;
   const screen = dlg.querySelector('.screen')!;
   const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-  let progress = 0;
 
   // Touch-only devices can't play it; don't make them download 6.5 MB to find out.
   const keyboardless = () => matchMedia('(pointer: coarse)').matches && !matchMedia('(any-pointer: fine)').matches;
@@ -52,15 +51,34 @@
     screen.replaceChildren();
   }
 
-  /** Advances through the code; true when the last key completes it. */
-  function konamiComplete(key: string) {
-    progress = key === KONAMI[progress] ? progress + 1 : key === KONAMI[0] ? 1 : 0;
-    if (progress < KONAMI.length) return false;
-    progress = 0;
-    return true;
+  const ARROWS = KONAMI.length - 2;
+  const MODIFIERS = new Set(['Shift', 'CapsLock', 'Control', 'Alt', 'Meta']);
+  const recent: string[] = [];
+
+  // Caps Lock or Shift turns b/a into B/A.
+  const normalise = (key: string) => (key.length === 1 ? key.toLowerCase() : key);
+
+  /** How much of the code the latest keys spell, so an extra ↑ doesn't restart it. */
+  function matched() {
+    for (let n = Math.min(recent.length, KONAMI.length); n > 0; n--) {
+      if (recent.slice(-n).every((k, i) => k === KONAMI[i])) return n;
+    }
+    return 0;
   }
 
-  const onKey = (e: KeyboardEvent) => konamiComplete(e.key) && open();
+  const isTyping = (t: EventTarget | null) => t instanceof HTMLElement && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));
+
+  function onKey(e: KeyboardEvent) {
+    if (MODIFIERS.has(e.key) || isTyping(e.target)) return;
+    recent.push(normalise(e.key));
+    if (recent.length > KONAMI.length) recent.shift();
+    const n = matched();
+    // Firefox's find-as-you-type would take the `a` after a `b`; claiming the key stops it.
+    if (n > ARROWS) e.preventDefault();
+    if (n < KONAMI.length) return;
+    recent.length = 0;
+    open();
+  }
 
   /** The game page posts doom:quit when the player quits from its menu. */
   const isQuit = (e: MessageEvent) => e.origin === location.origin && e.data?.type === 'doom:quit';
