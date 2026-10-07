@@ -24,3 +24,6 @@ supabase/.temp/
 
 # owner-only working notes (decision logs etc.)
 .local/
+
+# Foundry loop telemetry (local observability)
+.foundry/

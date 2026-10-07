@@ -1,0 +1,13 @@
+{
+  "ignore": [
+    "**/src/test/**",
+    "**/src/main/resources/**",
+    "**/build/**",
+    "**/target/**",
+    "**/*.golden.txt",
+    "public/doom/**",
+    "package.json",
+    "package-lock.json",
+    "supabase/migrations/**"
+  ]
+}
