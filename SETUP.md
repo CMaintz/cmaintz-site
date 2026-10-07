@@ -45,11 +45,11 @@ Later, with a domain: verify it in Resend, then `npx wrangler secret put CONTACT
 
 ## Phase 4 - Spam protection (Cloudflare Turnstile, optional)
 
-1. **You:** Cloudflare dashboard -> Turnstile -> Add widget. Hostnames: the `workers.dev` host (and your domain later). Mode: Managed.
+1. **You:** Cloudflare dashboard -> Turnstile -> Add widget. Hostname: `maintz.dev`. Mode: Managed.
 2. **You:** in your own terminal (not the chat `!`): `npx wrangler secret put TURNSTILE_SECRET_KEY --name cmaintz-site` (secret key).
-3. **Claude:** add `PUBLIC_TURNSTILE_SITE_KEY=<site key>` to `.env` / build variables, rebuild, redeploy.
+3. **You:** GitHub repo -> Settings -> Secrets and variables -> Actions -> Variables: `PUBLIC_TURNSTILE_SITE_KEY` = the site key. Then re-run the latest `main` deploy. Do steps 2 and 3 back to back: with only one of the two keys in place, every message is rejected.
 
-Without Turnstile the form still has a honeypot field and Astro's same-origin check.
+Without Turnstile the form still has a honeypot field, Astro's same-origin check and a rate limit of 3 messages a minute per IP (`ratelimits` in `wrangler.jsonc`).
 
 ## Phase 5 - Comments (Supabase)
 
@@ -73,7 +73,7 @@ Free tier: 2 active projects, 50,000 monthly active users, 500 MB database. Free
 
 ## Phase 6 - Analytics (optional, 2 min)
 
-**You:** Cloudflare -> Web Analytics -> Add site -> copy the token. **Claude:** `PUBLIC_CF_BEACON_TOKEN=<token>`, rebuild, redeploy. Cookieless, no consent banner needed.
+**You:** Cloudflare -> Web Analytics -> Add site -> copy the token, add it as the GitHub repo variable `PUBLIC_CF_BEACON_TOKEN`, then re-run the latest `main` deploy. Cookieless, no consent banner needed.
 
 ## Phase 7 - Domain (whenever you buy one)
 

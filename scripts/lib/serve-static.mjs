@@ -1,5 +1,7 @@
 // Minimal static server for dist/client - used by the screenshot and CV-PDF
 // scripts so they don't need the Workers runtime. Not for production.
+// Applies dist/client/_headers like Cloudflare does, so the smoke test runs
+// under the real security headers (CSP included).
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize, resolve, dirname } from 'node:path';
@@ -27,6 +29,25 @@ const TYPES = {
   '.pagefind': 'application/octet-stream',
 };
 
+/** Parses a Cloudflare `_headers` file into [pattern, headers] rules. */
+async function loadHeaderRules() {
+  const text = await readFile(join(ROOT, '_headers'), 'utf8').catch(() => '');
+  const rules = [];
+  for (const line of text.split(/\r?\n/)) {
+    if (line.startsWith('/')) rules.push([line.trim(), {}]);
+    else if (line.trim() && rules.length) {
+      const i = line.indexOf(':');
+      rules.at(-1)[1][line.slice(0, i).trim()] = line.slice(i + 1).trim();
+    }
+  }
+  return rules;
+}
+
+const ruleMatches = (pattern, path) => (pattern.endsWith('*') ? path.startsWith(pattern.slice(0, -1)) : path === pattern);
+
+/** Every matching rule's headers, merged (later rules win). */
+const headersFor = (rules, path) => Object.assign({}, ...rules.filter(([p]) => ruleMatches(p, path)).map(([, h]) => h));
+
 async function resolveFile(urlPath) {
   const p = normalize(decodeURIComponent(urlPath.split('?')[0])).replace(/^([/\\])+/, '');
   for (const cand of [p, join(p, 'index.html'), `${p}.html`]) {
@@ -40,20 +61,22 @@ async function resolveFile(urlPath) {
 }
 
 /** Unknown paths fall back to the built 404 page (with a 404 status). */
-async function respond(req, res) {
+async function respond(rules, req, res) {
   const file = (await resolveFile(req.url ?? '/')) ?? join(ROOT, '404.html');
   const is404 = file.endsWith('404.html') && !req.url?.includes('404');
   try {
     const body = await readFile(file);
-    res.writeHead(is404 ? 404 : 200, { 'content-type': TYPES[extname(file)] ?? 'application/octet-stream' });
+    const type = TYPES[extname(file)] ?? 'application/octet-stream';
+    res.writeHead(is404 ? 404 : 200, { ...headersFor(rules, (req.url ?? '/').split('?')[0]), 'content-type': type });
     res.end(body);
   } catch {
     res.writeHead(404).end('not found');
   }
 }
 
-export function serve(port = 4322) {
-  const server = createServer(respond);
+export async function serve(port = 4322) {
+  const rules = await loadHeaderRules();
+  const server = createServer((req, res) => respond(rules, req, res));
   return new Promise((r) => server.listen(port, () => r(server)));
 }
 
