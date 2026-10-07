@@ -31,10 +31,15 @@ jobs:
         env:
           PW_CHANNEL: chromium
 
-  # Deploys main to Cloudflare once the build, tests and smoke test pass.
+  # Deploys main to Cloudflare once the build, tests and smoke test pass, and
+  # after the weekly GitHub snapshot lands on main. (The snapshot commit is
+  # pushed with GITHUB_TOKEN, which doesn't trigger a new run, so it deploys here.)
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: build
+    needs: [build, refresh-github-data]
+    if: >-
+      always() && !failure() && !cancelled() &&
+      ((github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+       needs.refresh-github-data.outputs.sha != '')
     runs-on: ubuntu-latest
     concurrency:
       group: deploy
@@ -44,6 +49,8 @@ jobs:
       url: https://maintz.dev
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.refresh-github-data.outputs.sha || github.sha }}
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
@@ -62,23 +69,34 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
 
+  # Weekly: refresh src/data/github.json (repo metadata, READMEs, repo count),
+  # check that the site still builds with it, commit it to main, then deploy.
   refresh-github-data:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: main
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
+          cache: npm
       - run: node scripts/sync-github.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
-        with:
-          branch: chore/github-snapshot
-          commit-message: 'chore(data): refresh GitHub snapshot'
-          title: 'chore(data): refresh GitHub snapshot'
-          body: Weekly refresh of `src/data/github.json` (repo metadata + READMEs).
+      - name: Build with the new snapshot
+        run: npm ci && npm run build
+      - name: Commit the snapshot to main
+        id: commit
+        run: |
+          git diff --quiet -- src/data/github.json && exit 0
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore(data): refresh GitHub snapshot' -- src/data/github.json
+          git push origin HEAD:main
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
