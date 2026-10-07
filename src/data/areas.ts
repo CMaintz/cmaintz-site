@@ -163,7 +163,7 @@ export const areas: Record<AreaId, Area> = {
           en: 'Confident results flow through; uncertain ones go to a person. Automation where it’s safe, judgement where it matters.',
           da: 'Sikre resultater går direkte igennem; usikre går til et menneske. Automatisering hvor det er sikkert, dømmekraft hvor det betyder noget.',
         },
-        proof: 'jev-triage',
+        proof: 'jev-tools',
       },
       {
         title: { en: 'Cheapest model that’s good enough', da: 'Den billigste model, der er god nok' },
@@ -171,7 +171,7 @@ export const areas: Record<AreaId, Area> = {
           en: 'Fast, cheap models handle the bulk; stronger ones are reserved for what they can’t decide.',
           da: 'Hurtige, billige modeller tager størstedelen; stærkere modeller gemmes til det, de ikke kan afgøre.',
         },
-        proof: 'jev-sort',
+        proof: 'jev-rerank',
       },
       {
         title: { en: 'Measure before trusting', da: 'Mål før du stoler på det' },
@@ -179,7 +179,7 @@ export const areas: Record<AreaId, Area> = {
           en: 'Evaluation harnesses compare models and prompts, audit trails record exactly what ran, and guardrails stop agents before risky actions.',
           da: 'Evalueringsværktøjer sammenligner modeller og prompts, audit trails registrerer præcis hvad der kørte, og guardrails stopper agenter før risikable handlinger.',
         },
-        proof: 'jev-guard',
+        proof: 'jev-eval',
       },
     ],
   },

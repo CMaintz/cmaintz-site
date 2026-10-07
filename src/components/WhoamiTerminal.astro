@@ -8,7 +8,7 @@ import { recentRepos } from '../lib/home';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
-const shipped = ['illux-product-ai', 'foundry', 'jev-triage', 'jev-guard', 'jev-sort', 'jobbuddy', 'tech-atlas'];
+const shipped = ['illux-product-ai', 'foundry', 'jev-tools', 'leash', 'jobbuddy', 'tech-atlas'];
 const areas = [
   { id: 'dx', label: 'dx' },
   { id: 'devops', label: 'devops' },
@@ -95,7 +95,7 @@ const link = (path: string) => localize(path, lang);
   const replies: Record<string, string> = {
     help: 'commands: whoami, ls, contact, help ... and maybe something from 1993',
     whoami: 'christoffer maintz',
-    ls: 'illux-product-ai  foundry  jev-triage  jev-guard  jev-sort  jobbuddy  tech-atlas',
+    ls: 'illux-product-ai  foundry  jev-tools  leash  jobbuddy  tech-atlas',
     contact: 'christoffer@maintz.dev',
     doom: 'loading DOOM...',
     iddqd: 'loading DOOM...',

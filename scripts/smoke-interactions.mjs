@@ -55,7 +55,7 @@ async function floppySwaps(page) {
 
 /** Clicking load embeds the project's demo URL (read from the page, so moving a demo doesn't break this). */
 async function demoLoads(page) {
-  await page.goto(`${BASE}/projects/movie-db`);
+  await page.goto(`${BASE}/projects/movie-explorer`);
   const expected = await page.getAttribute('[data-demo]', 'data-demo');
   await page.click('[data-demo] .load');
   const src = await page.getAttribute('[data-demo] iframe', 'src');
