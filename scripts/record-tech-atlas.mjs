@@ -6,7 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import ffmpeg from 'ffmpeg-static';
 
-const URL = 'https://cmaintz.github.io/tech-atlas/en/explorer/';
+const URL = 'https://atlas.maintz.dev/en/explorer/';
 const RAW = '.recording';
 const VIEWPORT = { width: 1280, height: 800 };
 
