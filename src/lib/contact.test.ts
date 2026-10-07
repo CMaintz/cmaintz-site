@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { formatInquiry, isHoneypotHit, parseInquiry, passesTurnstile, sendInquiry, validationError, type Inquiry } from './contact';
+import { isHoneypotHit, parseInquiry, passesTurnstile, sendInquiry, validationError, type Inquiry } from './contact';
 
 const formOf = (fields: Record<string, string>) => {
   const form = new FormData();
@@ -143,21 +143,27 @@ describe('passesTurnstile verdict', () => {
   });
 });
 
-describe('formatInquiry', () => {
-  it('lists the sender details, then the message', () => {
+const cfg = { apiKey: 're_test', to: 'me@example.com', from: 'Site <form@example.com>' };
+
+async function sentText(q: Inquiry) {
+  const fetch = mockFetch(() => jsonResponse({ id: '1' }));
+  await sendInquiry(q, cfg);
+  return JSON.parse(requestOf(fetch)[1].body as string).text as string;
+}
+
+describe('sendInquiry email body', () => {
+  it('lists the sender details, then the message', async () => {
     const lines = ['Sent from the contact form on https://maintz.dev', '', 'Name: Ada', 'Email: ada@example.com'];
     const expected = [...lines, 'Company: Acme', 'Topic: job', 'Budget: 10k', '', valid.message].join('\n');
-    expect(formatInquiry({ ...valid, company: 'Acme', budget: '10k' })).toBe(expected);
+    await expect(sentText({ ...valid, company: 'Acme', budget: '10k' })).resolves.toBe(expected);
   });
 
-  it('leaves out empty optional fields', () => {
-    const text = formatInquiry(valid);
+  it('leaves out empty optional fields', async () => {
+    const text = await sentText(valid);
     expect(text).not.toContain('Company:');
     expect(text).not.toContain('Budget:');
   });
 });
-
-const cfg = { apiKey: 're_test', to: 'me@example.com', from: 'Site <form@example.com>' };
 
 describe('sendInquiry', () => {
   it('posts the inquiry to Resend with reply-to set to the sender', async () => {
@@ -173,7 +179,6 @@ describe('sendInquiry', () => {
       subject: 'New inquiry via maintz.dev: job opportunity from Ada (Acme)',
     });
   });
-
 });
 
 describe('sendInquiry failure', () => {

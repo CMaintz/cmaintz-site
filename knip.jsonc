@@ -1,0 +1,11 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["astro.config.mjs!", "scripts/*.mjs", "redirect-www/index.js"],
+  "project": ["src/**/*.{ts,astro,mdx,mjs}!", "scripts/**/*.mjs", "redirect-www/*.js"],
+  // jscpd and ts-morph are run by habit-hooks, not imported. "cloudflare" is the
+  // cloudflare:workers runtime module, which no package provides.
+  "ignoreDependencies": ["jscpd", "ts-morph", "cloudflare"],
+  // Read astro.config.mjs as source rather than plugin config, so --production
+  // follows its imports (integrations, security headers) like any other entry.
+  "astro": { "config": [] }
+}

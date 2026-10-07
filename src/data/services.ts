@@ -10,7 +10,7 @@ export const HOURLY_RATE_DKK = 650;
  * How a service is priced. No fixed amounts: a fixed price depends on the
  * complexity, so it's quoted after scoping. Labels live in the i18n files.
  */
-export type Pricing = 'quote' | 'hourly' | 'either';
+type Pricing = 'quote' | 'hourly' | 'either';
 
 export interface Service {
   id: string;

@@ -1,11 +1,11 @@
 import { en } from './en';
 import { da } from './da';
 
-export const locales = ['en', 'da'] as const;
+const locales = ['en', 'da'] as const;
 export type Lang = (typeof locales)[number];
-export const defaultLang: Lang = 'en';
+const defaultLang: Lang = 'en';
 
-export const ui = { en, da };
+const ui = { en, da };
 
 export type UIKey = keyof (typeof ui)['en'];
 
@@ -24,10 +24,6 @@ export function localize(path: string, lang: Lang) {
 export function unlocalize(pathname: string) {
   const m = pathname.match(/^\/(da)(\/.*)?$/);
   return m ? m[2] || '/' : pathname;
-}
-
-export function langFromUrl(url: URL): Lang {
-  return url.pathname.startsWith('/da/') || url.pathname === '/da' ? 'da' : 'en';
 }
 
 export function formatDate(date: Date, lang: Lang, opts: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' }) {
