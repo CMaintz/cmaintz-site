@@ -12,3 +12,7 @@ files = ["**/*.ts", "**/*.tsx", "!**/*.spec.ts", "!**/*.spec.tsx", "!**/*.test.t
 # are already excluded by the `files` globs; keep big prompts in their own resource file.
 [sensors.line-count]
 args = ["--max", "300"]
+
+# No ESLint in this repo yet; the sensor can't run without it and marks every run incomplete.
+[sensors.eslint]
+disabled = true

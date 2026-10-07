@@ -4,6 +4,10 @@
     "**/src/main/resources/**",
     "**/build/**",
     "**/target/**",
-    "**/*.golden.txt"
+    "**/*.golden.txt",
+    "public/doom/**",
+    "package.json",
+    "package-lock.json",
+    "supabase/migrations/**"
   ]
 }
