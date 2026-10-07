@@ -1,7 +1,7 @@
 name: supabase-keepalive
 
 # Free-tier Supabase projects pause after 7 days without activity, which would
-# silently break comments and tracked links. One tiny read a day keeps it awake
+# silently break comments. One tiny read a day keeps it awake
 # (every 3 days still drew a pause warning; GitHub also delays or skips scheduled runs).
 on:
   schedule:

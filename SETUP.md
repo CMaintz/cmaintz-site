@@ -81,17 +81,6 @@ Free tier: 2 active projects, 50,000 monthly active users, 500 MB database. Free
 2. **You:** Workers & Pages -> `cmaintz-site` -> Settings -> Domains & Routes -> Add custom domain.
 3. **Claude:** `SITE_URL=https://yourdomain.dk`, rebuild, redeploy; add the domain to Turnstile hostnames and Supabase redirect URLs; verify it in Resend and switch the sender address.
 
-## Phase 8 - Tracked application links
-
-One short link per job application (`maintz.dev/r/<code>`), so you can see whether it was opened. Codes and company labels live only in Supabase, never in this public repo.
-
-1. **You or Claude:** apply `supabase/migrations/0003_tracked_links.sql` (SQL Editor -> New query -> Run, or the Supabase CLI).
-2. **You:** Project Settings -> API Keys: copy a **secret** key (or the legacy `service_role` key). Put it in `.env` as `SUPABASE_SECRET_KEY=...`. It has full database access: never prefix it with `PUBLIC_`, never commit it, never add it to Cloudflare.
-3. Create links: `npm run links -- add "Acme - platform engineer" /what-i-do/platform` prints the link to paste into the application. The target is any site path (default `/`; use `/da/...` for Danish applications).
-4. Check them: `npm run links -- list`. **opens** = the link was followed by a browser, **bots** = mail scanners and link previews, **seen** = the page actually loaded and ran its script (the best signal a human looked).
-
-What's stored per event: the code, hit or seen, a bot flag, the country Cloudflare reports, and the time. No IP address, user agent, cookie or browser storage.
-
 ---
 
 ## Day-to-day
@@ -105,5 +94,4 @@ What's stored per event: the code, hit or seen, a bot flag, the country Cloudfla
 | Add a looping clip to a project                       | `npm run clip -- <recording.mp4> <name> [start] [end]`, then `video: /media/<name>` in the project frontmatter |
 | Redeploy the www redirect (rarely needed)             | `npx wrangler deploy --config redirect-www/wrangler.jsonc`                                                     |
 | Visual / interaction smoke tests                      | `npm run build && npm run shots && npm run smoke`                                                              |
-| Tracked application links                             | `npm run links -- add "<label>" [/path]`, `npm run links -- list`                                              |
 | Change pricing                                        | `HOURLY_RATE_DKK` in `src/data/services.ts` (services show a pricing type, not amounts)                                                   |
