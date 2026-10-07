@@ -7,7 +7,7 @@ export type Post = CollectionEntry<'blog'>;
 
 export const github = snapshot;
 
-export function repo(name: string): Repo | undefined {
+function repo(name: string): Repo | undefined {
   return snapshot.repos.find((r) => r.name === name);
 }
 
@@ -56,7 +56,7 @@ export function allTags(posts: Post[]) {
 }
 
 /** "2025-10" -> "Oct 2025" in the given locale. */
-export function monthLabel(ym: string, lang: 'en' | 'da') {
+function monthLabel(ym: string, lang: 'en' | 'da') {
   const [y, m] = ym.split('-').map(Number);
   if (!m) return String(y);
   return new Date(Date.UTC(y, m - 1, 1)).toLocaleDateString(lang === 'da' ? 'da-DK' : 'en-GB', {

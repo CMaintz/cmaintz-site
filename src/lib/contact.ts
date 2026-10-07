@@ -75,7 +75,7 @@ export const passesTurnstile = async (form: FormData, secret: string | undefined
 
 const optionalLine = (label: string, value: string) => (value ? [`${label}: ${value}`] : []);
 
-export function formatInquiry(q: Inquiry) {
+function formatInquiry(q: Inquiry) {
   const header = [
     'Sent from the contact form on https://maintz.dev',
     '',

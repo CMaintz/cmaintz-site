@@ -7,7 +7,7 @@ export const AREA_IDS = ['dx', 'devops', 'platform', 'ai'] as const;
 export type AreaId = (typeof AREA_IDS)[number];
 
 type L = Record<Lang, string>;
-export interface Principle {
+interface Principle {
   title: L;
   body: L;
   proof?: string;

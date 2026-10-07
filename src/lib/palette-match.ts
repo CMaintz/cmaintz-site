@@ -1,10 +1,8 @@
-/** Command palette matching: word-prefix and substring hits, plus a strict fuzzy fallback. */
 
 const BOUNDARY = /[\s/\-_.,:()]/;
 
 const isWordStart = (s: string, i: number) => i === 0 || BOUNDARY.test(s[i - 1]);
 
-/** Index where `q` starts a word in `s`, or -1. */
 function wordPrefixAt(q: string, s: string) {
   for (let i = s.indexOf(q); i >= 0; i = s.indexOf(q, i + 1)) if (isWordStart(s, i)) return i;
   return -1;
