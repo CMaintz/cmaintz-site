@@ -9,13 +9,27 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { unified } from '@astrojs/markdown-remark';
 
+import { appendFile } from 'node:fs/promises';
 import { loadEnv } from 'vite';
+import { headersFileBlock } from './src/lib/security-headers.ts';
 
 // Build-time: canonical URLs, RSS, sitemap and OG tags. Read from the shell/CI env
 // or .env; set it to the workers.dev URL after the first deploy, then the domain.
 const fileEnv = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
 // `||`, not `??`: an unset GitHub variable reaches the build as an empty string.
 const SITE = process.env.SITE_URL || fileEnv.SITE_URL || 'https://maintz.dev';
+
+/**
+ * Appends the site-wide security headers to the `_headers` file Cloudflare serves static assets with.
+ * @type {import('astro').AstroIntegration}
+ */
+const securityHeaders = {
+  name: 'security-headers',
+  hooks: {
+    'astro:build:done': async ({ dir }) => appendFile(new URL('_headers', dir), `
+${headersFileBlock()}`),
+  },
+};
 
 export default defineConfig({
   site: SITE,
@@ -33,6 +47,7 @@ export default defineConfig({
     routing: { prefixDefaultLocale: false },
   },
   integrations: [
+    securityHeaders,
     mermaid({ theme: 'dark', autoTheme: true }),
     expressiveCode({
       themes: ['github-dark-dimmed', 'github-light'],

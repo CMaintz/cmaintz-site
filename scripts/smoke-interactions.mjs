@@ -100,6 +100,23 @@ async function terminalTabs(page) {
   return visible && links > 0 && (await page.isHidden('#panel-whoami'));
 }
 
+// Console messages from every check, scanned at the end for CSP blocks.
+const cspBlocks = [];
+const isCspBlock = (text) => /Content Security Policy|Refused to (load|execute|frame|connect|compile|evaluate)/i.test(text);
+
+/** Visits the pages the other checks don't (diagrams, search, DOOM), then reports any CSP block seen. */
+async function noCspBlocks(page) {
+  await page.goto(`${BASE}/blog/hello-world`, { waitUntil: 'networkidle' });
+  await page.goto(`${BASE}/search`);
+  await page.fill('.pagefind-ui input', 'astro');
+  await page.waitForSelector('.pagefind-ui__result', { timeout: 10000 });
+  await page.goto(BASE);
+  await page.evaluate(() => dispatchEvent(new Event('doom:open')));
+  await page.waitForTimeout(3000);
+  cspBlocks.forEach((t) => console.error(`  CSP: ${t}`));
+  return cspBlocks.length === 0;
+}
+
 const CHECKS = {
   terminalTabs,
   paletteNavigates,
@@ -110,6 +127,7 @@ const CHECKS = {
   demoLoads,
   langSwitches,
   postLangSwitchLandsOnIndex,
+  noCspBlocks,
 };
 
 async function run(page, [name, check]) {
@@ -121,6 +139,7 @@ async function run(page, [name, check]) {
 async function main() {
   const results = await withSiteBrowser(PORT, async (browser) => {
     const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    page.on('console', (m) => isCspBlock(m.text()) && cspBlocks.push(m.text()));
     const out = [];
     for (const entry of Object.entries(CHECKS)) out.push(await run(page, entry));
     return out;

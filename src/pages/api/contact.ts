@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 import { RESEND_API_KEY, TURNSTILE_SECRET_KEY, CONTACT_TO_EMAIL, CONTACT_FROM_EMAIL } from 'astro:env/server';
 import { PUBLIC_TURNSTILE_SITE_KEY } from 'astro:env/client';
 import { parseInquiry, validationError, isHoneypotHit, passesTurnstile, sendInquiry, type Inquiry } from '../../lib/contact';
@@ -16,6 +17,17 @@ function reply(req: Request, status: number, error?: string) {
 }
 
 type Outcome = { status: number; error?: string };
+
+interface RateLimiter {
+  limit(options: { key: string }): Promise<{ success: boolean }>;
+}
+
+/** True once an IP has sent too many messages; without the binding (local dev) nothing is limited. */
+async function rateLimited(ip: string | null) {
+  const limiter = (env as { CONTACT_LIMITER?: RateLimiter }).CONTACT_LIMITER;
+  if (!limiter || !ip) return false;
+  return !(await limiter.limit({ key: ip })).success;
+}
 
 /** Bots get a silent 200 (honeypot) or a 403 (captcha); humans get null. */
 async function botOutcome(form: FormData, ip: string | null): Promise<Outcome | null> {
@@ -38,7 +50,9 @@ async function handle(request: Request, form: FormData, ip: string | null) {
 }
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
+  const ip = request.headers.get('cf-connecting-ip') ?? clientAddress ?? null;
+  if (await rateLimited(ip)) return reply(request, 429, 'rate_limited');
   const form = await request.formData().catch(() => null);
   if (!form) return reply(request, 400, 'bad_request');
-  return handle(request, form, request.headers.get('cf-connecting-ip') ?? clientAddress ?? null);
+  return handle(request, form, ip);
 };
