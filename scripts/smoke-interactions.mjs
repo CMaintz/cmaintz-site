@@ -100,6 +100,19 @@ async function terminalTabs(page) {
   return visible && links > 0 && (await page.isHidden('#panel-whoami'));
 }
 
+// An extra ↑ up front, and Caps Lock on for the b and a.
+const KONAMI_KEYS = ['ArrowUp', ...'Up Up Down Down Left Right Left Right'.split(' ').map((k) => `Arrow${k}`), 'Shift+B', 'Shift+A'];
+
+/** The Konami code opens DOOM even with a stray extra ↑ and Caps Lock on, and claims the b/a so Firefox's find bar can't. */
+async function konamiOpensDoom(page) {
+  await page.goto(`${BASE}/about`);
+  await page.evaluate(() => addEventListener('keydown', (e) => (window.__claimed = e.key === 'A' && e.defaultPrevented)));
+  for (const k of KONAMI_KEYS) await page.keyboard.press(k);
+  const opened = await page.evaluate(() => document.querySelector('dialog.doom').open);
+  await page.click('dialog.doom .close');
+  return opened && (await page.evaluate(() => window.__claimed));
+}
+
 // Console messages from every check, scanned at the end for CSP blocks.
 const cspBlocks = [];
 const isCspBlock = (text) => /Content Security Policy|Refused to (load|execute|frame|connect|compile|evaluate)/i.test(text);
@@ -127,6 +140,7 @@ const CHECKS = {
   demoLoads,
   langSwitches,
   postLangSwitchLandsOnIndex,
+  konamiOpensDoom,
   noCspBlocks,
 };
 
