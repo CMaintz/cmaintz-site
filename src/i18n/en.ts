@@ -125,6 +125,7 @@ export const en = {
   'services.languages': 'Languages I work in',
   'services.process': 'How it works',
   'services.ask': 'Start a conversation',
+  'services.faq': 'Common questions',
   'contact.title': 'Contact',
   'contact.lede': 'Job opportunities, freelance work, consulting, or just a hello. I usually reply within a day or two.',
   'contact.name': 'Name',
