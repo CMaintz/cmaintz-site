@@ -15,8 +15,8 @@ context: Personal project
 start: 2025-04
 stack: [React 19, TypeScript, Vite, Tailwind CSS, TanStack Query, Firebase, LG webOS, Vitest]
 repos: [movie-explorer]
-demo: https://moviedb.maintz.dev/
-live: https://moviedb.maintz.dev/
+demo: https://movie-explorer.maintz.dev/
+live: https://movie-explorer.maintz.dev/
 ---
 
 ## The hard part
