@@ -7,6 +7,7 @@ tagline:
 summary:
   en: Employee time registration with real validation rules - overlap detection and a 37-hour weekly cap - behind interface contracts so a WPF desktop client and an ASP.NET MVC web app share one core.
   da: Tidsregistrering med rigtige valideringsregler - overlap-detektion og loft på 37 timer om ugen - bag interface-kontrakter, så en WPF-klient og en ASP.NET MVC-webapp deler én kerne.
+areas: [backend]
 category: academic
 order: 23
 role: Developer in a group

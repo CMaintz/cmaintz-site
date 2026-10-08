@@ -8,6 +8,7 @@ summary:
   en: An unofficial .NET 8 SDK for TypeSafe AI's Jev - typed Choice, Score and Noul questions in, typed answers with calibrated confidence out - built on nothing but System.Net.Http and System.Text.Json.
   da: Et uofficielt .NET 8-SDK til TypeSafe AI's Jev - typede Choice-, Score- og Noul-spørgsmål ind, typede svar med kalibreret confidence ud - bygget på intet andet end System.Net.Http og System.Text.Json.
 areas: [ai]
+aiPowered: true
 category: open-source
 order: 12
 role: Sole developer

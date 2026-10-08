@@ -8,6 +8,7 @@ summary:
   en: An unofficial Java 21 SDK for TypeSafe AI's Jev, with a sealed question hierarchy over records and truly non-blocking async calls - no runtime dependencies beyond java.net.http.
   da: Et uofficielt Java 21-SDK til TypeSafe AI's Jev med et sealed spørgsmålshierarki over records og reelt ikke-blokerende asynkrone kald - ingen runtime-afhængigheder ud over java.net.http.
 areas: [ai]
+aiPowered: true
 category: open-source
 order: 13
 role: Sole developer

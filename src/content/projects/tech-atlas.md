@@ -7,7 +7,8 @@ tagline:
 summary:
   en: About 420 security, CS, AI and platform terms in English and Danish, linked by typed, sourced relationships into a knowledge graph with a 2D/3D explorer, plain-language explanations and quizzes.
   da: Omkring 420 begreber inden for sikkerhed, datalogi, AI og platform på engelsk og dansk, forbundet af typede relationer med kilder til en vidensgraf med 2D/3D-explorer, letforståelige forklaringer og quizzer.
-areas: [ai]
+areas: [backend]
+frontend: true
 category: personal
 order: 7
 featured: true

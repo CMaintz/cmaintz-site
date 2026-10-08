@@ -8,6 +8,8 @@ summary:
   en: A production Shopware 6 plugin that turns product images into multilingual copy, SEO, categories and tags with generative AI, and lets shoppers see artwork on their own wall before buying. Designed, built and deployed as sole developer.
   da: Et Shopware 6-plugin i produktion, der omdanner produktbilleder til flersproget tekst, SEO, kategorier og tags med generativ AI, og lader kunder se kunstværket på deres egen væg, før de køber. Designet, bygget og udrullet som eneste udvikler.
 areas: [ai, backend, platform]
+frontend: true
+aiPowered: true
 category: professional
 order: 1
 featured: true

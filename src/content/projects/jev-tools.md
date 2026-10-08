@@ -8,6 +8,7 @@ summary:
   en: A monorepo of tools built on TypeSafe AI's Jev - an agent tool-call guardrail, a GitHub issue-triage Action and a bulk classification CLI - that run Jev on everything and hand only the uncertain cases to a human or a real LLM.
   da: Et monorepo med værktøjer bygget på TypeSafe AI's Jev - en guardrail for agenters værktøjskald, en GitHub Action til issue-triage og et CLI til masseklassificering - der kører Jev på alt og kun sender de usikre tilfælde videre til et menneske eller en rigtig LLM.
 areas: [ai, platform, devops]
+aiPowered: true
 category: open-source
 order: 3
 featured: true
