@@ -5,3 +5,8 @@ src/data/github.json
 # Prose; Prettier's markdown rewrapping and escaping would churn the posts
 src/content/
 package-lock.json
+# Markup and styles keep their compact hand layout: Prettier roughly doubles their
+# length, which breaks the 300-line / 18-line rules in check-code-size.mjs, and it
+# adds whitespace inside inline elements.
+*.astro
+*.css

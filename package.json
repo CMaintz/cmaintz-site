@@ -54,7 +54,6 @@
     "pagefind": "^1.5.2",
     "playwright": "^1.63.0",
     "prettier": "^3.9.9",
-    "prettier-plugin-astro": "^1.1.0",
     "ts-morph": "^28.0.0",
     "typescript": "^6.0.3",
     "vite": "^8.3.3",
