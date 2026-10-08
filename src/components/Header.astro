@@ -15,6 +15,7 @@ const links = [
 ];
 const isActive = (href: string) => here === href || here.startsWith(href + '/');
 const other: Lang = lang === 'en' ? 'da' : 'en';
+import DisplayMenu from './DisplayMenu.astro';
 ---
 
 <header class="site-header">
@@ -39,9 +40,7 @@ const other: Lang = lang === 'en' ? 'da' : 'en';
       <a class="tool lang mono" href={localize(switchPath ?? here, other)} hreflang={other} lang={other} aria-label={`${t('lang.label')}: ${other.toUpperCase()}`}>
         <span class:list={{ on: lang === 'en' }}>EN</span><span class="sep">/</span><span class:list={{ on: lang === 'da' }}>DA</span>
       </a>
-      <button class="tool" type="button" data-crt-toggle aria-label={t('crt.toggle')} title={t('crt.toggle')}>
-        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M1 3h14v9H1zM2 4v7h12V4zM5 13h6v1H5z M3 5h10v1H3zM3 7h10v1H3zM3 9h10v1H3z" /></svg>
-      </button>
+      <DisplayMenu lang={lang} />
       <button class="tool" type="button" data-theme-toggle aria-label={t('theme.toggle')} title={t('theme.toggle')}>
         <svg class="sun" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M6 5h4v1h1v4h-1v1H6v-1H5V6h1zM7 0h2v3H7zM7 13h2v3H7zM0 7h3v2H0zM13 7h3v2h-3zM2 2h2v2H2zM12 2h2v2h-2zM2 12h2v2H2zM12 12h2v2h-2z" /></svg>
         <svg class="moon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M6 1h4v1H8v1H7v2H6v6h1v1h1v1h4v-1h2v2h-1v1h-2v1H6v-1H4v-1H3v-1H2v-2H1V6h1V4h1V3h1V2h2z" /></svg>
@@ -69,14 +68,14 @@ const other: Lang = lang === 'en' ? 'da' : 'en';
   const root = document.documentElement;
   const save = (k: string, v: string) => { try { localStorage.setItem(k, v); } catch {} };
   /** Flips a root data-* setting between two values and returns the new one. */
-  function flip(key: 'theme' | 'crt', [a, b]: [string, string]) {
+  function flip(key: 'theme', [a, b]: [string, string]) {
     const next = root.dataset[key] === a ? b : a;
     root.dataset[key] = next;
     return next;
   }
 
   /** Wires a header button to a persisted setting; others listen for `${key}change`. */
-  function bindToggle(key: 'theme' | 'crt', values: [string, string]) {
+  function bindToggle(key: 'theme', values: [string, string]) {
     document.querySelector(`[data-${key}-toggle]`)?.addEventListener('click', () => {
       save(key, flip(key, values));
       window.dispatchEvent(new CustomEvent(`${key}change`));
@@ -84,7 +83,6 @@ const other: Lang = lang === 'en' ? 'da' : 'en';
   }
 
   bindToggle('theme', ['light', 'dark']);
-  bindToggle('crt', ['off', 'on']);
 </script>
 
 <style>
@@ -121,19 +119,19 @@ const other: Lang = lang === 'en' ? 'da' : 'en';
   .nav a[aria-current='page']::before { content: '>'; margin-right: 0.3em; }
 
   .tools { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
-  .tool {
+  /* Global so DisplayMenu's summary gets the same look; two classes keep the old specificity, so .lang and .status-link still override it. */
+  :global(.site-header .tool) {
     display: inline-grid; place-items: center;
     height: 2.1rem; min-width: 2.1rem; padding: 0 0.5rem;
     background: transparent; color: var(--fg-dim);
     border: 1px solid var(--line); cursor: pointer;
     font-size: 0.78rem; text-decoration: none;
   }
-  .tool:hover { color: var(--accent); border-color: var(--accent); }
+  :global(.site-header .tool:hover) { color: var(--accent); border-color: var(--accent); }
   .lang { display: inline-flex; gap: 0.15rem; }
   .lang .on { color: var(--fg); font-weight: 700; }
   .lang .sep { color: var(--fg-faint); }
   :global(:root[data-theme='light']) .sun, :global(:root:not([data-theme='light'])) .moon { display: none; }
-  :global(:root[data-crt='off']) [data-crt-toggle] { opacity: 0.5; }
 
   /* The home hero shows this status itself, so the header only carries it elsewhere. */
   .status-link { display: none; gap: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }

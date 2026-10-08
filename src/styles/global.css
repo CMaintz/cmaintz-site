@@ -102,8 +102,8 @@ kbd {
   background: radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.45) 100%);
 }
 :root[data-theme='light'] .crt-vignette { background: radial-gradient(ellipse at center, transparent 60%, rgb(60 50 30 / 0.12) 100%); }
-:root[data-crt='off'] .crt-scan, :root[data-crt='off'] .crt-vignette { display: none; }
-:root[data-crt='off'] { --glow: none; }
+:root[data-scan='off'] .crt-scan, :root[data-vignette='off'] .crt-vignette { display: none; }
+:root[data-glow='off'] { --glow: none; }
 
 /* ── Layout primitives ──────────────────────────────────────── */
 .wrap { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-inline: var(--gutter); }
