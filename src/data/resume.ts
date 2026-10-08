@@ -184,12 +184,28 @@ export const skills: { name: L; keywords: string[] }[] = [
     ],
   },
   {
-    name: { en: 'Cloud, data & messaging', da: 'Cloud, data & messaging' },
+    name: { en: 'Backend', da: 'Backend' },
+    keywords: [
+      'ASP.NET Core & MVC',
+      'Spring Boot',
+      'Quarkus',
+      'Symfony / Shopware 6',
+      'Node.js / Express',
+      'REST APIs',
+      'RabbitMQ',
+      'Symfony Messenger',
+    ],
+  },
+  {
+    name: { en: 'Frontend & apps', da: 'Frontend & apps' },
+    keywords: ['Angular', 'React', 'Vue', 'Astro', 'SwiftUI', 'WPF', 'JavaFX'],
+  },
+  {
+    name: { en: 'Cloud & data', da: 'Cloud & data' },
     keywords: [
       'Azure (Functions, SQL)',
       'Cloudflare',
       'Serverless',
-      'RabbitMQ',
       'PostgreSQL',
       'MS SQL / T-SQL',
       'MySQL',
@@ -201,28 +217,11 @@ export const skills: { name: L; keywords: string[] }[] = [
     ],
   },
   {
-    name: { en: 'Programming languages', da: 'Programmeringssprog' },
+    name: { en: 'Languages', da: 'Programmeringssprog' },
     keywords: ['C# / .NET', 'Java', 'PHP', 'TypeScript', 'JavaScript', 'Python', 'Kotlin', 'Swift', 'SQL', 'Shell'],
   },
   {
-    name: { en: 'Frameworks', da: 'Frameworks' },
-    keywords: [
-      'ASP.NET Core & MVC',
-      'Spring Boot',
-      'Quarkus',
-      'Symfony / Shopware 6',
-      'Node.js / Express',
-      'Angular',
-      'React',
-      'Vue',
-      'Astro',
-      'SwiftUI',
-      'WPF',
-      'JavaFX',
-    ],
-  },
-  {
-    name: { en: 'Architecture & practice', da: 'Arkitektur & praksis' },
+    name: { en: 'Architecture & craft', da: 'Arkitektur & håndværk' },
     keywords: [
       'Hexagonal / clean architecture',
       'Event-driven architecture',
