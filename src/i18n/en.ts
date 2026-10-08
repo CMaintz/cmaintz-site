@@ -117,7 +117,7 @@ export const en = {
   'about.present': 'present',
   'about.funfact': 'Fun fact: I built my first website for my dad’s business when I was 13.',
   'services.title': 'Services',
-  'services.lede': 'Available for freelance and consulting alongside my job search. Fixed-scope or hourly, remote or on-site in Aarhus.',
+  'services.lede': 'Available for freelance and consulting alongside my job search.\nFixed-scope or hourly, remote or on-site in Aarhus.',
   'services.pricing': 'Pricing',
   'services.pricing.body':
     'Hourly from {rate} DKK ex. VAT. Fixed-price work is quoted after scoping, because the price depends on the complexity. The first 30-minute call is free.',
