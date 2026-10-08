@@ -2,7 +2,7 @@ export const site = {
   name: 'Christoffer Maintz',
   shortName: 'CM',
   handle: 'cmaintz',
-  role: { en: 'Developer · DX, DevOps, Platform & AI', da: 'Udvikler · DX, DevOps, platform & AI' },
+  role: { en: 'Developer · DX, DevOps, Backend, Platform & AI', da: 'Udvikler · DX, DevOps, backend, platform & AI' },
   description: {
     en: 'Christoffer Maintz - developer in Aarhus working on developer experience, DevOps, platform engineering and AI enablement.',
     da: 'Christoffer Maintz - udvikler i Aarhus med fokus på developer experience, DevOps, platform engineering og AI.',

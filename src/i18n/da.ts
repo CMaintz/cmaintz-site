@@ -121,7 +121,7 @@ export const da: Record<keyof typeof en, string> = {
   'about.funfact': 'Fun fact: Jeg byggede min første hjemmeside til min fars forretning, da jeg var 13.',
   'services.title': 'Ydelser',
   'services.lede':
-    'Tilgængelig for freelance- og konsulentopgaver sideløbende med jobsøgningen. Fast pris eller timebasis, remote eller on-site i Aarhus.',
+    'Tilgængelig for freelance- og konsulentopgaver sideløbende med jobsøgningen.\nFast pris eller timebasis, remote eller on-site i Aarhus.',
   'services.pricing': 'Priser',
   'services.pricing.body':
     'Timepris fra {rate} kr. ekskl. moms. Opgaver til fast pris får et tilbud efter afgrænsning, fordi prisen afhænger af kompleksiteten. Det første 30-minutters opkald er gratis.',
@@ -132,7 +132,7 @@ export const da: Record<keyof typeof en, string> = {
   'services.process': 'Sådan foregår det',
   'services.ask': 'Start en samtale',
   'contact.title': 'Kontakt',
-  'contact.lede': 'Jobmuligheder, freelance, konsulentopgaver eller bare et hej. Jeg svarer typisk inden for en dag eller to.',
+  'contact.lede': 'Jobmuligheder, freelance, konsulentopgaver eller bare et hej.\nJeg svarer typisk inden for en dag eller to.',
   'contact.name': 'Navn',
   'contact.email': 'E-mail',
   'contact.company': 'Virksomhed (valgfrit)',
