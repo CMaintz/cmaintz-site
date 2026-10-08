@@ -11,7 +11,9 @@
   --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
   --font-pixel: 'Silkscreen', 'JetBrains Mono', monospace;
 
-  --maxw: 72rem;
+  --maxw: 84rem;
+  /* Longest line of running text: about 80 characters of body copy. */
+  --measure: 52rem;
   --gutter: clamp(1rem, 4vw, 2rem);
   --radius: 0;
   --shadow-offset: 6px;
