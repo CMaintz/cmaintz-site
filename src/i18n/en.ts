@@ -128,7 +128,7 @@ export const en = {
   'services.process': 'How it works',
   'services.ask': 'Start a conversation',
   'contact.title': 'Contact',
-  'contact.lede': 'Job opportunities, freelance work, consulting, or just a hello. I usually reply within a day or two.',
+  'contact.lede': 'Job opportunities, freelance work, consulting, or just a hello.\nI usually reply within a day or two.',
   'contact.name': 'Name',
   'contact.email': 'Email',
   'contact.company': 'Company (optional)',

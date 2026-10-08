@@ -132,7 +132,7 @@ export const da: Record<keyof typeof en, string> = {
   'services.process': 'Sådan foregår det',
   'services.ask': 'Start en samtale',
   'contact.title': 'Kontakt',
-  'contact.lede': 'Jobmuligheder, freelance, konsulentopgaver eller bare et hej. Jeg svarer typisk inden for en dag eller to.',
+  'contact.lede': 'Jobmuligheder, freelance, konsulentopgaver eller bare et hej.\nJeg svarer typisk inden for en dag eller to.',
   'contact.name': 'Navn',
   'contact.email': 'E-mail',
   'contact.company': 'Virksomhed (valgfrit)',
