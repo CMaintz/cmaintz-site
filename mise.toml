@@ -69,9 +69,8 @@ postinstall = "mise run setup:habit-hooks"
 
 [tasks.fix]
 description = "Auto-fix what is mechanically fixable; never opinionated"
-# No mechanical fixers are wired in yet: the repo has no ESLint, and Prettier isn't a
-# declared dependency. A no-op that exits 0 keeps the verb present, per CONTRACT.
-run = "echo 'fix: no auto-fixers configured yet'"
+# Prettier only for now (.prettierrc, .prettierignore); ESLint --fix joins it once ESLint is set up.
+run = "prettier --write ."
 
 # Provision the pinned habit-hooks (core + language plugin, same version) into a
 # per-plugin venv. Auxiliary (tier c), like setup:pmd - not a contract verb, not in

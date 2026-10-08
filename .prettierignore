@@ -1,0 +1,7 @@
+# Vendored third-party build (Doom)
+public/
+# Written by scripts/sync-github.mjs on every deploy
+src/data/github.json
+# Prose; Prettier's markdown rewrapping and escaping would churn the posts
+src/content/
+package-lock.json
