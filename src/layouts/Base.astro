@@ -44,7 +44,7 @@ const metaDescription = clipDescription(description);
 ---
 
 <!doctype html>
-<html lang={lang} data-theme="dark" data-crt="on">
+<html lang={lang} data-theme="dark" data-scan="on" data-vignette="on" data-motion="on">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -75,14 +75,19 @@ const metaDescription = clipDescription(description);
     <meta name="twitter:card" content="summary_large_image" />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(ld)} />
     <script is:inline>
-      // Apply stored theme/CRT prefs before first paint (no flash).
+      // Apply stored theme and display-effect prefs before first paint (no flash).
       (() => {
         const d = document.documentElement;
         d.classList.add('js');
         try {
           const theme = localStorage.getItem('theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
           d.dataset.theme = theme;
-          d.dataset.crt = localStorage.getItem('crt') ?? (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'off' : 'on');
+          // 'crt' is the old single switch for scanlines and vignette together.
+          const legacy = localStorage.getItem('crt');
+          const fx = (k, fallback) => localStorage.getItem(`fx-${k}`) ?? fallback;
+          d.dataset.scan = fx('scan', legacy ?? 'on');
+          d.dataset.vignette = fx('vignette', legacy ?? 'on');
+          d.dataset.motion = fx('motion', matchMedia('(prefers-reduced-motion: reduce)').matches ? 'off' : 'on');
         } catch {}
       })();
     </script>

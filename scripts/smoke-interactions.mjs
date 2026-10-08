@@ -20,9 +20,10 @@ async function togglesFlip(page) {
   const theme = () => page.evaluate(() => document.documentElement.dataset.theme);
   const before = await theme();
   await page.click('[data-theme-toggle]');
-  await page.click('[data-crt-toggle]');
-  const crt = await page.evaluate(() => document.documentElement.dataset.crt);
-  return (await theme()) !== before && crt === 'off';
+  await page.click('details.fx summary');
+  await page.click('[data-fx="scan"]');
+  const fx = await page.evaluate(() => ({ ...document.documentElement.dataset }));
+  return (await theme()) !== before && fx.scan === 'off' && fx.motion === 'on';
 }
 
 /** Cards a filter leaves on screen, read from rendered visibility (a card's own display rule can override hidden). */
