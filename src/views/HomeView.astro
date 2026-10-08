@@ -7,18 +7,19 @@ import PostItem from '../components/PostItem.astro';
 import { type Lang, localize, useT } from '../i18n/ui';
 import { getFeaturedProjects, getPosts } from '../lib/content';
 import { site } from '../data/site';
+import { AREA_IDS, areas } from '../data/areas';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useT(lang);
 const featured = await getFeaturedProjects(9);
 const posts = (await getPosts()).slice(0, 3);
-const focus = (['dx', 'devops', 'platform', 'ai'] as const).map((k, i) => ({
+const focus = AREA_IDS.map((k, i) => ({
   id: k,
   n: String(i + 1).padStart(2, '0'),
   title: t(`focus.${k}.title`),
   body: t(`focus.${k}.body`),
-  glyph: ['⌘', '⟳', '▦', '◈'][i],
+  glyph: areas[k].glyph,
 }));
 const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', 'Spring Boot', 'Symfony', 'Angular', 'React', 'Astro', 'GitHub Actions', 'mise', 'Docker', 'PostgreSQL', 'RabbitMQ', 'Cloudflare', 'Azure', 'Kubernetes', 'Claude Code', 'Semgrep'];
 ---
@@ -107,7 +108,7 @@ const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', '
   .kb { font-size: 0.75rem; color: var(--fg-dim); gap: 0.3rem; }
   @media (hover: none) and (pointer: coarse) { .kb { display: none; } }
 
-  .focus { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 0; border: 2px solid var(--line); background: var(--bg-2); }
+  .focus { grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 0; border: 2px solid var(--line); background: var(--bg-2); }
   .focus__item { padding: 1.5rem; border-right: 1px dashed var(--line); display: flex; flex-direction: column; gap: 0.6rem; }
   .focus__item:last-child { border-right: 0; }
   .focus__glyph { font-size: 1.4rem; color: var(--accent); text-shadow: var(--glow); }

@@ -7,6 +7,7 @@ tagline:
 summary:
   en: A multi-actor booking system for Hørning Rideskole - horses, riders, time slots, a mucking-out reward rota and payments - with a hand-written ADO.NET data layer instead of an ORM.
   da: Et bookingsystem for Hørning Rideskole - heste, ryttere, tider, en mugningsordning med belønning og betaling - med et håndskrevet ADO.NET-datalag i stedet for en ORM.
+areas: [backend]
 category: academic
 order: 24
 role: Developer in a group

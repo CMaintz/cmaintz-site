@@ -36,6 +36,8 @@ export const da: Record<keyof typeof en, string> = {
   'focus.dx.body': 'Hurtige feedback-loops, fornuftige standarder og værktøjer, der fjerner friktion i stedet for at tilføje ceremoni.',
   'focus.devops.title': 'DevOps & CI/CD',
   'focus.devops.body': 'Genbrugelige pipelines, deterministiske kvalitets-gates, supply-chain- og secret-scanning.',
+  'focus.backend.title': 'Backend',
+  'focus.backend.body': 'API’er og datamodeller bygget omkring domænet, med køer og retries, hvor afhængigheder er langsomme.',
   'focus.platform.title': 'Platform & infrastruktur',
   'focus.platform.body': 'Asfalterede veje: fastlåste toolchains, scaffolding, config-as-code og policy-as-code.',
   'focus.ai.title': 'AI-enablement',

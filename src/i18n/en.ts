@@ -34,6 +34,8 @@ export const en = {
   'focus.dx.body': 'Fast feedback loops, sane defaults, tooling that removes friction instead of adding ceremony.',
   'focus.devops.title': 'DevOps & CI/CD',
   'focus.devops.body': 'Reusable pipelines, deterministic quality gates, supply-chain and secret scanning.',
+  'focus.backend.title': 'Backend',
+  'focus.backend.body': 'APIs and data models built around the domain, with queues and retries where dependencies are slow.',
   'focus.platform.title': 'Platform & Infrastructure',
   'focus.platform.body': 'Paved roads: pinned toolchains, scaffolding, config-as-code and policy-as-code.',
   'focus.ai.title': 'AI enablement',
