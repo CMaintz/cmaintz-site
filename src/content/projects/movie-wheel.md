@@ -7,6 +7,7 @@ tagline:
 summary:
   en: Filter, spin a 12-slot wheel and get a title plus where it streams. React on Cloudflare Workers, with the TMDB key kept server-side behind a rate-limited proxy that checks origin and path.
   da: Filtrér, drej et hjul med 12 felter og få en titel plus hvor den streames. React på Cloudflare Workers, hvor TMDB-nøglen bliver på serveren bag en rate-limited proxy, der tjekker origin og path.
+areas: [backend]
 category: personal
 order: 10
 featured: true

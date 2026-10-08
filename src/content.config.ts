@@ -53,6 +53,8 @@ const projects = defineCollection({
     metrics: z.array(z.object({ value: z.string(), label: localized })).default([]),
     glyph: z.string().default('▣'),
     areas,
+    /** Has AI features built in (an LLM or Jev), as opposed to helping others use AI. */
+    aiPowered: z.boolean().default(false),
   }),
 });
 

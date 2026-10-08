@@ -56,6 +56,8 @@ export const da: Record<keyof typeof en, string> = {
   'projects.lede':
     'Produktionsarbejde, open source-værktøjer, personlige projekter og bedømte eksamensprojekter. Repo-data synkroniseres fra GitHub.',
   'projects.filter.all': 'alle',
+  'projects.filter.tech': 'Bygget med',
+  'projects.filter.ai': '✦ AI-drevet',
   'projects.cat.professional': 'professionelt',
   'projects.cat.open-source': 'open source',
   'projects.cat.personal': 'personligt',

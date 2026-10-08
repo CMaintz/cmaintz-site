@@ -7,6 +7,7 @@ tagline:
 summary:
   en: Browser Yahtzee on Node.js/Express with a framework-free client, server-side scoring that can't be tampered with, and crash-safe persistence after every action.
   da: Yatzy i browseren på Node.js/Express med en framework-fri klient, pointberegning på serveren og crash-sikker persistens efter hver handling.
+areas: [backend]
 category: academic
 order: 25
 role: Developer
