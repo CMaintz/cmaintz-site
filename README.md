@@ -21,18 +21,18 @@ Domain, deploy, contact form, comments, analytics and content workflows are in [
 
 ## Where things live
 
-| Path                                         | What                                                                 |
-| -------------------------------------------- | -------------------------------------------------------------------- |
-| `src/content/projects/*.md`                  | Project case studies (frontmatter schema in `src/content.config.ts`) |
-| `src/content/blog/*.mdx`                     | Blog posts                                                           |
-| `src/data/resume.ts`                         | CV data (drives /about, /cv and the PDFs)                            |
-| `src/data/services.ts`                       | Services and pricing                                                 |
-| `src/data/site.ts`                           | Name, email, socials                                                 |
-| `src/data/github.json`                       | GitHub snapshot (`npm run sync`)                                     |
-| `src/i18n/ui.ts`                             | English/Danish UI strings                                            |
-| `src/views/`                                 | Page bodies shared by `/x` and `/da/x` routes                        |
-| `src/styles/global.css`                      | Retro design tokens and primitives                                   |
-| `scripts/`                                   | GitHub sync, CV PDF, OG image, screenshots, function-length check    |
+| Path                        | What                                                                 |
+| --------------------------- | -------------------------------------------------------------------- |
+| `src/content/projects/*.md` | Project case studies (frontmatter schema in `src/content.config.ts`) |
+| `src/content/blog/*.mdx`    | Blog posts                                                           |
+| `src/data/resume.ts`        | CV data (drives /about, /cv and the PDFs)                            |
+| `src/data/services.ts`      | Services and pricing                                                 |
+| `src/data/site.ts`          | Name, email, socials                                                 |
+| `src/data/github.json`      | GitHub snapshot (`npm run sync`)                                     |
+| `src/i18n/ui.ts`            | English/Danish UI strings                                            |
+| `src/views/`                | Page bodies shared by `/x` and `/da/x` routes                        |
+| `src/styles/global.css`     | Retro design tokens and primitives                                   |
+| `scripts/`                  | GitHub sync, CV PDF, OG image, screenshots, function-length check    |
 
 ## License
 
