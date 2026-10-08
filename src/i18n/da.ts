@@ -1,4 +1,3 @@
-// Danish UI strings. Must have exactly the same keys as en.ts.
 import type { en } from './en';
 
 export const da: Record<keyof typeof en, string> = {

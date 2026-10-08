@@ -1,4 +1,3 @@
-// SEO helpers: description clipping, share-image lookup and schema.org JSON-LD.
 import { site } from '../data/site';
 
 /** Search results show ~155-160 characters; cut at a word boundary. */

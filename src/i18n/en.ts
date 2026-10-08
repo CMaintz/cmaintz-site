@@ -1,4 +1,3 @@
-// English UI strings. Keys must match da.ts (checked by the type in ui.ts).
 export const en = {
   'nav.home': 'home',
   'nav.about': 'about',
