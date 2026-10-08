@@ -26,7 +26,7 @@ const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', '
 <Base lang={lang}>
   <section class="hero wrap">
     <div class="hero__text">
-      <p class="status mono"><span class="status-dot" aria-hidden="true"></span> {t('home.status')} · {site.location}</p>
+      <a class="status mono" href={localize('/contact', lang)}><span class="status-dot" aria-hidden="true"></span> {t('home.status')} · {site.location}</a>
       <h1 class="glow">{t('home.hello').replace('.', '')}<span class="cursor" aria-hidden="true"></span></h1>
       <p class="lede">{t('home.lede')}</p>
       <div class="ctas">
@@ -97,8 +97,9 @@ const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', '
 </Base>
 
 <style>
-  .hero { display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; padding-block: clamp(3rem, 9vw, 7rem) clamp(2rem, 5vw, 4rem); }
-  .status { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-dim); border: 1px solid var(--line); padding: 0.3rem 0.7rem; background: var(--bg-2); margin-bottom: 1.5rem; }
+  .hero { display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; padding-block: clamp(1.5rem, 4vw, 3rem) clamp(2rem, 5vw, 4rem); }
+  .status { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-dim); border: 1px solid var(--line); padding: 0.3rem 0.7rem; background: var(--bg-2); margin-bottom: 1.5rem; text-decoration: none; }
+  .status:hover { color: var(--accent); border-color: var(--accent); }
   /* The hero's bottom padding is the gap before the first section. */
   .hero + .section { padding-top: 0; }
   h1 { margin-bottom: 1.4rem; }

@@ -46,6 +46,11 @@ const other: Lang = lang === 'en' ? 'da' : 'en';
         <svg class="sun" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M6 5h4v1h1v4h-1v1H6v-1H5V6h1zM7 0h2v3H7zM7 13h2v3H7zM0 7h3v2H0zM13 7h3v2h-3zM2 2h2v2H2zM12 2h2v2h-2zM2 12h2v2H2zM12 12h2v2h-2z" /></svg>
         <svg class="moon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" shape-rendering="crispEdges"><path fill="currentColor" d="M6 1h4v1H8v1H7v2H6v6h1v1h1v1h4v-1h2v2h-1v1h-2v1H6v-1H4v-1H3v-1H2v-2H1V6h1V4h1V3h1V2h2z" /></svg>
       </button>
+      {here !== '/' && (
+        <a class="tool status-link mono" href={localize('/contact', lang)}>
+          <span class="status-dot" aria-hidden="true"></span>{t('home.status')}
+        </a>
+      )}
       <details class="menu">
         <summary class="tool mono" aria-label={t('nav.menu')}>≡</summary>
         <div class="menu__panel win">
@@ -129,6 +134,10 @@ const other: Lang = lang === 'en' ? 'da' : 'en';
   .lang .sep { color: var(--fg-faint); }
   :global(:root[data-theme='light']) .sun, :global(:root:not([data-theme='light'])) .moon { display: none; }
   :global(:root[data-crt='off']) [data-crt-toggle] { opacity: 0.5; }
+
+  /* The home hero shows this status itself, so the header only carries it elsewhere. */
+  .status-link { display: none; gap: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  @media (min-width: 1100px) { .status-link { display: inline-flex; align-items: center; } }
 
   .menu { display: none; position: relative; }
   .menu summary { list-style: none; font-size: 1.1rem; }
