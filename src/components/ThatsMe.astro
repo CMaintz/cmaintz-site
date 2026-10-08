@@ -1,0 +1,88 @@
+---
+// THROWAWAY: four "that's me" callouts around the portrait, switchable with
+// the buttons in the corner or ?me=a|b|c|d. Pick one, then this file goes.
+import Portrait from './Portrait.astro';
+
+interface Props { alt: string }
+const { alt } = Astro.props;
+
+type Px = [number, number];
+const U = 6;
+
+/** Corner brackets around the face, each arm four blocks long. */
+function brackets(x0: number, y0: number, w: number, h: number): Px[] {
+  const out: Px[] = [];
+  for (const [cx, cy, dx, dy] of [[x0, y0, 1, 1], [x0 + w, y0, -1, 1], [x0, y0 + h, 1, -1], [x0 + w, y0 + h, -1, -1]]) {
+    const ox = dx < 0 ? U : 0, oy = dy < 0 ? U : 0;
+    for (let i = 0; i < 4; i++) out.push([cx + dx * i * U - ox, cy - oy], [cx - ox, cy + dy * i * U - oy]);
+  }
+  return out;
+}
+
+/** A ring of blocks around the head. */
+function ring(cx: number, cy: number, r: number): Px[] {
+  const out: Px[] = [];
+  for (let x = -r - U; x <= r + U; x += U) for (let y = -r - U; y <= r + U; y += U) if (Math.abs(Math.hypot(x, y) - r) < U * 0.55) out.push([cx + x, cy + y]);
+  return out;
+}
+
+const tail: Px[] = [[-48, 38], [-42, 38], [-42, 44], [-36, 44], [-36, 50], [-30, 50], [-30, 56]];
+const arrow: Px[] = [];
+for (let x = -80; x <= 42; x += 8) arrow.push([x, 100 - Math.round(Math.sin(((x + 80) / 122) * Math.PI) * 2) * 8]);
+for (const [i, j] of [[0, 0], [-1, -1], [-2, -2], [-1, 1], [-2, 2]]) arrow.push([50 + i * 8, 100 + j * 8]);
+const dots: Px[] = [];
+for (let x = -130; x <= 20; x += 12) dots.push([x, 89]);
+
+const variants = [
+  { id: 'a', blocks: tail, size: U },
+  { id: 'b', blocks: arrow, size: 8 },
+  { id: 'c', blocks: brackets(55, 22, 150, 200), size: U },
+  { id: 'd', blocks: [...ring(130, 120, 96), ...dots], size: U },
+];
+---
+
+<div class="me" data-me="a">
+  <Portrait alt={alt} />
+  {variants.map((v) => (
+    <svg class={`me__px me__px--${v.id}`} aria-hidden="true" shape-rendering="crispEdges">
+      {v.blocks.map(([x, y]) => <rect x={x + 300} y={y + 40} width={v.size} height={v.size} />)}
+    </svg>
+  ))}
+  <span class="me__a pixel" aria-hidden="true">That's me!</span>
+  <span class="me__b pixel" aria-hidden="true">That's me!</span>
+  <span class="me__c pixel" aria-hidden="true">P1 · Christoffer</span>
+  <span class="me__d mono" aria-hidden="true">// that's me</span>
+</div>
+
+<div class="me-pick mono" aria-hidden="true">
+  that's me: <button data-pick="a">A</button><button data-pick="b">B</button><button data-pick="c">C</button><button data-pick="d">D</button><button data-pick="off">off</button>
+</div>
+
+<script>
+  const me = document.querySelector<HTMLElement>('.me')!;
+  const pick = (v: string) => { me.dataset.me = v; document.querySelectorAll<HTMLButtonElement>('[data-pick]').forEach((b) => b.classList.toggle('on', b.dataset.pick === v)); };
+  pick(new URLSearchParams(location.search).get('me') ?? 'a');
+  document.querySelectorAll<HTMLButtonElement>('[data-pick]').forEach((b) => b.addEventListener('click', () => pick(b.dataset.pick!)));
+</script>
+
+<style>
+  .me { position: relative; }
+  /* The svg spans 300px left of the photo and 40px above it, so blocks can sit in the empty space. */
+  .me__px { position: absolute; left: -300px; top: -40px; width: calc(100% + 300px); height: calc(100% + 80px); overflow: visible; pointer-events: none; fill: var(--accent); display: none; }
+  .me__px--a { fill: var(--line-strong); }
+  .me__a, .me__b, .me__c, .me__d { display: none; }
+  .me[data-me='a'] .me__px--a, .me[data-me='b'] .me__px--b, .me[data-me='c'] .me__px--c, .me[data-me='d'] .me__px--d { display: block; }
+  .me[data-me='a'] .me__a, .me[data-me='b'] .me__b, .me[data-me='c'] .me__c, .me[data-me='d'] .me__d { display: block; }
+  .me__a, .me__b, .me__c, .me__d { position: absolute; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.04em; }
+  .me__a { left: -130px; top: 0; background: var(--bg-2); border: 3px solid var(--line-strong); box-shadow: 4px 4px 0 var(--shadow-c); padding: 0.4rem 0.7rem; font-size: 0.95rem; color: var(--fg); }
+  .me__b { left: -240px; top: 80px; font-size: 1.25rem; color: var(--accent); }
+  .me__c { left: 55px; top: -4px; background: var(--accent); color: var(--accent-ink); font-size: 0.75rem; padding: 0.15rem 0.45rem; }
+  .me__d { left: -250px; top: 80px; font-size: 0.9rem; color: var(--accent); text-transform: none; letter-spacing: 0; }
+  @media (prefers-reduced-motion: no-preference) { .me__px--c, .me__c { animation: me-blink 1.2s steps(1) infinite; } }
+  @keyframes me-blink { 50% { opacity: 0; } }
+  @media (max-width: 1100px) { .me__px, .me__a, .me__b, .me__c, .me__d { display: none !important; } }
+
+  .me-pick { position: fixed; right: 1rem; bottom: 1rem; z-index: 70; display: flex; gap: 0.3rem; align-items: center; background: var(--bg-2); border: 2px solid var(--line-strong); padding: 0.4rem 0.6rem; font-size: 0.8rem; }
+  .me-pick button { font: inherit; background: none; border: 1px solid var(--line); color: var(--fg); padding: 0.15rem 0.5rem; cursor: pointer; }
+  .me-pick button.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+</style>
