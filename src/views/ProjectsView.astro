@@ -17,6 +17,7 @@ const langCounts = LANGUAGES.map((l) => ({ id: techId(l), name: l, n: projects.f
 // Most-used first; languages no project uses don't get a button.
 const langs = langCounts.filter((l) => l.n > 0).sort((a, b) => b.n - a.n);
 const aiCount = projects.filter((p) => p.data.aiPowered).length;
+const frontendCount = projects.filter((p) => p.data.frontend).length;
 const areaCounts = Object.fromEntries(AREA_IDS.map((a) => [a, projects.filter((p) => (p.data.areas as string[]).includes(a)).length]));
 ---
 
@@ -34,6 +35,7 @@ const areaCounts = Object.fromEntries(AREA_IDS.map((a) => [a, projects.filter((p
       {AREA_IDS.map((a) => <button type="button" data-filter={a} aria-pressed="false">◆ {areaLabels[a][lang]} <span>{areaCounts[a]}</span></button>)}
     </div>
     <div class="filters tech mono" role="toolbar" aria-label={t('projects.filter.tech')}>
+      <button type="button" data-filter="frontend" aria-pressed="false">{t('projects.filter.frontend')} <span>{frontendCount}</span></button>
       <button type="button" data-filter="ai-powered" aria-pressed="false">{t('projects.filter.ai')} <span>{aiCount}</span></button>
       {langs.map((l) => <button type="button" data-filter={l.id} aria-pressed="false">{l.name} <span>{l.n}</span></button>)}
     </div>

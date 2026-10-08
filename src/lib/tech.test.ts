@@ -12,8 +12,8 @@ describe('stackLanguages', () => {
 });
 
 describe('techIds', () => {
-  it('makes hash-safe ids and puts the AI flag first', () => {
+  it('makes hash-safe ids and puts the flags first', () => {
     expect(techId('C#')).toBe('csharp');
-    expect(techIds(['C#', 'TypeScript'], true)).toEqual(['ai-powered', 'typescript', 'csharp']);
+    expect(techIds({ stack: ['C#', 'TypeScript'], aiPowered: true, frontend: true })).toEqual(['frontend', 'ai-powered', 'typescript', 'csharp']);
   });
 });

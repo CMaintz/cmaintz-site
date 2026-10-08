@@ -8,6 +8,7 @@ summary:
   en: Imports your GitHub repositories, measures activity, commit habits, structure and quality, and turns that into scores you can trace back to the numbers. .NET 10 and Angular 22, hexagonal, on PostgreSQL.
   da: Importerer dine GitHub-repos, måler aktivitet, commit-vaner, struktur og kvalitet og gør det til scores, du kan føre tilbage til tallene. .NET 10 og Angular 22, hexagonal, på PostgreSQL.
 areas: [dx, backend]
+frontend: true
 category: personal
 order: 11
 role: Sole developer

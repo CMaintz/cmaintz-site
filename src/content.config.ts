@@ -55,6 +55,8 @@ const projects = defineCollection({
     areas,
     /** Has AI features built in (an LLM or Jev), as opposed to helping others use AI. */
     aiPowered: z.boolean().default(false),
+    /** Has real UI work: a web frontend or a mobile app. */
+    frontend: z.boolean().default(false),
   }),
 });
 

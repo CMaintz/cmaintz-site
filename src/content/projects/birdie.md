@@ -7,6 +7,8 @@ tagline:
 summary:
   en: A SwiftUI birdwatching app - log a species with notes and GPS in one tap, browse sightings as a list or on an interactive MapKit map. Firebase backend, MVVM with @Observable.
   da: En SwiftUI-app til fuglekiggere - registrér en art med noter og GPS med ét tryk, og se observationer som liste eller på et interaktivt MapKit-kort. Firebase-backend, MVVM med @Observable.
+areas: [backend]
+frontend: true
 category: academic
 order: 21
 role: Sole developer

@@ -11,7 +11,7 @@ const href = localize(`/projects/${p.id}`, lang);
 const period = projectPeriod(p, lang);
 ---
 
-<article class="card reveal" data-category={p.data.category} data-areas={p.data.areas.join(' ')} data-tech={techIds(p.data.stack, p.data.aiPowered).join(' ')}>
+<article class="card reveal" data-category={p.data.category} data-areas={p.data.areas.join(' ')} data-tech={techIds(p.data).join(' ')}>
   <a class="hit" href={href} aria-label={p.data.title}></a>
   <header class="top">
     <span class="glyph" aria-hidden="true">{p.data.glyph}</span>

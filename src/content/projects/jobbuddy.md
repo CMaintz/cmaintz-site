@@ -8,6 +8,7 @@ summary:
   en: A Spring Boot (strict hexagonal) + Angular platform that ingests job postings and generates tailored CVs and cover letters with ATS match reports, backed by Postgres full-text and pgvector semantic search.
   da: En Spring Boot- (strengt hexagonal) og Angular-platform, der henter jobopslag og genererer skræddersyede CV'er og ansøgninger med ATS-matchrapporter, med Postgres fuldtekst- og pgvector-søgning.
 areas: [ai, backend]
+frontend: true
 aiPowered: true
 category: personal
 order: 6

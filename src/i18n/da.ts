@@ -58,6 +58,7 @@ export const da: Record<keyof typeof en, string> = {
   'projects.filter.all': 'alle',
   'projects.filter.tech': 'Bygget med',
   'projects.filter.ai': '✦ AI-drevet',
+  'projects.filter.frontend': '✦ Frontend',
   'projects.cat.professional': 'professionelt',
   'projects.cat.open-source': 'open source',
   'projects.cat.personal': 'personligt',

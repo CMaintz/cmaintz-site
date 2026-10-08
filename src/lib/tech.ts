@@ -1,5 +1,5 @@
 // The "built with" filters on /projects: languages read from each project's
-// stack, plus whether it has AI features built in (the `aiPowered` flag).
+// stack, plus the frontend and aiPowered flags from its frontmatter.
 
 export const LANGUAGES = ['TypeScript', 'JavaScript', 'Java', 'C#', 'PHP', 'Python', 'Swift', 'Kotlin'] as const;
 
@@ -12,7 +12,7 @@ export function stackLanguages(stack: string[]) {
 }
 
 /** Filter ids for one project, as written to its card's data-tech attribute. */
-export function techIds(stack: string[], aiPowered: boolean) {
-  const ids = stackLanguages(stack).map(techId);
-  return aiPowered ? ['ai-powered', ...ids] : ids;
+export function techIds(p: { stack: string[]; aiPowered: boolean; frontend: boolean }) {
+  const flags = [p.frontend && 'frontend', p.aiPowered && 'ai-powered'].filter((f): f is string => !!f);
+  return [...flags, ...stackLanguages(p.stack).map(techId)];
 }

@@ -55,6 +55,7 @@ export const en = {
   'projects.filter.all': 'all',
   'projects.filter.tech': 'Built with',
   'projects.filter.ai': '✦ AI-powered',
+  'projects.filter.frontend': '✦ Frontend',
   'projects.cat.professional': 'professional',
   'projects.cat.open-source': 'open source',
   'projects.cat.personal': 'personal',
