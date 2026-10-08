@@ -4,7 +4,7 @@ import PageHead from '../components/PageHead.astro';
 import StatGrid from '../components/StatGrid.astro';
 import TimelineEntry from '../components/TimelineEntry.astro';
 import Window from '../components/Window.astro';
-import Portrait from '../components/Portrait.astro';
+import ThatsMe from '../components/ThatsMe.astro';
 import JobEntry from '../components/JobEntry.astro';
 import { type Lang, localize, useT } from '../i18n/ui';
 import { monthRange } from '../lib/content';
@@ -48,7 +48,7 @@ const highlights = [
       <a class="btn" href={localize('/cv', lang)}>{t('about.print')}</a>
       <a class="btn btn--ghost" href={localize('/contact', lang)}>{t('nav.contact')} →</a>
     </div>
-    <Portrait slot="aside" alt={lang === 'da' ? 'Portræt af Christoffer Maintz' : 'Portrait of Christoffer Maintz'} />
+    <ThatsMe slot="aside" alt={lang === 'da' ? 'Portræt af Christoffer Maintz' : 'Portrait of Christoffer Maintz'} />
   </PageHead>
 
   <section class="wrap intro">

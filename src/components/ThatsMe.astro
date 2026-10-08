@@ -1,0 +1,125 @@
+---
+// THROWAWAY: three speech-bubble takes on "that's me" next to the portrait.
+// Switch with the buttons in the corner or ?me=1|2|3. Pick one, then this goes.
+import Portrait from './Portrait.astro';
+
+interface Props { alt: string }
+const { alt } = Astro.props;
+
+/** Block size in px; every shape is drawn on this grid so it reads as pixel art. */
+const U = 4;
+/** Drawing area around the photo (photo top-left is 0,0). */
+const BOX = { x: -264, y: -24, w: 324, h: 196 };
+type Shape = (x: number, y: number) => boolean;
+type Run = { x: number; y: number; w: number };
+
+const roundRect = (x0: number, y0: number, x1: number, y1: number, r: number): Shape => (x, y) => {
+  if (x < x0 || x > x1 || y < y0 || y > y1) return false;
+  const dx = Math.max(x0 + r - x, 0, x - (x1 - r)), dy = Math.max(y0 + r - y, 0, y - (y1 - r));
+  return dx * dx + dy * dy <= r * r;
+};
+const ellipse = (cx: number, cy: number, rx: number, ry: number): Shape => (x, y) => ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1;
+const side = (ax: number, ay: number, bx: number, by: number, x: number, y: number) => (bx - ax) * (y - ay) - (by - ay) * (x - ax);
+const tri = (a: [number, number], b: [number, number], c: [number, number]): Shape => (x, y) => {
+  const s = [side(...a, ...b, x, y), side(...b, ...c, x, y), side(...c, ...a, x, y)];
+  return s.every((v) => v >= 0) || s.every((v) => v <= 0);
+};
+const union = (...shapes: Shape[]): Shape => (x, y) => shapes.some((s) => s(x, y));
+
+/** Cells (by grid index) that the shape covers, sampled at each cell's centre. */
+function cells(shape: Shape) {
+  const set = new Set<string>();
+  for (let j = 0; j < BOX.h / U; j++) for (let i = 0; i < BOX.w / U; i++) if (shape(BOX.x + i * U + U / 2, BOX.y + j * U + U / 2)) set.add(`${i},${j}`);
+  return set;
+}
+
+/** Cells of a shape that touch the outside: its one-block outline. */
+function outline(set: Set<string>) {
+  const edge = new Set<string>();
+  for (const k of set) {
+    const [i, j] = k.split(',').map(Number);
+    if ([[1, 0], [-1, 0], [0, 1], [0, -1]].some(([a, b]) => !set.has(`${i + a},${j + b}`))) edge.add(k);
+  }
+  return edge;
+}
+
+/** Merges each row's cells into horizontal runs, so a bubble is dozens of rects, not thousands. */
+function runs(set: Set<string>, dx = 0, dy = 0): Run[] {
+  const out: Run[] = [];
+  for (let j = 0; j < BOX.h / U; j++) {
+    for (let i = 0; i < BOX.w / U; i++) {
+      if (!set.has(`${i},${j}`)) continue;
+      const last = out.at(-1);
+      if (last && last.y === j + dy && last.x + last.w === i + dx) last.w++;
+      else out.push({ x: i + dx, y: j + dy, w: 1 });
+    }
+  }
+  return out;
+}
+
+function bubble(shape: Shape, inner?: Shape) {
+  const body = cells(shape);
+  const lines = outline(body);
+  if (inner) for (const k of outline(cells(inner))) lines.add(k);
+  return { shadow: runs(body, 2, 2), fill: runs(body), line: runs(lines) };
+}
+
+const variants = [
+  { id: '1', ...bubble(union(roundRect(-256, -16, -20, 104, 28), tri([-40, 36], [-40, 84], [10, 116]))) },
+  { id: '2', ...bubble(union(roundRect(-252, -4, -24, 108, 4), tri([-30, 44], [-30, 84], [6, 108])), roundRect(-244, 4, -32, 100, 2)) },
+  { id: '3', ...bubble(union(ellipse(-138, 42, 126, 62), ellipse(-36, 122, 17, 13), ellipse(-6, 146, 11, 9), ellipse(14, 160, 7, 6))) },
+];
+---
+
+<div class="me" data-me="1">
+  <Portrait alt={alt} />
+  {variants.map((v) => (
+    <svg class={`me__art me__art--${v.id}`} viewBox={`0 0 ${BOX.w / U} ${BOX.h / U}`} aria-hidden="true" shape-rendering="crispEdges">
+      <g class="sh">{v.shadow.map((r) => <rect x={r.x} y={r.y} width={r.w} height="1" />)}</g>
+      <g class="fi">{v.fill.map((r) => <rect x={r.x} y={r.y} width={r.w} height="1" />)}</g>
+      <g class="li">{v.line.map((r) => <rect x={r.x} y={r.y} width={r.w} height="1" />)}</g>
+    </svg>
+  ))}
+  <p class="me__say me__say--1" aria-hidden="true"><b class="pixel">That's me!</b><span class="mono">(hi there)</span></p>
+  <p class="me__say me__say--2" aria-hidden="true"><i class="pixel">Christoffer</i><b class="mono">That's me!</b><span class="pixel caret">▼</span></p>
+  <p class="me__say me__say--3" aria-hidden="true"><b class="pixel">That's me!</b><span class="mono">(thinking about CI)</span></p>
+</div>
+
+<div class="me-pick mono" aria-hidden="true">
+  bubble: <button data-pick="1">1</button><button data-pick="2">2</button><button data-pick="3">3</button><button data-pick="off">off</button>
+</div>
+
+<script>
+  const me = document.querySelector<HTMLElement>('.me')!;
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-pick]');
+  const pick = (v: string) => { me.dataset.me = v; buttons.forEach((b) => b.classList.toggle('on', b.dataset.pick === v)); };
+  pick(new URLSearchParams(location.search).get('me') ?? '1');
+  buttons.forEach((b) => b.addEventListener('click', () => pick(b.dataset.pick!)));
+</script>
+
+<style>
+  .me { position: relative; }
+  /* max-width: none undoes the global svg cap, which would shrink the art to the photo width. */
+  .me__art { position: absolute; left: -264px; top: -24px; width: 324px; max-width: none; height: 196px; overflow: visible; pointer-events: none; display: none; z-index: 1; }
+  .sh { fill: var(--shadow-c); }
+  .fi { fill: var(--bg-2); }
+  .li { fill: var(--line-strong); }
+  .me__say { position: absolute; z-index: 2; margin: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 0.35rem; text-align: center; pointer-events: none; }
+  .me[data-me='1'] .me__art--1, .me[data-me='2'] .me__art--2, .me[data-me='3'] .me__art--3 { display: block; }
+  .me[data-me='1'] .me__say--1, .me[data-me='2'] .me__say--2, .me[data-me='3'] .me__say--3 { display: flex; }
+  .me__say b.pixel { font-weight: 400; font-size: 1.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.03em; line-height: 1; }
+  .me__say span.mono { font-size: 0.9rem; color: var(--fg-dim); }
+  .me__say--1 { left: -252px; top: -12px; width: 228px; height: 112px; }
+  .me__say--3 { left: -256px; top: -16px; width: 236px; height: 116px; }
+  .me__say--2 { left: -240px; top: 8px; width: 204px; height: 88px; align-items: flex-start; padding-left: 0.6rem; }
+  .me__say--2 i { position: absolute; top: -1.35rem; left: 0.2rem; font-style: normal; font-size: 0.75rem; text-transform: uppercase; background: var(--accent); color: var(--accent-ink); padding: 0.15rem 0.45rem; }
+  .me__say--2 b { font-size: 1.35rem; color: var(--fg); }
+  .me__say--2 .caret { position: absolute; right: 0.6rem; bottom: 0.4rem; color: var(--accent); font-size: 0.8rem; }
+  @media (prefers-reduced-motion: no-preference) { .caret { animation: me-blink 1s steps(1) infinite; } }
+  @keyframes me-blink { 50% { opacity: 0; } }
+  @media (max-width: 1100px) { .me__art, .me__say { display: none !important; } }
+
+  .me-pick { position: fixed; right: 1rem; bottom: 1rem; z-index: 70; display: flex; gap: 0.3rem; align-items: center; background: var(--bg-2); border: 2px solid var(--line-strong); padding: 0.4rem 0.6rem; font-size: 0.8rem; }
+  .me-pick button { font: inherit; background: none; border: 1px solid var(--line); color: var(--fg); padding: 0.15rem 0.5rem; cursor: pointer; }
+  .me-pick button.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+</style>
