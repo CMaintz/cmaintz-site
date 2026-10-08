@@ -97,7 +97,7 @@ Free tier: 2 active projects, 50,000 monthly active users, 500 MB database. Free
 | Task                                                  | Command                                                                                                        |
 | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | New blog post                                         | add `src/content/blog/<slug>.mdx` (see `hello-world.mdx`); `draft: true` hides it in production                |
-| Refresh GitHub data + READMEs                         | `npm run sync` (CI also refreshes, commits and deploys it every Monday)                                        |
+| Refresh GitHub data + READMEs                         | `npm run sync` (deploys fetch it hourly; CI commits it every Monday)                                           |
 | Regenerate CV PDFs after editing `src/data/resume.ts` | `npm run build && npm run cv:pdf`                                                                              |
 | Regenerate share images (after a new post or project) | `npm run build && npm run og && npm run build`                                                                 |
 | Add a looping clip to a project                       | `npm run clip -- <recording.mp4> <name> [start] [end]`, then `video: /media/<name>` in the project frontmatter |
