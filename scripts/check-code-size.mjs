@@ -39,7 +39,8 @@ function badNames(code) {
   const sf = ts.createSourceFile('x.ts', code, ts.ScriptTarget.Latest, true);
   const found = [];
   const visit = (node) => {
-    if (isFunction(node) && TWO_THINGS.test(nameOf(node))) found.push({ line: sf.getLineAndCharacterOfPosition(node.getStart()).line + 1, name: nameOf(node) });
+    if (isFunction(node) && TWO_THINGS.test(nameOf(node)))
+      found.push({ line: sf.getLineAndCharacterOfPosition(node.getStart()).line + 1, name: nameOf(node) });
     ts.forEachChild(node, visit);
   };
   visit(sf);
@@ -63,12 +64,10 @@ function longFunctions(code) {
 
 function functionProblems(file, text) {
   if (file.endsWith('.css')) return [];
-  return chunks(file, text).flatMap(({ code, offset }) =>
-    [
-      ...longFunctions(code).map((f) => `${file}:${f.line + offset} function is ${f.length} lines (max ${MAX})`),
-      ...badNames(code).map((f) => `${file}:${f.line + offset} "${f.name}" sounds like two functions`),
-    ],
-  );
+  return chunks(file, text).flatMap(({ code, offset }) => [
+    ...longFunctions(code).map((f) => `${file}:${f.line + offset} function is ${f.length} lines (max ${MAX})`),
+    ...badNames(code).map((f) => `${file}:${f.line + offset} "${f.name}" sounds like two functions`),
+  ]);
 }
 
 function fileProblems(file, text) {

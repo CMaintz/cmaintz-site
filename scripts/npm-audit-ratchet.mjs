@@ -48,10 +48,14 @@ const flagged = Object.entries(vulns)
   .map(([name, v]) => ({
     name,
     severity: v.severity,
-    urls: [...new Set((function collect(via, acc = []) {
-      for (const x of via || []) if (x && typeof x === 'object' && x.url) acc.push(x.url);
-      return acc;
-    })(v.via))],
+    urls: [
+      ...new Set(
+        (function collect(via, acc = []) {
+          for (const x of via || []) if (x && typeof x === 'object' && x.url) acc.push(x.url);
+          return acc;
+        })(v.via),
+      ),
+    ],
   }));
 
 // Allowlist — accepted[].package is the vulnerable package name; reason is required.
