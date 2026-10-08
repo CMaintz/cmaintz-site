@@ -7,6 +7,8 @@
   "routes": [
     { "pattern": "maintz.dev", "custom_domain": true }
   ],
+  // PR previews (ci.yml) are served at pr-<n>-cmaintz-site.<subdomain>.workers.dev.
+  "preview_urls": true,
   // Contact form: at most 3 messages a minute per IP (src/pages/api/contact.ts).
   // namespace_id is any number unique within the Cloudflare account.
   "ratelimits": [
