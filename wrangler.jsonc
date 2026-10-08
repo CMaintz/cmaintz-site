@@ -2,6 +2,13 @@
 {
   "name": "cmaintz-site",
   "compatibility_date": "2026-09-25",
+  // Astro's handler wrapped with Markdown content negotiation (Accept: text/markdown).
+  "main": "./src/worker.ts",
+  // Pages go through the Worker first so it can negotiate; static files don't.
+  "assets": {
+    "binding": "ASSETS",
+    "run_worker_first": ["/*", "!/_astro/*", "!/og/*", "!/img/*", "!/media/*", "!/doom/*", "!/pagefind/*"]
+  },
   // www.maintz.dev is handled by redirect-www/ (a separate redirect Worker).
   // Custom domains: Cloudflare creates the DNS records and TLS certificates on deploy.
   "routes": [
