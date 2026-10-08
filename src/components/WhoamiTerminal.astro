@@ -10,8 +10,9 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const shipped = ['illux-product-ai', 'foundry', 'jev-tools', 'leash', 'jobbuddy', 'tech-atlas'];
 const areas = [
+  { id: 'dx', label: 'dx' },
+  { id: 'devops', label: 'devops' },
   { id: 'backend', label: 'backend' },
-  { id: 'devops', label: 'devops & dx' },
   { id: 'platform', label: 'platform' },
   { id: 'ai', label: 'ai enablement' },
 ];

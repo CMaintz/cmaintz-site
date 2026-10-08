@@ -7,7 +7,7 @@ tagline:
 summary:
   en: One deterministic quality standard - format, lint, types, tests, coverage, security - enforced identically while an AI agent edits, before push and in CI. Reusable GitHub Actions workflows, mise templates and a Claude Code plugin, released as versioned open source.
   da: Én deterministisk kvalitetsstandard - formatering, lint, typer, tests, coverage, sikkerhed - håndhævet ens, mens en AI-agent redigerer, før push og i CI. Genbrugelige GitHub Actions-workflows, mise-skabeloner og et Claude Code-plugin, udgivet som versioneret open source.
-areas: [devops, platform, ai]
+areas: [devops, platform, dx, ai]
 category: open-source
 order: 2
 featured: true

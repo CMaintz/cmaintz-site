@@ -1,9 +1,9 @@
-// The four "What I do" areas. Projects, posts and services reference these ids,
+// The five "What I do" areas. Projects, posts and services reference these ids,
 // which ties content to the focus areas and to the /what-i-do/<area> pages.
 // Principles are drafts grounded in real work; `proof` names a project slug.
 import type { Lang } from '../i18n/ui';
 
-export const AREA_IDS = ['backend', 'devops', 'platform', 'ai'] as const;
+export const AREA_IDS = ['dx', 'devops', 'backend', 'platform', 'ai'] as const;
 export type AreaId = (typeof AREA_IDS)[number];
 
 type L = Record<Lang, string>;
@@ -20,6 +20,86 @@ export interface Area {
 }
 
 export const areas: Record<AreaId, Area> = {
+  dx: {
+    glyph: '⌘',
+    label: { en: 'Developer Experience', da: 'Developer Experience' },
+    intro: {
+      en: 'Developers are fastest when the right thing is also the easy thing. I look for the friction that quietly eats a team’s week (slow feedback, flaky setup, manual steps) and remove it with tooling, not more documentation.',
+      da: 'Udviklere er hurtigst, når det rigtige også er det nemme. Jeg leder efter den friktion, der stille æder et teams uge (langsom feedback, ustabilt setup, manuelle trin), og fjerner den med værktøjer frem for mere dokumentation.',
+    },
+    principles: [
+      {
+        title: { en: 'Feedback in seconds, not in CI', da: 'Feedback på sekunder, ikke i CI' },
+        body: {
+          en: 'The same checks run in the editor, before push and in CI, so problems surface while the code is still in your head, not twenty minutes later.',
+          da: 'De samme tjek kører i editoren, før push og i CI, så problemer dukker op, mens koden stadig er frisk, og ikke tyve minutter senere.',
+        },
+        proof: 'foundry',
+      },
+      {
+        title: { en: 'One command to a working setup', da: 'Én kommando til et fungerende setup' },
+        body: {
+          en: 'Pinned toolchains and reproducible environments end "works on my machine". A new developer should be productive on day one.',
+          da: 'Fastlåste toolchains og reproducerbare miljøer gør en ende på "det virker på min maskine". En ny udvikler skal være produktiv fra dag ét.',
+        },
+      },
+      {
+        title: { en: 'Remove steps instead of documenting them', da: 'Fjern trin i stedet for at dokumentere dem' },
+        body: {
+          en: 'Scaffolding, CLI tools and previews beat a wiki page listing twelve manual steps nobody reads.',
+          da: 'Scaffolding, CLI-værktøjer og previews slår en wiki-side med tolv manuelle trin, som ingen læser.',
+        },
+        proof: 'email-template-preview',
+      },
+      {
+        title: { en: 'Ask where the time goes first', da: 'Spørg først, hvor tiden går hen' },
+        body: {
+          en: 'Before picking tools I watch how the team actually works. The biggest win is often not the one anyone asked for.',
+          da: 'Før jeg vælger værktøjer, ser jeg på, hvordan teamet reelt arbejder. Den største gevinst er ofte ikke den, nogen bad om.',
+        },
+      },
+    ],
+  },
+  devops: {
+    glyph: '⟳',
+    label: { en: 'DevOps & CI/CD', da: 'DevOps & CI/CD' },
+    intro: {
+      en: 'A pipeline is a promise about quality that runs on every change. I build ones that are deterministic, fast, cheap to run and hard to quietly weaken, including by AI agents.',
+      da: 'En pipeline er et løfte om kvalitet, der kører på hver ændring. Jeg bygger pipelines, der er deterministiske, hurtige, billige at køre og svære at svække i det stille, også for AI-agenter.',
+    },
+    principles: [
+      {
+        title: { en: 'One rule set, three placements', da: 'Ét regelsæt, tre steder' },
+        body: {
+          en: 'In-loop, pre-push and CI enforce the same rules. Different rules in different places is how you get "green locally, red in CI".',
+          da: 'Editor, pre-push og CI håndhæver de samme regler. Forskellige regler forskellige steder er opskriften på "grøn lokalt, rød i CI".',
+        },
+        proof: 'foundry',
+      },
+      {
+        title: { en: 'Ratchet, don’t gate', da: 'Ratchet i stedet for at blokere' },
+        body: {
+          en: 'Existing issues become a baseline that may only shrink. Only new violations fail, so a legacy codebase can adopt strict rules on day one.',
+          da: 'Eksisterende fejl bliver en baseline, der kun må skrumpe. Kun nye overtrædelser fejler, så en legacy-kodebase kan tage strenge regler i brug fra dag ét.',
+        },
+      },
+      {
+        title: { en: 'The exit code decides', da: 'Exit-koden bestemmer' },
+        body: {
+          en: 'Linters, types, tests and scanners own pass/fail. AI may propose a fix, but it only lands when the deterministic gate passes.',
+          da: 'Linters, typer, tests og scannere afgør bestået/fejlet. AI må foreslå en rettelse, men den lander kun, når den deterministiske gate består.',
+        },
+        proof: 'foundry',
+      },
+      {
+        title: { en: 'Secure the supply chain by default', da: 'Sikr forsyningskæden som standard' },
+        body: {
+          en: 'SHA-pinned actions, least-privilege tokens, secret and dependency scanning, and no long-lived keys in CI.',
+          da: 'SHA-fastlåste actions, tokens med mindst mulige rettigheder, secret- og dependency-scanning og ingen langlivede nøgler i CI.',
+        },
+      },
+    ],
+  },
   backend: {
     glyph: '▤',
     label: { en: 'Backend', da: 'Backend' },
@@ -62,61 +142,6 @@ export const areas: Record<AreaId, Area> = {
       },
     ],
   },
-  devops: {
-    glyph: '⟳',
-    label: { en: 'DevOps & Developer Experience', da: 'DevOps & Developer Experience' },
-    intro: {
-      en: 'Developers are fastest when the right thing is also the easy thing. I build feedback loops and pipelines that are deterministic, fast and cheap to run, and hard to quietly weaken, including by AI agents.',
-      da: 'Udviklere er hurtigst, når det rigtige også er det nemme. Jeg bygger feedback-loops og pipelines, der er deterministiske, hurtige og billige at køre, og svære at svække i det stille, også for AI-agenter.',
-    },
-    principles: [
-      {
-        title: { en: 'Feedback in seconds, not in CI', da: 'Feedback på sekunder, ikke i CI' },
-        body: {
-          en: 'The same checks run in the editor, before push and in CI, so problems surface while the code is still in your head, not twenty minutes later.',
-          da: 'De samme tjek kører i editoren, før push og i CI, så problemer dukker op, mens koden stadig er frisk, og ikke tyve minutter senere.',
-        },
-        proof: 'foundry',
-      },
-      {
-        title: { en: 'One rule set, three placements', da: 'Ét regelsæt, tre steder' },
-        body: {
-          en: 'In-loop, pre-push and CI enforce the same rules. Different rules in different places is how you get "green locally, red in CI".',
-          da: 'Editor, pre-push og CI håndhæver de samme regler. Forskellige regler forskellige steder er opskriften på "grøn lokalt, rød i CI".',
-        },
-        proof: 'foundry',
-      },
-      {
-        title: { en: 'Ratchet, don’t gate', da: 'Ratchet i stedet for at blokere' },
-        body: {
-          en: 'Existing issues become a baseline that may only shrink. Only new violations fail, so a legacy codebase can adopt strict rules on day one.',
-          da: 'Eksisterende fejl bliver en baseline, der kun må skrumpe. Kun nye overtrædelser fejler, så en legacy-kodebase kan tage strenge regler i brug fra dag ét.',
-        },
-      },
-      {
-        title: { en: 'The exit code decides', da: 'Exit-koden bestemmer' },
-        body: {
-          en: 'Linters, types, tests and scanners own pass/fail. AI may propose a fix, but it only lands when the deterministic gate passes.',
-          da: 'Linters, typer, tests og scannere afgør bestået/fejlet. AI må foreslå en rettelse, men den lander kun, når den deterministiske gate består.',
-        },
-        proof: 'foundry',
-      },
-      {
-        title: { en: 'Secure the supply chain by default', da: 'Sikr forsyningskæden som standard' },
-        body: {
-          en: 'SHA-pinned actions, least-privilege tokens, secret and dependency scanning, and no long-lived keys in CI.',
-          da: 'SHA-fastlåste actions, tokens med mindst mulige rettigheder, secret- og dependency-scanning og ingen langlivede nøgler i CI.',
-        },
-      },
-      {
-        title: { en: 'Ask where the time goes first', da: 'Spørg først, hvor tiden går hen' },
-        body: {
-          en: 'Before picking tools I watch how the team actually works. The biggest win is often not the one anyone asked for.',
-          da: 'Før jeg vælger værktøjer, ser jeg på, hvordan teamet reelt arbejder. Den største gevinst er ofte ikke den, nogen bad om.',
-        },
-      },
-    ],
-  },
   platform: {
     glyph: '▦',
     label: { en: 'Platform & Infrastructure', da: 'Platform & infrastruktur' },
@@ -131,21 +156,6 @@ export const areas: Record<AreaId, Area> = {
           en: 'Make the right way the default with templates and shared workflows, instead of reviewing every team into compliance.',
           da: 'Gør den rigtige vej til standarden med skabeloner og fælles workflows i stedet for at reviewe hvert team på plads.',
         },
-      },
-      {
-        title: { en: 'One command to a working setup', da: 'Én kommando til et fungerende setup' },
-        body: {
-          en: 'Pinned toolchains and reproducible environments end "works on my machine". A new developer should be productive on day one.',
-          da: 'Fastlåste toolchains og reproducerbare miljøer gør en ende på "det virker på min maskine". En ny udvikler skal være produktiv fra dag ét.',
-        },
-      },
-      {
-        title: { en: 'Remove steps instead of documenting them', da: 'Fjern trin i stedet for at dokumentere dem' },
-        body: {
-          en: 'Scaffolding, CLI tools and previews beat a wiki page listing twelve manual steps nobody reads.',
-          da: 'Scaffolding, CLI-værktøjer og previews slår en wiki-side med tolv manuelle trin, som ingen læser.',
-        },
-        proof: 'email-template-preview',
       },
       {
         title: { en: 'Everything as code', da: 'Alt som kode' },

@@ -25,7 +25,7 @@ export interface Service {
 export const services: Service[] = [
   {
     id: 'quality-gate',
-    areas: ['devops'],
+    areas: ['devops', 'dx'],
     glyph: '▣',
     title: { en: 'CI/CD & quality-gate setup', da: 'CI/CD & kvalitets-gates' },
     body: {
@@ -73,7 +73,7 @@ export const services: Service[] = [
   },
   {
     id: 'ai-dev',
-    areas: ['ai', 'devops'],
+    areas: ['ai', 'dx'],
     glyph: '◎',
     title: { en: 'AI-assisted development enablement', da: 'AI-assisteret udvikling' },
     body: {
