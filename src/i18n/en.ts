@@ -16,6 +16,7 @@ export const en = {
   'theme.toggle': 'Toggle light/dark',
   'fx.menu': 'Display effects',
   'fx.scan': 'Scanlines',
+  'fx.glow': 'Glow',
   'fx.vignette': 'Vignette',
   'fx.motion': 'Background animation',
   'lang.label': 'Language',
