@@ -61,7 +61,9 @@ jobs:
         run: node scripts/sync-github.mjs || echo "::warning::GitHub sync failed; deploying the committed snapshot"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: npm run build
+      # Previews reuse this step through the anchor, so both build the real site config.
+      - &site-build
+        run: npm run build
         env:
           SITE_URL: ${{ vars.SITE_URL }}
           PUBLIC_SUPABASE_URL: ${{ vars.PUBLIC_SUPABASE_URL }}
@@ -93,14 +95,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run build
-        env:
-          SITE_URL: ${{ vars.SITE_URL }}
-          PUBLIC_SUPABASE_URL: ${{ vars.PUBLIC_SUPABASE_URL }}
-          PUBLIC_SUPABASE_ANON_KEY: ${{ vars.PUBLIC_SUPABASE_ANON_KEY }}
-          PUBLIC_SUPABASE_PROVIDERS: ${{ vars.PUBLIC_SUPABASE_PROVIDERS }}
-          PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
-          PUBLIC_CF_BEACON_TOKEN: ${{ vars.PUBLIC_CF_BEACON_TOKEN }}
+      - *site-build
       - name: Upload the preview version
         id: upload
         run: |
