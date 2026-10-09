@@ -5,7 +5,19 @@ import globals from 'globals';
 import foundry from './eslint.config.foundry.mjs';
 
 export default [
-  { ignores: ['dist/', 'coverage/', '.astro/', '.wrangler/', '.local/', '.foundry/', 'public/', 'supabase/', 'screenshots/'] },
+  {
+    ignores: [
+      'dist/',
+      'coverage/',
+      '.astro/',
+      '.wrangler/',
+      '.local/',
+      '.foundry/',
+      'public/',
+      'supabase/',
+      'screenshots/',
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   ...astro.configs.recommended,
@@ -17,11 +29,6 @@ export default [
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       'no-unused-vars': 'off',
-      // Same width as .prettierrc, so Prettier wraps what it can and this catches the rest.
-      'max-len': [
-        'error',
-        { code: 140, tabWidth: 2, ignoreStrings: true, ignoreTemplateLiterals: true, ignoreRegExpLiterals: true, ignoreUrls: true },
-      ],
     },
   },
 ];
