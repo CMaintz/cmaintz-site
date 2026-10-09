@@ -36,12 +36,15 @@ async function checks(db) {
 async function authorChecks(db) {
   return {
     'anon cannot insert': await fails(insert(db, 'anon', null, 'hello-world', 'hi there')),
-    'author fields cannot be forged': await fails(insert(db, 'authenticated', ALICE, 'hello-world', 'hi there', 'Mallory')),
+    'author fields cannot be forged': await fails(
+      insert(db, 'authenticated', ALICE, 'hello-world', 'hi there', 'Mallory'),
+    ),
     'signed-in insert works': !(await fails(insert(db, 'authenticated', ALICE, 'hello-world', 'Great post!'))),
     'only initials are stored, no avatar': (
       await as(db, 'anon', null, 'select author_name, author_avatar from public.site_comments')
     ).rows.every((r) => r.author_name === 'A.A.' && r.author_avatar === null),
-    'single-word names give one initial': (await db.query("select public.site_comments_initials('bob') as i")).rows[0].i === 'B.',
+    'single-word names give one initial':
+      (await db.query("select public.site_comments_initials('bob') as i")).rows[0].i === 'B.',
   };
 }
 
@@ -54,8 +57,11 @@ async function inputChecks(db) {
 
 async function permissionChecks(db) {
   return {
-    'cannot delete others': (await as(db, 'authenticated', BOB, 'delete from public.site_comments returning id')).rows.length === 0,
-    'cannot update via API': await fails(as(db, 'authenticated', ALICE, "update public.site_comments set body = 'edited'")),
+    'cannot delete others':
+      (await as(db, 'authenticated', BOB, 'delete from public.site_comments returning id')).rows.length === 0,
+    'cannot update via API': await fails(
+      as(db, 'authenticated', ALICE, "update public.site_comments set body = 'edited'"),
+    ),
   };
 }
 

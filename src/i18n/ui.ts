@@ -36,6 +36,10 @@ export function unlocalize(pathname: string) {
   return m ? m[2] || '/' : pathname;
 }
 
-export function formatDate(date: Date, lang: Lang, opts: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' }) {
+export function formatDate(
+  date: Date,
+  lang: Lang,
+  opts: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' },
+) {
   return date.toLocaleDateString(lang === 'da' ? 'da-DK' : 'en-GB', opts);
 }

@@ -36,11 +36,13 @@ export const da: Record<keyof typeof en, string> = {
   'home.cta.title': 'Har du noget, der skal bygges?',
   'home.cta.body': 'Jeg søger fuldtidsstilling og tager gerne freelance- og konsulentopgaver i mellemtiden.',
   'focus.dx.title': 'Developer Experience',
-  'focus.dx.body': 'Hurtige feedback-loops, fornuftige standarder og værktøjer, der fjerner friktion i stedet for at tilføje ceremoni.',
+  'focus.dx.body':
+    'Hurtige feedback-loops, fornuftige standarder og værktøjer, der fjerner friktion i stedet for at tilføje ceremoni.',
   'focus.devops.title': 'DevOps & CI/CD',
   'focus.devops.body': 'Genbrugelige pipelines, deterministiske kvalitets-gates, supply-chain- og secret-scanning.',
   'focus.backend.title': 'Backend',
-  'focus.backend.body': 'API’er og datamodeller bygget omkring domænet, med køer og retries, hvor afhængigheder er langsomme.',
+  'focus.backend.body':
+    'API’er og datamodeller bygget omkring domænet, med køer og retries, hvor afhængigheder er langsomme.',
   'focus.platform.title': 'Platform & infrastruktur',
   'focus.platform.body': 'Asfalterede veje: fastlåste toolchains, scaffolding, config-as-code og policy-as-code.',
   'focus.ai.title': 'AI-enablement',
@@ -140,7 +142,8 @@ export const da: Record<keyof typeof en, string> = {
   'services.ask': 'Start en samtale',
   'services.faq': 'Ofte stillede spørgsmål',
   'contact.title': 'Kontakt',
-  'contact.lede': 'Jobmuligheder, freelance, konsulentopgaver eller bare et hej.\nJeg svarer typisk inden for en dag eller to.',
+  'contact.lede':
+    'Jobmuligheder, freelance, konsulentopgaver eller bare et hej.\nJeg svarer typisk inden for en dag eller to.',
   'contact.name': 'Navn',
   'contact.email': 'E-mail',
   'contact.company': 'Virksomhed (valgfrit)',

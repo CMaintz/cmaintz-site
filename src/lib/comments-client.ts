@@ -76,7 +76,11 @@ async function fetchComments(client: SupabaseClient, slug: string) {
 function renderComment(c: Comment, userId: string | null, cfg: Config, onDelete: (id: string) => void) {
   const li = h('li', 'comment');
   const meta = h('p', 'comment__meta');
-  const time = h('time', '', new Date(c.created_at).toLocaleDateString(document.documentElement.lang === 'da' ? 'da-DK' : 'en-GB'));
+  const time = h(
+    'time',
+    '',
+    new Date(c.created_at).toLocaleDateString(document.documentElement.lang === 'da' ? 'da-DK' : 'en-GB'),
+  );
   time.setAttribute('datetime', c.created_at);
   meta.append(h('span', 'badge-initials', c.author_name), time);
   if (c.user_id === userId) meta.append(deleteButton(c.id, cfg, onDelete));
@@ -91,7 +95,13 @@ function deleteButton(id: string, cfg: Config, onDelete: (id: string) => void) {
   return btn;
 }
 
-function renderList(list: HTMLElement, comments: Comment[], userId: string | null, cfg: Config, onDelete: (id: string) => void) {
+function renderList(
+  list: HTMLElement,
+  comments: Comment[],
+  userId: string | null,
+  cfg: Config,
+  onDelete: (id: string) => void,
+) {
   if (!comments.length) return list.replaceChildren(h('li', 'comment comment--empty', cfg.text.empty));
   list.replaceChildren(...comments.map((c) => renderComment(c, userId, cfg, onDelete)));
 }
@@ -100,7 +110,9 @@ function providerButton(client: SupabaseClient, provider: string) {
   const btn = h('button', 'btn btn--sm', PROVIDER_LABELS[provider] ?? provider) as HTMLButtonElement;
   btn.type = 'button';
   const redirectTo = `${location.origin}${location.pathname}#comments`;
-  btn.addEventListener('click', () => client.auth.signInWithOAuth({ provider: provider as 'github', options: { redirectTo } }));
+  btn.addEventListener('click', () =>
+    client.auth.signInWithOAuth({ provider: provider as 'github', options: { redirectTo } }),
+  );
   return btn;
 }
 

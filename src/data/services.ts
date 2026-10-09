@@ -67,7 +67,13 @@ export const services: Service[] = [
         'Guardrails & fallbacks',
         'Cost estimate',
       ],
-      da: ['Feasibility-spike', 'Evaluering af prompts og modeller', 'Asynkron pipeline', 'Guardrails & fallbacks', 'Omkostningsestimat'],
+      da: [
+        'Feasibility-spike',
+        'Evaluering af prompts og modeller',
+        'Asynkron pipeline',
+        'Guardrails & fallbacks',
+        'Omkostningsestimat',
+      ],
     },
     pricing: 'quote',
   },
@@ -82,7 +88,12 @@ export const services: Service[] = [
     },
     deliverables: {
       en: ['Claude Code / Codex setup', 'Custom skills & hooks', 'AGENTS.md conventions', 'Team workshop'],
-      da: ['Opsætning af Claude Code / Codex', 'Skræddersyede skills & hooks', 'AGENTS.md-konventioner', 'Workshop for teamet'],
+      da: [
+        'Opsætning af Claude Code / Codex',
+        'Skræddersyede skills & hooks',
+        'AGENTS.md-konventioner',
+        'Workshop for teamet',
+      ],
     },
     pricing: 'quote',
   },
@@ -130,7 +141,20 @@ export const services: Service[] = [
   },
 ];
 
-export const workLanguages = ['TypeScript', 'JavaScript', 'Java', 'Kotlin', 'C#', 'PHP', 'Swift', 'Python', 'Go', 'Rust', 'SQL', 'Shell'];
+export const workLanguages = [
+  'TypeScript',
+  'JavaScript',
+  'Java',
+  'Kotlin',
+  'C#',
+  'PHP',
+  'Swift',
+  'Python',
+  'Go',
+  'Rust',
+  'SQL',
+  'Shell',
+];
 
 export const process: Record<Lang, { step: string; body: string }[]> = {
   en: [

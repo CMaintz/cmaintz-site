@@ -12,7 +12,9 @@ export function clipDescription(text: string, max = 158) {
 
 // Known at build time by Vite, so it works in any runtime (the Workers
 // prerender can't read the disk). Only the keys (file paths) are used.
-const OG_FILES = new Set(Object.keys(import.meta.glob('/public/og/**/*.png', { query: '?url' })).map((k) => k.replace('/public', '')));
+const OG_FILES = new Set(
+  Object.keys(import.meta.glob('/public/og/**/*.png', { query: '?url' })).map((k) => k.replace('/public', '')),
+);
 
 /** Per-page share image if `npm run og` generated one, else the site default. */
 export function ogImageFor(kind: 'projects' | 'blog' | 'areas', id: string) {

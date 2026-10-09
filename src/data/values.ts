@@ -25,7 +25,10 @@ export const values: { title: L; body: L }[] = [
     },
   },
   {
-    title: { en: 'Automate the boring, keep humans on the judgement', da: 'Automatisér det kedelige, lad mennesker tage stilling' },
+    title: {
+      en: 'Automate the boring, keep humans on the judgement',
+      da: 'Automatisér det kedelige, lad mennesker tage stilling',
+    },
     body: {
       en: 'AI and tooling should take repetitive work off people’s plates, with a person reviewing wherever the system isn’t sure.',
       da: 'AI og værktøjer skal fjerne gentaget arbejde fra folks bord, med et menneske, der tager stilling, hvor systemet er usikkert.',

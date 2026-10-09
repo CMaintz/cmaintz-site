@@ -38,7 +38,8 @@ export const en = {
   'focus.devops.title': 'DevOps & CI/CD',
   'focus.devops.body': 'Reusable pipelines, deterministic quality gates, supply-chain and secret scanning.',
   'focus.backend.title': 'Backend',
-  'focus.backend.body': 'APIs and data models built around the domain, with queues and retries where dependencies are slow.',
+  'focus.backend.body':
+    'APIs and data models built around the domain, with queues and retries where dependencies are slow.',
   'focus.platform.title': 'Platform & Infrastructure',
   'focus.platform.body': 'Paved roads: pinned toolchains, scaffolding, config-as-code and policy-as-code.',
   'focus.ai.title': 'AI enablement',
@@ -54,7 +55,8 @@ export const en = {
   'wid.other': 'Other areas',
   'wid.more': 'Read more',
   'projects.title': 'Projects',
-  'projects.lede': 'Production work, open-source tooling, personal projects and graded exam work. Repo data is synced from GitHub.',
+  'projects.lede':
+    'Production work, open-source tooling, personal projects and graded exam work. Repo data is synced from GitHub.',
   'projects.filter.all': 'all',
   'projects.filter.tech': 'Built with',
   'projects.filter.ai': '✦ AI-powered',
@@ -124,7 +126,8 @@ export const en = {
   'about.present': 'present',
   'about.funfact': 'Fun fact: I built my first website for my dad’s business when I was 13.',
   'services.title': 'Services',
-  'services.lede': 'Available for freelance and consulting alongside my job search.\nFixed-scope or hourly, remote or on-site in Aarhus.',
+  'services.lede':
+    'Available for freelance and consulting alongside my job search.\nFixed-scope or hourly, remote or on-site in Aarhus.',
   'services.pricing': 'Pricing',
   'services.pricing.body':
     'Hourly from {rate} DKK ex. VAT. Fixed-price work is quoted after scoping, because the price depends on the complexity. The first 30-minute call is free.',
@@ -136,7 +139,8 @@ export const en = {
   'services.ask': 'Start a conversation',
   'services.faq': 'Common questions',
   'contact.title': 'Contact',
-  'contact.lede': 'Job opportunities, freelance work, consulting, or just a hello.\nI usually reply within a day or two.',
+  'contact.lede':
+    'Job opportunities, freelance work, consulting, or just a hello.\nI usually reply within a day or two.',
   'contact.name': 'Name',
   'contact.email': 'Email',
   'contact.company': 'Company (optional)',
