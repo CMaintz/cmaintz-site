@@ -94,7 +94,7 @@ const { cell = 7 } = Astro.props;
     ctx!.putImageData(img, 0, 0);
   }
 
-  const isAnimated = () => !reduce.matches && root.dataset.crt !== 'off' && !document.hidden;
+  const isAnimated = () => !reduce.matches && root.dataset.motion !== 'off' && !document.hidden;
   const drawStill = () => draw(performance.now());
 
   function loop(time: number) {
@@ -131,7 +131,7 @@ const { cell = 7 } = Astro.props;
     document.addEventListener('visibilitychange', sync);
     reduce.addEventListener('change', sync);
     addEventListener('themechange', onThemeChange);
-    addEventListener('crtchange', sync);
+    addEventListener('fxchange', sync);
   }
 
   if (canvas && ctx) {

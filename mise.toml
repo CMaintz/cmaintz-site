@@ -3,6 +3,7 @@
 
 [tools]
 node = "22.14.0"
+gitleaks = "8.30.1"  # pre-push secret scan (.githooks/pre-push)
 # deno = "2.9.7"  # uncomment if the repo has Deno code (see FOUNDRY_DENO_PATHS below)
 
 [env]
@@ -69,9 +70,13 @@ postinstall = "mise run setup:habit-hooks"
 
 [tasks.fix]
 description = "Auto-fix what is mechanically fixable; never opinionated"
-# No mechanical fixers are wired in yet: the repo has no ESLint, and Prettier isn't a
-# declared dependency. A no-op that exits 0 keeps the verb present, per CONTRACT.
-run = "echo 'fix: no auto-fixers configured yet'"
+# Prettier formats; ESLint fixes what it can, then the prune pass drops suppressions whose
+# violation is gone, so eslint-suppressions.json only ever shrinks.
+run = [
+    "prettier --write .",
+    "eslint . --fix",
+    "eslint . --prune-suppressions",
+]
 
 # Provision the pinned habit-hooks (core + language plugin, same version) into a
 # per-plugin venv. Auxiliary (tier c), like setup:pmd - not a contract verb, not in
@@ -124,10 +129,28 @@ echo "smells: $("$hh" --version) --branch base=$mb"
 '''
 
 [tasks.lint]
-description = "Code-size rules and structural smells; non-mutating"
-# No ESLint in this repo yet, so lint is its own function/file size rules
-# (scripts/check-code-size.mjs) followed by the habit-hooks smell check.
-run = ["node scripts/check-code-size.mjs", "mise run smells"]
+description = "ESLint, code-size rules and structural smells; non-mutating"
+# ESLint (line length and the recommended sets) fails on new violations and on stale
+# suppressions; eslint-suppressions.json is the accepted debt and may only shrink.
+# Honours FOUNDRY_SINCE like the template: changed files at the fast placements,
+# whole-tree in CI. Then the function/file size rules (scripts/check-code-size.mjs)
+# and the habit-hooks smell check.
+run = ['''
+set -eu
+if [ -z "${FOUNDRY_SINCE+x}" ]; then exec eslint .; fi
+base="${FOUNDRY_SINCE:-origin/main}"
+mb=$(git merge-base "$base" HEAD 2>/dev/null || true)
+if [ -z "$mb" ]; then echo "changed-scope lint: cannot resolve '$base'; whole-tree"; exec eslint .; fi
+changed=$(git diff --name-only --diff-filter=ACMR "$mb" -- '*.ts' '*.tsx' '*.js' '*.cjs' '*.mjs' '*.astro' 2>/dev/null || true)
+untracked=$(git ls-files --others --exclude-standard -- '*.ts' '*.tsx' '*.js' '*.cjs' '*.mjs' '*.astro' 2>/dev/null || true)
+files=$(printf '%s
+%s
+' "$changed" "$untracked" | sort -u | sed '/^$/d')
+if [ -z "$files" ]; then echo "changed-scope lint: no changed JS/TS since $mb"; exit 0; fi
+printf '%s
+' "$files" | xargs -d '
+' eslint
+''', "node scripts/check-code-size.mjs", "mise run smells"]
 
 [tasks.typecheck]
 description = "Static types (astro check over tsconfig.json)"

@@ -24,7 +24,8 @@ const items = deliverables ? s.deliverables[lang] : [];
 </Window>
 
 <style>
-  .svc :global(.win__body) { display: grid; gap: 0.8rem; height: 100%; align-content: start; }
+  /* .svc is set on the Window element, which carries Window's scope, not this one. */
+  :global(.svc .win__body) { display: grid; gap: 0.8rem; height: 100%; align-content: start; }
   .svc__top { display: flex; justify-content: space-between; align-items: center; }
   .glyph { width: 2.4rem; height: 2.4rem; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-size: 1.2rem; box-shadow: 3px 3px 0 var(--shadow-c); }
   .pricing { font-size: 0.75rem; color: var(--fg); }

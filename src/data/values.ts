@@ -1,4 +1,3 @@
-// Working values, shown on /about (full) and /services (titles only).
 import type { Lang } from '../i18n/ui';
 
 type L = Record<Lang, string>;

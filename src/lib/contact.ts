@@ -1,4 +1,3 @@
-// Contact-form domain: validation, spam checks and delivery via Resend.
 // Every external dependency is optional; see SETUP.md for the env vars.
 
 export interface Inquiry {

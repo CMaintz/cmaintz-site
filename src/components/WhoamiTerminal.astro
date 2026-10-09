@@ -12,15 +12,22 @@ const shipped = ['illux-product-ai', 'foundry', 'jev-tools', 'leash', 'jobbuddy'
 const areas = [
   { id: 'dx', label: 'dx' },
   { id: 'devops', label: 'devops' },
+  { id: 'backend', label: 'backend' },
   { id: 'platform', label: 'platform' },
   { id: 'ai', label: 'ai enablement' },
 ];
 const projectByRepo = new Map((await getProjects()).flatMap((p) => p.data.repos.map((r) => [r, p.id] as const)));
 const synced = Date.parse(github.syncedAt);
+const HOUR = 3_600_000;
+/** Time from a push to the sync: hours on the same day, days after that. */
+const since = (pushedAt: string) => {
+  const h = Math.max(0, Math.round((synced - Date.parse(pushedAt)) / HOUR));
+  return h < 24 ? `${h}h` : `${Math.round(h / 24)}d`;
+};
 const pushes = recentRepos(7).map((r) => ({
   name: r.name,
   lang: r.language?.name ?? '-',
-  ago: `${Math.max(0, Math.round((synced - Date.parse(r.pushedAt)) / 86_400_000))}d`,
+  ago: since(r.pushedAt),
   href: projectByRepo.has(r.name) ? localize(`/projects/${projectByRepo.get(r.name)}`, lang) : r.url,
 }));
 const link = (path: string) => localize(path, lang);
@@ -50,7 +57,7 @@ const link = (path: string) => localize(path, lang);
     <ul class="log">
       {pushes.map((p) => <li><span class="ago">{p.ago}</span><a class="hl" href={p.href}>{p.name}</a><span class="lang">{p.lang}</span></li>)}
     </ul>
-    <p class="note">synced {formatDate(new Date(github.syncedAt), lang)} · days since last push</p>
+    <p class="note">synced {formatDate(new Date(github.syncedAt), lang)} · time since last push</p>
     <p><span class="accent">$</span> <span class="cursor"></span></p>
   </div>
 </Window>

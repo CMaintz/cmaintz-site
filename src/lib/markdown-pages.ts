@@ -10,11 +10,24 @@ import remarkGfm from 'remark-gfm';
 import remarkStringify from 'remark-stringify';
 import type { Element, Root, RootContent } from 'hast';
 
-const DROP = new Set(['script', 'style', 'template', 'svg', 'noscript', 'form', 'button', 'iframe', 'video', 'canvas', 'dialog']);
+const DROP = new Set([
+  'script',
+  'style',
+  'template',
+  'svg',
+  'noscript',
+  'form',
+  'button',
+  'iframe',
+  'video',
+  'canvas',
+  'dialog',
+]);
 const SKIP_DIRS = new Set(['_astro', 'doom', 'pagefind', 'og', 'img', 'media']);
 
 const isElement = (n: RootContent): n is Element => n.type === 'element';
-const hidden = (el: Element) => DROP.has(el.tagName) || el.properties.ariaHidden === 'true' || el.properties.hidden != null;
+const hidden = (el: Element) =>
+  DROP.has(el.tagName) || el.properties.ariaHidden === 'true' || el.properties.hidden != null;
 
 function prune<T extends { children: RootContent[] }>(node: T): T {
   node.children = node.children.filter((c) => !(isElement(c) && hidden(c)));
@@ -61,7 +74,10 @@ export async function writeMarkdownPages(root: string, site: string) {
   await Promise.all(
     dirs.map(async (rel) => {
       const html = await readFile(join(root, rel, 'index.html'), 'utf8');
-      await writeFile(join(root, rel, 'index.md'), await htmlToMarkdown(html, new URL(rel ? `/${rel}/` : '/', site).toString()));
+      await writeFile(
+        join(root, rel, 'index.md'),
+        await htmlToMarkdown(html, new URL(rel ? `/${rel}/` : '/', site).toString()),
+      );
     }),
   );
   return dirs.length;

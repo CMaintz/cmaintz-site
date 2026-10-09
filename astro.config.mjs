@@ -34,9 +34,13 @@ const PAGE_DATES = pageDates();
 const securityHeaders = {
   name: 'security-headers',
   hooks: {
-    'astro:build:done': async ({ dir }) => appendFile(new URL('_headers', dir), `
+    'astro:build:done': async ({ dir }) =>
+      appendFile(
+        new URL('_headers', dir),
+        `
 ${headersFileBlock()}
-${linkHeadersBlock()}`),
+${linkHeadersBlock()}`,
+      ),
   },
 };
 
@@ -47,7 +51,8 @@ ${linkHeadersBlock()}`),
 const markdownPages = {
   name: 'markdown-pages',
   hooks: {
-    'astro:build:done': async ({ dir, logger }) => logger.info(`${await writeMarkdownPages(fileURLToPath(dir), SITE)} Markdown pages written`),
+    'astro:build:done': async ({ dir, logger }) =>
+      logger.info(`${await writeMarkdownPages(fileURLToPath(dir), SITE)} Markdown pages written`),
   },
 };
 
@@ -105,7 +110,11 @@ export default defineConfig({
       // Contact form - see SETUP.md. All optional so the site builds without them.
       RESEND_API_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
       CONTACT_TO_EMAIL: envField.string({ context: 'server', access: 'public', default: 'cmaintz@outlook.com' }),
-      CONTACT_FROM_EMAIL: envField.string({ context: 'server', access: 'public', default: 'maintz.dev contact form <onboarding@resend.dev>' }),
+      CONTACT_FROM_EMAIL: envField.string({
+        context: 'server',
+        access: 'public',
+        default: 'maintz.dev contact form <onboarding@resend.dev>',
+      }),
       TURNSTILE_SECRET_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
       PUBLIC_TURNSTILE_SITE_KEY: envField.string({ context: 'client', access: 'public', optional: true }),
       // Comments (Supabase, preferred) - see SETUP.md. Public by design (RLS protects data).

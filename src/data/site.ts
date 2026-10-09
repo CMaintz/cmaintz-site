@@ -2,7 +2,10 @@ export const site = {
   name: 'Christoffer Maintz',
   shortName: 'CM',
   handle: 'cmaintz',
-  role: { en: 'Developer · AI automation & enablement, DX, DevOps', da: 'Udvikler · AI-automatisering & enablement, DX, DevOps' },
+  role: {
+    en: 'Developer · AI automation & enablement, DX, DevOps, Backend & Platform',
+    da: 'Udvikler · AI-automatisering & enablement, DX, DevOps, backend & platform',
+  },
   description: {
     en: 'Christoffer Maintz - developer in Aarhus, Denmark, available for freelance: AI automation and enablement, developer experience, DevOps and platform engineering.',
     da: 'Christoffer Maintz - udvikler i Aarhus, tilgængelig som freelancer: AI-automatisering og enablement, developer experience, DevOps og platform engineering.',

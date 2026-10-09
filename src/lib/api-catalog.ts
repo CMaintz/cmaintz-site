@@ -38,7 +38,16 @@ const discoveryLinks = () =>
     `<${API_PATHS.llms}>; rel="describedby"; type="text/markdown"`,
   ].join(', ');
 
-const errorCodes = ['bad_request', 'name', 'email', 'message', 'captcha', 'rate_limited', 'send_failed', 'not_configured'];
+const errorCodes = [
+  'bad_request',
+  'name',
+  'email',
+  'message',
+  'captcha',
+  'rate_limited',
+  'send_failed',
+  'not_configured',
+];
 
 const inquiry = {
   type: 'object',
@@ -50,8 +59,15 @@ const inquiry = {
     topic: { type: 'string', enum: ['job', 'freelance', 'consulting', 'other'], default: 'other' },
     budget: { type: 'string', maxLength: 80 },
     message: { type: 'string', minLength: 10, maxLength: 5000 },
-    website: { type: 'string', maxLength: 0, description: 'Honeypot. Leave empty; a filled value is silently dropped.' },
-    'cf-turnstile-response': { type: 'string', description: 'Cloudflare Turnstile token. Required when the form shows a captcha.' },
+    website: {
+      type: 'string',
+      maxLength: 0,
+      description: 'Honeypot. Leave empty; a filled value is silently dropped.',
+    },
+    'cf-turnstile-response': {
+      type: 'string',
+      description: 'Cloudflare Turnstile token. Required when the form shows a captcha.',
+    },
   },
 };
 

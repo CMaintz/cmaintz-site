@@ -22,6 +22,7 @@ describe('linkHeadersBlock (RFC 8288)', () => {
   it('advertises the catalog, spec, docs and description on the homepage', () => {
     const block = linkHeadersBlock();
     expect(block.startsWith('/\n  Link: ')).toBe(true);
-    for (const rel of ['api-catalog', 'service-desc', 'service-doc', 'describedby']) expect(block).toContain(`rel="${rel}"`);
+    for (const rel of ['api-catalog', 'service-desc', 'service-doc', 'describedby'])
+      expect(block).toContain(`rel="${rel}"`);
   });
 });

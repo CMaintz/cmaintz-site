@@ -5,6 +5,7 @@ import ProjectCard from '../components/ProjectCard.astro';
 import { type Lang, useT, formatDate } from '../i18n/ui';
 import { getProjects, github } from '../lib/content';
 import { AREA_IDS, areaLabels } from '../data/areas';
+import { LANGUAGES, stackLanguages, techId } from '../lib/tech';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -12,6 +13,11 @@ const t = useT(lang);
 const projects = await getProjects();
 const cats = ['professional', 'open-source', 'personal', 'academic'] as const;
 const counts = Object.fromEntries(cats.map((c) => [c, projects.filter((p) => p.data.category === c).length]));
+const langCounts = LANGUAGES.map((l) => ({ id: techId(l), name: l, n: projects.filter((p) => stackLanguages(p.data.stack).includes(l)).length }));
+// Most-used first; languages no project uses don't get a button.
+const langs = langCounts.filter((l) => l.n > 0).sort((a, b) => b.n - a.n);
+const aiCount = projects.filter((p) => p.data.aiPowered).length;
+const frontendCount = projects.filter((p) => p.data.frontend).length;
 const areaCounts = Object.fromEntries(AREA_IDS.map((a) => [a, projects.filter((p) => (p.data.areas as string[]).includes(a)).length]));
 ---
 
@@ -28,6 +34,11 @@ const areaCounts = Object.fromEntries(AREA_IDS.map((a) => [a, projects.filter((p
     <div class="filters areas mono" role="toolbar" aria-label={lang === 'da' ? 'Områder' : 'Areas'}>
       {AREA_IDS.map((a) => <button type="button" data-filter={a} aria-pressed="false">◆ {areaLabels[a][lang]} <span>{areaCounts[a]}</span></button>)}
     </div>
+    <div class="filters tech mono" role="toolbar" aria-label={t('projects.filter.tech')}>
+      <button type="button" data-filter="frontend" aria-pressed="false">{t('projects.filter.frontend')} <span>{frontendCount}</span></button>
+      <button type="button" data-filter="ai-powered" aria-pressed="false">{t('projects.filter.ai')} <span>{aiCount}</span></button>
+      {langs.map((l) => <button type="button" data-filter={l.id} aria-pressed="false">{l.name} <span>{l.n}</span></button>)}
+    </div>
     <div class="grid grid-3" data-projects>
       {projects.map((p, i) => <ProjectCard project={p} lang={lang} index={i} />)}
     </div>
@@ -37,7 +48,8 @@ const areaCounts = Object.fromEntries(AREA_IDS.map((a) => [a, projects.filter((p
 <script>
   const buttons = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
   const cards = document.querySelectorAll<HTMLElement>('[data-projects] > [data-category]');
-  const matches = (c: HTMLElement, f: string) => f === 'all' || c.dataset.category === f || (c.dataset.areas ?? '').split(' ').includes(f);
+  const tagged = (c: HTMLElement, f: string) => [c.dataset.areas, c.dataset.tech].some((v) => (v ?? '').split(' ').includes(f));
+  const matches = (c: HTMLElement, f: string) => f === 'all' || c.dataset.category === f || tagged(c, f);
   const pressButton = (f: string) => buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.filter === f)));
   const filterCards = (f: string) => cards.forEach((c) => (c.hidden = !matches(c, f)));
   const setHash = (f: string) => history.replaceState(null, '', f === 'all' ? location.pathname : `#${f}`);
@@ -54,7 +66,7 @@ const areaCounts = Object.fromEntries(AREA_IDS.map((a) => [a, projects.filter((p
 
 <style>
   .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; }
-  .filters.areas { margin-bottom: 2rem; }
+  .filters.tech { margin-bottom: 2rem; }
   .filters.areas button { color: var(--accent); }
   .filters button { font: 500 0.82rem var(--font-mono); background: var(--bg-2); color: var(--fg-dim); border: 1px solid var(--line); padding: 0.45rem 0.8rem; cursor: pointer; }
   .filters button span { color: var(--fg-faint); margin-left: 0.3rem; }

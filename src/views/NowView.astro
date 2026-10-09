@@ -8,19 +8,26 @@ const { lang } = Astro.props;
 const t = useT(lang);
 
 // Edit this list when things change; bump UPDATED.
-const UPDATED = '2026-09-27';
-const items = {
+const UPDATED = '2026-10-07';
+const book = {
+  title: 'Technofeudalism',
+  author: 'Yanis Varoufakis',
+  href: 'https://www.penguin.co.uk/books/455212/technofeudalism-by-varoufakis-yanis/9781529926095',
+};
+const items: { k: string; v: string; book?: typeof book }[] = {
   en: [
     { k: 'Work', v: 'Consulting at DEVEX on DevOps, CI/CD, developer experience and AI-assisted development.' },
     { k: 'Looking for', v: 'A role in DevOps, developer experience, platform engineering or AI enablement. Aarhus or remote.' },
     { k: 'Building', v: 'The jev-tools family (jev-guard, jev-triage, jev-sort) and a major restructuring of Foundry.' },
     { k: 'Also', v: 'Growing Tech Atlas, the bilingual technical dictionary, and this site.' },
+    { k: 'Recommending', book, v: 'How big tech platforms turned markets into fiefdoms. Worth reading even if you end up disagreeing.' },
   ],
   da: [
     { k: 'Arbejde', v: 'Konsulent hos DEVEX med DevOps, CI/CD, developer experience og AI-assisted development.' },
     { k: 'Søger', v: 'En rolle inden for DevOps, developer experience, platform engineering eller AI-enablement. Aarhus eller remote.' },
     { k: 'Bygger', v: 'jev-tools-familien (jev-guard, jev-triage, jev-sort) og en større omstrukturering af Foundry.' },
     { k: 'Også', v: 'Udvider Tech Atlas, den tosprogede tekniske ordbog, og denne side.' },
+    { k: 'Anbefaler', book, v: 'Om hvordan de store tech-platforme har gjort markeder til feudale len. Værd at læse, også hvis man ender med at være uenig.' },
   ],
 }[lang];
 const lede = lang === 'da' ? 'Hvad jeg går og laver lige nu. Inspireret af nownownow.com.' : 'What I’m focused on right now. Inspired by nownownow.com.';
@@ -29,7 +36,12 @@ const lede = lang === 'da' ? 'Hvad jeg går og laver lige nu. Inspireret af nown
 <SimpleView lang={lang} title={t('now.title')} eyebrow="~/now" lede={lede} updated={`${t('blog.updated')}: ${UPDATED}`}>
   <Window title="status.log" meta={UPDATED}>
     <dl class="log">
-      {items.map((i) => (<><dt class="mono">{i.k}</dt><dd>{i.v}</dd></>))}
+      {items.map((i) => (
+        <>
+          <dt class="mono">{i.k}</dt>
+          <dd>{i.book && <><a href={i.book.href} rel="noopener"><cite>{i.book.title}</cite></a> - {i.book.author}. </>}{i.v}</dd>
+        </>
+      ))}
     </dl>
   </Window>
   <p class="more mono"><a href={localize('/contact', lang)}>{t('home.cta.hire')} →</a></p>

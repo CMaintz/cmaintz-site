@@ -1,4 +1,3 @@
-// SEO helpers: description clipping, share-image lookup and schema.org JSON-LD.
 import { site } from '../data/site';
 import { areas } from '../data/areas';
 import { faq } from '../data/faq';

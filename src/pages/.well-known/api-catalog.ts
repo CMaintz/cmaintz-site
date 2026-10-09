@@ -11,6 +11,7 @@ const headers = {
   'Cache-Control': 'public, max-age=3600',
 };
 
-export const GET: APIRoute = ({ site, url }) => new Response(JSON.stringify(apiCatalog(site ?? url), null, 2), { headers });
+export const GET: APIRoute = ({ site, url }) =>
+  new Response(JSON.stringify(apiCatalog(site ?? url), null, 2), { headers });
 
 export const HEAD: APIRoute = () => new Response(null, { headers });

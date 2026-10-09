@@ -1,6 +1,7 @@
 ---
 import { type Lang, localize, useT } from '../i18n/ui';
 import { type Project, projectRepoStats, projectPeriod } from '../lib/content';
+import { techIds } from '../lib/tech';
 
 interface Props { project: Project; lang: Lang; index?: number; compact?: boolean }
 const { project: p, lang, index, compact = false } = Astro.props;
@@ -10,7 +11,7 @@ const href = localize(`/projects/${p.id}`, lang);
 const period = projectPeriod(p, lang);
 ---
 
-<article class="card reveal" data-category={p.data.category} data-areas={p.data.areas.join(' ')}>
+<article class="card reveal" data-category={p.data.category} data-areas={p.data.areas.join(' ')} data-tech={techIds(p.data).join(' ')}>
   <a class="hit" href={href} aria-label={p.data.title}></a>
   <header class="top">
     <span class="glyph" aria-hidden="true">{p.data.glyph}</span>

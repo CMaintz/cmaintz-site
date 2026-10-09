@@ -7,6 +7,8 @@ tagline:
 summary:
   en: Production management for a real whisky distillery - casks, distillations, warehouse hierarchy, maturation history and bottling - with genuine production rules, later ported from JavaFX to a Spring Boot REST API and Angular SPA.
   da: Produktionsstyring for et rigtigt whiskydestilleri - fade, destillationer, lagerhierarki, modningshistorik og aftapning - med ægte produktionsregler, senere porteret fra JavaFX til Spring Boot REST-API og Angular-SPA.
+areas: [backend]
+frontend: true
 category: academic
 order: 20
 role: Developer in a group of 3, solo rewrite

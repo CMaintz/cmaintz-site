@@ -11,12 +11,10 @@
   },
   // www.maintz.dev is handled by redirect-www/ (a separate redirect Worker).
   // Custom domains: Cloudflare creates the DNS records and TLS certificates on deploy.
-  "routes": [
-    { "pattern": "maintz.dev", "custom_domain": true }
-  ],
+  "routes": [{ "pattern": "maintz.dev", "custom_domain": true }],
+  // PR previews (ci.yml) are served at pr-<n>-cmaintz-site.<subdomain>.workers.dev.
+  "preview_urls": true,
   // Contact form: at most 3 messages a minute per IP (src/pages/api/contact.ts).
   // namespace_id is any number unique within the Cloudflare account.
-  "ratelimits": [
-    { "name": "CONTACT_LIMITER", "namespace_id": "1001", "simple": { "limit": 3, "period": 60 } }
-  ]
+  "ratelimits": [{ "name": "CONTACT_LIMITER", "namespace_id": "1001", "simple": { "limit": 3, "period": 60 } }]
 }

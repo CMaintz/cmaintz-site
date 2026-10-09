@@ -49,8 +49,13 @@ function gitDates(): [string, string | undefined][] {
   const projects = markdownIds('src/content/projects').map(
     (f) => [`/projects/${f.replace(/\.mdx?$/, '')}/`, [`src/content/projects/${f}`]] as const,
   );
-  const areas = AREA_IDS.map((id) => [`/what-i-do/${id}/`, ['src/views/WhatIDoView.astro', 'src/data/areas.ts']] as const);
-  return [...Object.entries(PAGE_SOURCES), ...projects, ...areas].map(([path, files]) => [path, lastCommit([...files])]);
+  const areas = AREA_IDS.map(
+    (id) => [`/what-i-do/${id}/`, ['src/views/WhatIDoView.astro', 'src/data/areas.ts']] as const,
+  );
+  return [...Object.entries(PAGE_SOURCES), ...projects, ...areas].map(([path, files]) => [
+    path,
+    lastCommit([...files]),
+  ]);
 }
 
 const newest = (dates: Record<string, string>, prefix: string) =>

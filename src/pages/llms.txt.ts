@@ -36,18 +36,26 @@ function danish(base: URL) {
 async function sections(base: URL) {
   const [projects, posts] = await Promise.all([getProjects(), getPosts()]);
   return [
-    ['Services', [link(base, 'Services & pricing', '/services'), ...services.map((s) => `- **${s.title.en}**: ${s.body.en}`)]],
+    [
+      'Services',
+      [link(base, 'Services & pricing', '/services'), ...services.map((s) => `- **${s.title.en}**: ${s.body.en}`)],
+    ],
     ['Focus areas', AREA_IDS.map((id) => link(base, areas[id].label.en, `/what-i-do/${id}`, areas[id].intro.en))],
     ['Projects', projects.map((p) => link(base, p.data.title, `/projects/${p.id}`, p.data.tagline.en))],
     ['Writing', posts.map((p) => link(base, p.data.title, `/blog/${p.id}`, p.data.description))],
     ['FAQ', faq.en.map(({ q, a }) => `- **${q}** ${a}`)],
     ['På dansk', danish(base)],
-    ['Optional', [link(base, 'About', '/about'), link(base, 'CV (PDF)', '/cv.pdf'), link(base, 'CV på dansk (PDF)', '/cv-da.pdf')]],
+    [
+      'Optional',
+      [link(base, 'About', '/about'), link(base, 'CV (PDF)', '/cv.pdf'), link(base, 'CV på dansk (PDF)', '/cv-da.pdf')],
+    ],
   ] as const;
 }
 
 export async function GET(context: APIContext) {
   const base = context.site!;
   const body = (await sections(base)).map(([h, lines]) => `## ${h}\n\n${lines.join('\n')}`);
-  return new Response([intro(base), ...body].join('\n\n') + '\n', { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+  return new Response([intro(base), ...body].join('\n\n') + '\n', {
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  });
 }
