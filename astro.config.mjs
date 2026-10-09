@@ -101,7 +101,7 @@ export default defineConfig({
       serialize: (item) => ({ ...item, lastmod: lastmodFor(PAGE_DATES, item.url) }),
     }),
   ],
-  vite: { define: { __PAGE_DATES__: JSON.stringify(PAGE_DATES) } },
+  vite: { define: { 'import.meta.env.PAGE_DATES': JSON.stringify(PAGE_DATES) } },
   markdown: {
     processor: unified({ remarkPlugins: [remarkMath], rehypePlugins: [rehypeKatex, rehypeCanonicalLinks] }),
   },

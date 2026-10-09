@@ -25,7 +25,7 @@ const work = {
   description: p.data.summary.en,
   url: new URL(`/projects/${p.id}/`, Astro.site).toString(),
   creator: { '@id': `${Astro.site}#person` },
-  dateModified: __PAGE_DATES__[`/projects/${p.id}/`],
+  dateModified: import.meta.env.PAGE_DATES[`/projects/${p.id}/`],
   keywords: p.data.stack.join(', '),
   ...(stats && { codeRepository: stats.primary.url, programmingLanguage: stats.languages.map((l) => l.name) }),
 };

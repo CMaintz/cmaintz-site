@@ -10,12 +10,7 @@ export default [
   ...tseslint.configs.recommended,
   ...astro.configs.recommended,
   ...foundry,
-  {
-    languageOptions: {
-      // __PAGE_DATES__ is injected at build time by astro.config.mjs (see src/globals.d.ts).
-      globals: { ...globals.browser, ...globals.node, __PAGE_DATES__: 'readonly' },
-    },
-  },
+  { languageOptions: { globals: { ...globals.browser, ...globals.node } } },
   {
     // habit-hooks' TypeScript sensor and knip already report these; don't double up.
     rules: {
