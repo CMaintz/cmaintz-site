@@ -44,7 +44,7 @@ const metaDescription = clipDescription(description);
 ---
 
 <!doctype html>
-<html lang={lang} data-theme="dark" data-scan="on" data-glow="on" data-vignette="on" data-motion="on">
+<html lang={lang} data-theme="dark" data-scan="on" data-glow="on" data-vignette="off" data-motion="on">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -82,12 +82,12 @@ const metaDescription = clipDescription(description);
         try {
           const theme = localStorage.getItem('theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
           d.dataset.theme = theme;
-          // 'crt' is the old single switch for scanlines, glow and vignette together.
+          // 'crt' is the old single switch for all the effects; the vignette now starts off regardless.
           const legacy = localStorage.getItem('crt');
           const fx = (k, fallback) => localStorage.getItem(`fx-${k}`) ?? fallback;
           d.dataset.scan = fx('scan', legacy ?? 'on');
           d.dataset.glow = fx('glow', legacy ?? 'on');
-          d.dataset.vignette = fx('vignette', legacy ?? 'on');
+          d.dataset.vignette = fx('vignette', 'off');
           d.dataset.motion = fx('motion', matchMedia('(prefers-reduced-motion: reduce)').matches ? 'off' : 'on');
         } catch {}
       })();
