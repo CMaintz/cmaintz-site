@@ -22,7 +22,7 @@ const areaItems = AREA_IDS.map((id) => ({ group: t('wid.title'), label: areas[id
 const posts = (await getPosts()).map((p) => ({ group: t('nav.blog'), label: p.data.title, hint: p.data.description, href: withSlash(`/blog/${p.id}`) }));
 const actions = [
   { group: 'run', label: t('theme.toggle'), hint: 'theme', action: 'theme' },
-  ...(['scan', 'glow', 'vignette', 'motion'] as const).map((k) => ({ group: 'run', label: `${t('fx.menu')}: ${t(`fx.${k}`)}`, hint: 'crt', action: `fx:${k}` })),
+  ...(['scan', 'glow', 'motion'] as const).map((k) => ({ group: 'run', label: `${t('fx.menu')}: ${t(`fx.${k}`)}`, hint: 'crt', action: `fx:${k}` })),
   { group: 'run', label: `${t('lang.label')}: ${other.toUpperCase()}`, hint: 'lang', href: localize(switchPath ?? here, other) },
   { group: 'run', label: lang === 'da' ? 'Kopiér e-mail' : 'Copy email address', hint: site.email, action: 'copy-email' },
   { group: 'run', label: 'GitHub', hint: site.socials.github, href: site.socials.github },

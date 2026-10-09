@@ -78,7 +78,7 @@ const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog
   article :global(.page-head h1) { font-size: clamp(2.2rem, 5vw, 3.6rem); }
   article :global(.page-head__main) { max-width: 62rem; }
   .layout { display: grid; grid-template-columns: minmax(0, var(--measure)) 1fr; gap: 3rem; align-items: start; }
-  /* Reading panel sits above the CRT scanline/vignette layers (z 49-50), so long
+  /* Reading panel sits above the CRT scanline layer (z 50), so long
      text stays crisp while the rest of the page keeps the effect. */
   .reading { position: relative; z-index: 51; background: var(--bg); box-shadow: 0 0 0 1.2rem var(--bg); }
   .toc { position: sticky; top: 5rem; font-size: 0.8rem; border-left: 2px solid var(--line); padding-left: 1rem; }

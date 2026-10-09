@@ -44,7 +44,7 @@ const metaDescription = clipDescription(description);
 ---
 
 <!doctype html>
-<html lang={lang} data-theme="dark" data-scan="on" data-glow="on" data-vignette="on" data-motion="on">
+<html lang={lang} data-theme="dark" data-scan="on" data-glow="on" data-motion="on">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -83,12 +83,11 @@ const metaDescription = clipDescription(description);
           const prefersLight = matchMedia('(prefers-color-scheme: light)').matches;
           const theme = localStorage.getItem('theme') ?? (prefersLight ? 'light' : 'dark');
           d.dataset.theme = theme;
-          // 'crt' is the old single switch for scanlines, glow and vignette together.
+          // 'crt' is the old single switch for scanlines and glow together.
           const legacy = localStorage.getItem('crt');
           const fx = (k, fallback) => localStorage.getItem(`fx-${k}`) ?? fallback;
           d.dataset.scan = fx('scan', legacy ?? 'on');
           d.dataset.glow = fx('glow', legacy ?? 'on');
-          d.dataset.vignette = fx('vignette', legacy ?? 'on');
           d.dataset.motion = fx('motion', matchMedia('(prefers-reduced-motion: reduce)').matches ? 'off' : 'on');
         } catch {}
       })();
@@ -98,7 +97,6 @@ const metaDescription = clipDescription(description);
   <body>
     <a class="skip visually-hidden" href="#main">{t('skip')}</a>
     <PixelField />
-    <div class="crt-vignette" aria-hidden="true"></div>
     <div class="crt-scan" aria-hidden="true"></div>
     <Header lang={lang} switchPath={langSwitchPath} />
     <main id="main" data-pagefind-body={type === 'article' ? '' : undefined}>
