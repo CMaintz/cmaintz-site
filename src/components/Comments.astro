@@ -9,10 +9,14 @@ const { lang, slug } = Astro.props;
 const t = useT(lang);
 // Supabase is preferred; giscus is the fallback when only its IDs are set.
 const useSupabase = Boolean(PUBLIC_SUPABASE_URL && PUBLIC_SUPABASE_ANON_KEY);
-const configured = Boolean(PUBLIC_GISCUS_REPO && PUBLIC_GISCUS_REPO_ID && PUBLIC_GISCUS_CATEGORY && PUBLIC_GISCUS_CATEGORY_ID);
-const cfg = configured
-  ? { repo: PUBLIC_GISCUS_REPO, repoId: PUBLIC_GISCUS_REPO_ID, category: PUBLIC_GISCUS_CATEGORY, categoryId: PUBLIC_GISCUS_CATEGORY_ID, lang }
-  : null;
+const giscus = {
+  repo: PUBLIC_GISCUS_REPO,
+  repoId: PUBLIC_GISCUS_REPO_ID,
+  category: PUBLIC_GISCUS_CATEGORY,
+  categoryId: PUBLIC_GISCUS_CATEGORY_ID,
+};
+const configured = Object.values(giscus).every(Boolean);
+const cfg = configured ? { ...giscus, lang } : null;
 ---
 
 <section class="comments" aria-labelledby="comments-h" id="comments">

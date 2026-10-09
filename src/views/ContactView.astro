@@ -68,7 +68,10 @@ const topics = ['job', 'freelance', 'consulting', 'other'] as const;
   }
 
   /** Fallback when sending fails: write to me directly. */
-  const mailtoLink = () => Object.assign(document.createElement('a'), { href: `mailto:${form!.dataset.email}`, textContent: form!.dataset.email! });
+  const mailtoLink = () => {
+    const email = form!.dataset.email!;
+    return Object.assign(document.createElement('a'), { href: `mailto:${email}`, textContent: email });
+  };
 
   function showResult(ok: boolean) {
     status!.dataset.state = ok ? 'ok' : 'err';

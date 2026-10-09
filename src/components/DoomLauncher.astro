@@ -16,7 +16,9 @@
 <script>
   const dlg = document.querySelector<HTMLDialogElement>('dialog.doom')!;
   const screen = dlg.querySelector('.screen')!;
-  const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+  const KONAMI = [
+    'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a',
+  ];
 
   // Touch-only devices can't play it; don't make them download 6.5 MB to find out.
   const keyboardless = () => matchMedia('(pointer: coarse)').matches && !matchMedia('(any-pointer: fine)').matches;
@@ -66,7 +68,9 @@
     return 0;
   }
 
-  const isTyping = (t: EventTarget | null) => t instanceof HTMLElement && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));
+  const FORM_FIELD = /^(INPUT|TEXTAREA|SELECT)$/;
+  const isTyping = (t: EventTarget | null) =>
+    t instanceof HTMLElement && (t.isContentEditable || FORM_FIELD.test(t.tagName));
 
   function onKey(e: KeyboardEvent) {
     if (MODIFIERS.has(e.key) || isTyping(e.target)) return;
