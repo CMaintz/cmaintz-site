@@ -31,10 +31,4 @@ export default [
       'no-unused-vars': 'off',
     },
   },
-  {
-    // Markup lines (long attribute lists, inline text) are not held to a width; Prettier
-    // does not format .astro either. Code size there is still capped by check-code-size.mjs.
-    files: ['**/*.astro'],
-    rules: { 'max-len': 'off' },
-  },
 ];
