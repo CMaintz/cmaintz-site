@@ -18,7 +18,7 @@ const wantsJson = (req: Request) => (req.headers.get('accept') ?? '').includes('
 /** JSON for the enhanced form; a redirect back to /contact for no-JS posts. */
 function reply(req: Request, status: number, error?: string) {
   if (wantsJson(req)) return Response.json({ ok: status < 300, error }, { status });
-  const url = new URL('/contact', req.url);
+  const url = new URL('/contact/', req.url);
   url.searchParams.set(status < 300 ? 'sent' : 'error', error ?? '1');
   return Response.redirect(url, 303);
 }
