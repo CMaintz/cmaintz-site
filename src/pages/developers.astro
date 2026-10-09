@@ -1,0 +1,54 @@
+---
+// Human docs for the contact API: the `service-doc` target in the API catalog.
+// English only; the fields and responses come from the same OpenAPI object.
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { API_PATHS, openApiSpec } from '../lib/api-catalog';
+
+const spec = openApiSpec(Astro.site!);
+const op = spec.paths[API_PATHS.contact].post;
+const fields = Object.entries(op.requestBody.content['application/x-www-form-urlencoded'].schema.properties);
+const required = new Set(op.requestBody.content['application/x-www-form-urlencoded'].schema.required);
+const responses = Object.entries(op.responses);
+const origin = spec.servers[0].url;
+const example = `curl -X POST ${origin}${API_PATHS.contact} \\
+  -H 'Accept: application/json' \\
+  --data-urlencode 'name=Ada Lovelace' \\
+  --data-urlencode 'email=ada@example.com' \\
+  --data-urlencode 'topic=freelance' \\
+  --data-urlencode 'message=We need help automating invoice triage with an LLM.'`;
+---
+
+<Base lang="en" title="Developers" description={op.description} alternates={false}>
+  <PageHead eyebrow="~/developers" title="Developers" lede={op.description} />
+
+  <section class="wrap prose">
+    <h2>POST <code>{API_PATHS.contact}</code></h2>
+    <p>{op.summary}. Form-encoded or multipart body.</p>
+    <table>
+      <thead><tr><th>Field</th><th>Rules</th></tr></thead>
+      <tbody>
+        {fields.map(([name, f]) => (
+          <tr>
+            <td><code>{name}</code>{required.has(name) && ' (required)'}</td>
+            <td>{'enum' in f ? f.enum.join(' | ') : f.type}{'description' in f && `. ${f.description}`}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    <h3>Responses</h3>
+    <ul>{responses.map(([code, r]) => <li><code>{code}</code> {r.description}</li>)}</ul>
+
+    <h3>Example</h3>
+    <pre><code>{example}</code></pre>
+
+    <h2>Machine-readable</h2>
+    <ul>
+      <li><a href={API_PATHS.catalog}><code>{API_PATHS.catalog}</code></a>: API catalog (RFC 9727)</li>
+      <li><a href={API_PATHS.spec}><code>{API_PATHS.spec}</code></a>: OpenAPI 3.1 description</li>
+      <li><a href={API_PATHS.health}><code>{API_PATHS.health}</code></a>: health check</li>
+      <li><a href={API_PATHS.llms}><code>{API_PATHS.llms}</code></a>: site summary for LLMs</li>
+    </ul>
+  </section>
+</Base>

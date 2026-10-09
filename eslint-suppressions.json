@@ -163,6 +163,11 @@
       "count": 1
     }
   },
+  "src/views/ServicesView.astro": {
+    "max-len": {
+      "count": 1
+    }
+  },
   "src/views/WhatIDoView.astro": {
     "max-len": {
       "count": 1

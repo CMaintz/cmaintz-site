@@ -1,5 +1,5 @@
 ---
-import { type Lang, localize, useT, formatDate } from '../i18n/ui';
+import { type Lang, localize, useT, formatDate, withSlash } from '../i18n/ui';
 import { type Post, readingTime } from '../lib/content';
 
 interface Props { post: Post; lang: Lang }
@@ -11,7 +11,7 @@ const mins = readingTime(post.body);
 <article class="post reveal">
   <time class="date mono" datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate, lang)}</time>
   <div>
-    <h3><a href={`/blog/${post.id}`}>{post.data.title}</a></h3>
+    <h3><a href={withSlash(`/blog/${post.id}`)}>{post.data.title}</a></h3>
     <p class="dim">{post.data.description}</p>
     <p class="meta mono">
       <span>{mins} {t('blog.read')}</span>

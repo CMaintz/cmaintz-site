@@ -1,0 +1,64 @@
+---
+title: 'Case study: automating product data for 3,000+ products with an LLM'
+description: How a Shopware 6 plugin turned product images into multilingual copy, SEO and categories for Illux - and the guardrails that made it safe to run unattended.
+pubDate: 2026-10-09
+areas: [ai, backend, platform]
+tags: [ai-automation, case-study, llm, shopware]
+---
+
+import Callout from '../../components/Callout.astro';
+
+Illux sells artwork online. Every product needed a description, SEO metadata, categories, tags and translations into Danish, English, Norwegian and Swedish - and none of it existed in any data source. It was written by hand, product by product, and the cost grew with the catalogue.
+
+I built the automation as sole developer during my internship at WEXO, from problem framing to production. This post is about what made it work in production, not in a demo. The full project write-up is on the [Illux Product AI](/projects/illux-product-ai) page.
+
+## The result first
+
+| Measure | Result |
+| --- | --- |
+| Products enriched | **3,000+** |
+| Manual enrichment left | **none for most of the catalogue** |
+| Time saved | **hundreds of hours** |
+| Languages per AI call | **4** |
+| Status | business-critical, still in daily use |
+
+## What the automation does
+
+Product images, plus name, manufacturer and attributes, go to a generative-AI model. What comes back is **schema-enforced JSON**: SEO metadata, a customer-facing description, and category, tag and property assignments from a whitelist, in all four languages from a single call.
+
+Two decisions carry most of the weight:
+
+- **Schema-enforced output, not prose.** The model fills a typed structure, so there's no brittle text parsing, and it can only pick categories and tags that already exist.
+- **A provider-agnostic abstraction.** The domain logic talks to an interface, not to one vendor. Swapping the LLM provider doesn't touch the business code.
+
+## What made it safe to run unattended
+
+Getting a model to write a nice product description is the easy part. Letting it write to a live catalogue every day is the actual project.
+
+<Callout type="note" title="The rule of thumb">
+Automate the confident cases, route the uncertain ones to a person, and record everything.
+</Callout>
+
+**A configurable confidence score.** Every analysis gets a score. The weights are adjustable, there are thresholds for description, title and metadata length and keyword counts, and the customer manages lists of unwanted words that lower the score.
+
+**Human-in-the-loop review.** Results above the threshold are applied automatically; the rest wait in a transaction-safe review queue. The customer can move the threshold, switch review off (full auto-apply), or send everything to review. A dashboard shows the time saved.
+
+**A full audit trail.** For every analysis: the exact prompt, model and version, confidence, reviewer, approval history and which batch it came from. When someone asks "why does this product say that?", there's an answer.
+
+**Resilient batching.** Up to 500 products per run, six per API call, processed asynchronously through Symfony Messenger over RabbitMQ so nothing blocks a web request. Retries with exponential backoff, idempotency, rate limiting and caching protect against a flaky or slow AI provider.
+
+**An evaluation harness.** Models and prompt strategies are compared on average confidence, which also catches quality drift when a model or prompt changes. Without it, "the new model seems better" is a feeling, not a measurement.
+
+## The second half: seeing art on your own wall
+
+Wall art is hard to sell online because people can't picture it at home. The same plugin lets shoppers pick frame, size and material, then see the piece composited into curated room scenes - or into **a photo of their own room**. Each tile streams in over server-sent events as it's ready. An admin module generates new photorealistic interiors from structured photographic parameters, and they wait for approval before they go live.
+
+## What I'd tell a team considering this
+
+1. **Start from the data you don't have.** The win here wasn't "AI"; it was that the metadata didn't exist anywhere and was expensive to create by hand.
+2. **Make the output typed and constrained.** If the model can only choose from your categories, it can't invent new ones.
+3. **Decide the confidence policy with the business, not for it.** The threshold is a business decision; the system should make it adjustable.
+4. **Log the prompt and model with every result.** You will be asked, and you'll need to compare when you change models.
+5. **Measure before and after a model change.** An evaluation harness is cheap compared to discovering quality drift in production.
+
+If your team has a manual, repetitive data job like this - product data, documents, emails, tickets - [that's the kind of work I take on](/services). The first 30-minute call is free.
