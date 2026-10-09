@@ -4,7 +4,7 @@ plugins = ["typescript", "generic"]
 # Tests are not structural-smell-gated: long, mock-heavy specs are normal and fine.
 # CI should police production maintainability, not test structure. (Language-
 # agnostic principle — see README.)
-files = ["**/*.ts", "**/*.tsx", "!**/*.spec.ts", "!**/*.spec.tsx", "!**/*.test.ts", "!**/*.test.tsx"]
+files = ["**/*.ts", "**/*.tsx", "**/*.astro", "**/*.mjs", "!**/*.spec.ts", "!**/*.spec.tsx", "!**/*.test.ts", "!**/*.test.tsx"]
 
 # File-length: flag files over 300 lines (oversized-file). 300 rather than the
 # sensor default of 200 — verbose-but-cohesive files (esp. Java) legitimately pass
@@ -12,7 +12,19 @@ files = ["**/*.ts", "**/*.tsx", "!**/*.spec.ts", "!**/*.spec.tsx", "!**/*.test.t
 # are already excluded by the `files` globs; keep big prompts in their own resource file.
 [sensors.line-count]
 args = ["--max", "300"]
+files = ["**/*.ts", "**/*.tsx", "!**/*.spec.ts", "!**/*.spec.tsx", "!**/*.test.ts", "!**/*.test.tsx"]
 
 # ESLint runs directly in the `lint` verb, so the sensor would only report it twice.
 [sensors.eslint]
 disabled = true
+
+# .astro and .mjs are in scope for duplication only (jscpd reads .astro frontmatter, template
+# and <script>). Comment and file-length checks stay on TypeScript: .astro file size is
+# already capped by scripts/check-code-size.mjs, which counts only its code lines.
+[sensors.comment]
+files = ["**/*.ts", "**/*.tsx", "!**/*.spec.ts", "!**/*.spec.tsx", "!**/*.test.ts", "!**/*.test.tsx"]
+
+# Duplication fails the gate instead of only coaching: a repeated block is a missing
+# component (markup), helper (logic) or shared object (data). See AGENTS.md.
+[smells.duplicated-code]
+severity = "enforced"
