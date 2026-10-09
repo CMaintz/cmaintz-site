@@ -5,8 +5,10 @@ import { areas, AREA_IDS } from '../data/areas';
 import { faq } from '../data/faq';
 import { services, HOURLY_RATE_DKK } from '../data/services';
 import { getPosts, getProjects } from '../lib/content';
+import { withSlash } from '../i18n/ui';
 
-const link = (base: URL, title: string, path: string, note?: string) => `- [${title}](${new URL(path, base)})${note ? `: ${note}` : ''}`;
+const link = (base: URL, title: string, path: string, note?: string) =>
+  `- [${title}](${new URL(withSlash(path), base)})${note ? `: ${note}` : ''}`;
 
 function intro(base: URL) {
   return [
@@ -14,7 +16,7 @@ function intro(base: URL) {
     `> ${site.description.en}`,
     `${site.name} is based in ${site.location} and takes freelance and consulting work, remote or on-site. ` +
       `Hourly from ${HOURLY_RATE_DKK} DKK ex. VAT; fixed-price work is quoted after scoping; the first 30-minute call is free. ` +
-      `Works in English and Danish. Contact: ${site.email} or ${new URL('/contact', base)}.`,
+      `Works in English and Danish. Contact: ${site.email} or ${new URL('/contact/', base)}.`,
   ].join('\n\n');
 }
 

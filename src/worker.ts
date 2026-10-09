@@ -1,8 +1,10 @@
-// Worker entry: Astro's Cloudflare handler, plus Markdown content negotiation.
-// A request with `Accept: text/markdown` gets the page's prebuilt index.md
-// (src/lib/markdown-pages.ts); everything else goes to Astro unchanged.
+// Worker entry: Astro's Cloudflare handler, plus two things pages need now that
+// they run worker-first: a redirect to the canonical trailing-slash URL, and
+// Markdown content negotiation. A request with `Accept: text/markdown` gets the
+// page's prebuilt index.md (src/lib/markdown-pages.ts); the rest goes to Astro.
 import astro from '@astrojs/cloudflare/entrypoints/server';
 import { SECURITY_HEADERS } from './lib/security-headers';
+import { withSlash } from './i18n/ui';
 
 interface Env {
   ASSETS: { fetch(input: URL | Request): Promise<Response> };
@@ -23,6 +25,18 @@ async function markdown(request: Request, env: Env) {
   return new Response(request.method === 'HEAD' ? null : body, { headers });
 }
 
+// Endpoints keep their exact paths; `trailingSlash: 'always'` would break these.
+const EXACT_PATHS = /^\/(api|\.well-known)\//;
+
+/** "/services" -> 301 "/services/", as Cloudflare does for static pages it serves directly. */
+function canonicalRedirect(request: Request) {
+  const url = new URL(request.url);
+  if ((request.method !== 'GET' && request.method !== 'HEAD') || EXACT_PATHS.test(url.pathname)) return null;
+  const pathname = withSlash(url.pathname);
+  if (pathname === url.pathname) return null;
+  return new Response(null, { status: 301, headers: { Location: pathname + url.search } });
+}
+
 /** HTML varies by Accept now, so shared caches must key on it. */
 function varyOnAccept(res: Response) {
   if (!res.headers.get('content-type')?.includes('text/html')) return res;
@@ -33,6 +47,8 @@ function varyOnAccept(res: Response) {
 
 export default {
   async fetch(request: Request, env: Env, ctx: Parameters<typeof astro.fetch>[2]) {
+    const redirect = canonicalRedirect(request);
+    if (redirect) return redirect;
     const md = wantsMarkdown(request) ? await markdown(request, env) : null;
     return md ?? varyOnAccept(await astro.fetch(request, env, ctx));
   },

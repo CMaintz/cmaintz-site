@@ -110,7 +110,7 @@ export function openApiSpec(base: URL) {
       title: `${site.name} contact API`,
       version: '1.0.0',
       description: `Send ${site.name} a job, freelance or consulting inquiry. Human docs: ${new URL(API_PATHS.docs, base)}`,
-      contact: { name: site.name, email: site.email, url: new URL('/contact', base).toString() },
+      contact: { name: site.name, email: site.email, url: new URL('/contact/', base).toString() },
     },
     servers: [{ url: new URL('/', base).toString().replace(/\/$/, '') }],
     paths: {

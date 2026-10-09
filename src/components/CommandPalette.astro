@@ -1,5 +1,5 @@
 ---
-import { type Lang, localize, unlocalize, useT } from '../i18n/ui';
+import { type Lang, localize, unlocalize, useT, withSlash } from '../i18n/ui';
 import { getProjects, getPosts, github } from '../lib/content';
 import { site } from '../data/site';
 import { AREA_IDS, areas } from '../data/areas';
@@ -19,7 +19,7 @@ const pages = (['/', '/about', '/projects', '/blog', '/services', '/contact', '/
 const allProjects = await getProjects();
 const projects = allProjects.map((p) => ({ group: t('nav.projects'), label: p.data.title, hint: p.data.tagline[lang], alias: [p.id, ...p.data.repos].join(' '), href: localize(`/projects/${p.id}`, lang) }));
 const areaItems = AREA_IDS.map((id) => ({ group: t('wid.title'), label: areas[id].label[lang], hint: areas[id].intro[lang], href: localize(`/what-i-do/${id}`, lang) }));
-const posts = (await getPosts()).map((p) => ({ group: t('nav.blog'), label: p.data.title, hint: p.data.description, href: `/blog/${p.id}` }));
+const posts = (await getPosts()).map((p) => ({ group: t('nav.blog'), label: p.data.title, hint: p.data.description, href: withSlash(`/blog/${p.id}`) }));
 const actions = [
   { group: 'run', label: t('theme.toggle'), hint: 'theme', action: 'theme' },
   { group: 'run', label: t('crt.toggle'), hint: 'crt', action: 'crt' },
