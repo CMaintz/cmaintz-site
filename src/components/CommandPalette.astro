@@ -3,6 +3,7 @@ import { type Lang, localize, unlocalize, useT, withSlash } from '../i18n/ui';
 import { getProjects, getPosts, github } from '../lib/content';
 import { site } from '../data/site';
 import { AREA_IDS, areas } from '../data/areas';
+import { DISPLAY_EFFECT_IDS } from '../data/display-effects';
 
 interface Props { lang: Lang; switchPath?: string }
 const { lang, switchPath } = Astro.props;
@@ -22,7 +23,7 @@ const areaItems = AREA_IDS.map((id) => ({ group: t('wid.title'), label: areas[id
 const posts = (await getPosts()).map((p) => ({ group: t('nav.blog'), label: p.data.title, hint: p.data.description, href: withSlash(`/blog/${p.id}`) }));
 const actions = [
   { group: 'run', label: t('theme.toggle'), hint: 'theme', action: 'theme' },
-  ...(['scan', 'glow', 'motion'] as const).map((k) => ({ group: 'run', label: `${t('fx.menu')}: ${t(`fx.${k}`)}`, hint: 'crt', action: `fx:${k}` })),
+  ...DISPLAY_EFFECT_IDS.map((k) => ({ group: 'run', label: `${t('fx.menu')}: ${t(`fx.${k}`)}`, hint: 'crt', action: `fx:${k}` })),
   { group: 'run', label: `${t('lang.label')}: ${other.toUpperCase()}`, hint: 'lang', href: localize(switchPath ?? here, other) },
   { group: 'run', label: lang === 'da' ? 'Kopiér e-mail' : 'Copy email address', hint: site.email, action: 'copy-email' },
   { group: 'run', label: 'GitHub', hint: site.socials.github, href: site.socials.github },
