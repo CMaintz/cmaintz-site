@@ -25,8 +25,8 @@ metrics:
     label: { en: products enriched, da: produkter beriget }
   - value: "100s"
     label: { en: of hours of manual work saved, da: af timers manuelt arbejde sparet }
-  - value: "4"
-    label: { en: languages per call, da: sprog pr. kald }
+  - value: "4+"
+    label: { en: languages per call (configurable), da: sprog pr. kald (konfigurerbart) }
 ---
 
 ## The problem
@@ -39,14 +39,14 @@ A Shopware 6 plugin with two halves, a **PHP 8.1+** backend, a **Vue** admin UI 
 
 It started as an ambitious exam project where only part was expected to get built. It was finished in full and deployed to production a few days before the internship ended.
 
-**Product enrichment.** Product images, plus name, manufacturer and attributes, go to a generative-AI API through a shared, **provider-agnostic abstraction layer**, and come back as schema-enforced JSON: SEO metadata, customer-facing descriptions and whitelisted property, category and tag assignments in four languages from a single call. Processing runs asynchronously through **Symfony Messenger over RabbitMQ**, so batches never block a web request.
+**Product enrichment.** Product images, plus name, manufacturer and attributes, go to a generative-AI API through a shared, **provider-agnostic abstraction layer**, and come back as schema-enforced JSON: SEO metadata, customer-facing descriptions and whitelisted property, category and tag assignments in every configured language from a single call (four at launch). Processing runs asynchronously through **Symfony Messenger over RabbitMQ**, so batches never block a web request.
 
 **Artwork visualization.** On the product page, shoppers choose frame, size and approximate print material, then pick curated room scenes or **upload a photo of their own room**. The piece is composited into each scene with frame-accurate rendering, and each tile updates the moment it's ready over **server-sent events**. An admin module generates new photorealistic interiors from structured photographic parameters (scene type, décor style, lens, angle, lighting, mood, palette), held in a pending-approval queue. Try it live on an Illux product page: click "visualiser i flere rum".
 
 ## Technical highlights
 
 - **Event-driven modular monolith** - architecture chosen from concrete analysis of payload sizes, product volume and scaling needs
-- **Schema-enforced AI output** - no brittle text parsing; four languages in one call; the LLM provider can be swapped without touching domain logic
+- **Schema-enforced AI output** - no brittle text parsing; every configured language in one call; the LLM provider can be swapped without touching domain logic
 - **Resilient batching** - up to 500 products per run (6 per API call), retry with exponential backoff, idempotency, rate limiting and caching against external AI services
 - **Configurable confidence model** - every weight is adjustable, with thresholds for description, title and metadata length and keyword counts, plus customer-managed lists of unwanted words that lower the score
 - **Human-in-the-loop approval** - a transaction-safe workflow with an adjustable review threshold; the customer can switch off review routing (full auto-apply) or auto-apply (everything reviewed), plus a time-savings dashboard

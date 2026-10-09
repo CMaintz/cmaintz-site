@@ -19,17 +19,18 @@ I built the automation as sole developer during my internship at WEXO, from prob
 | Products enriched | **3,000+** |
 | Manual enrichment left | **none for most of the catalogue** |
 | Time saved | **hundreds of hours** |
-| Languages per AI call | **4** |
+| Output languages | **configurable** (4 at launch, all from one AI call) |
 | Status | business-critical, still in daily use |
 
 ## What the automation does
 
-Product images, plus name, manufacturer and attributes, go to a generative-AI model. What comes back is **schema-enforced JSON**: SEO metadata, a customer-facing description, and category, tag and property assignments from a whitelist, in all four languages from a single call.
+Product images, plus name, manufacturer and attributes, go to a generative-AI model. What comes back is **schema-enforced JSON**: SEO metadata, a customer-facing description, and category, tag and property assignments from a whitelist, in every configured language from a single call. The language list is a setting: Illux launched with Danish, English, Norwegian and Swedish, and adding German or French is a config change, not a code change.
 
-Two decisions carry most of the weight:
+Three decisions carry most of the weight:
 
 - **Schema-enforced output, not prose.** The model fills a typed structure, so there's no brittle text parsing, and it can only pick categories and tags that already exist.
 - **A provider-agnostic abstraction.** The domain logic talks to an interface, not to one vendor. Swapping the LLM provider doesn't touch the business code.
+- **Configuration over code.** Output languages, length limits, keyword counts and the scoring rules are all settings, so the shop can tune the system without a developer.
 
 ## What made it safe to run unattended
 
@@ -39,7 +40,19 @@ Getting a model to write a nice product description is the easy part. Letting it
 Automate the confident cases, route the uncertain ones to a person, and record everything.
 </Callout>
 
-**A configurable confidence score.** Every analysis gets a score. The weights are adjustable, there are thresholds for description, title and metadata length and keyword counts, and the customer manages lists of unwanted words that lower the score.
+**A confidence score built from configurable heuristics.** The model's own confidence isn't enough to trust on its face, so every result is also checked against plain, deterministic rules. The score starts from the model's per-field confidence, weighted by how much each field matters (meta title, meta description, keywords, description, properties). Each heuristic that fires then subtracts a penalty:
+
+| Heuristic | What it catches |
+| --- | --- |
+| Length rules | Titles, meta descriptions and descriptions that are too short or over the configured limits |
+| Keyword rules | Too few SEO keywords, or too long in total |
+| Generic content | Stock phrases ("perfekt til enhver", "fantastisk tilføjelse"), lorem ipsum and unfilled `[placeholders]`, matched by configurable patterns |
+| Hedging words | Unsure phrasing ("muligvis", "måske", "kunne være": *possibly*, *maybe*, *could be*) from a customer-managed word list |
+| Duplicate content | The same text returned in different languages |
+| Property sanity | No properties found, too many candidate options (a sign of uncertainty), or a low match rate against the shop's real properties |
+| Completeness | A response that came back partially empty |
+
+Every weight, penalty, threshold and word list is a setting the customer controls, and the total penalty is capped so one rule can't sink a good result. Each penalty also leaves a plain-language warning, so a reviewer sees *why* a product was flagged ("meta title too short", "hedging language in description"), not just a number.
 
 **Human-in-the-loop review.** Results above the threshold are applied automatically; the rest wait in a transaction-safe review queue. The customer can move the threshold, switch review off (full auto-apply), or send everything to review. A dashboard shows the time saved.
 
@@ -57,8 +70,9 @@ Wall art is hard to sell online because people can't picture it at home. The sam
 
 1. **Start from the data you don't have.** The win here wasn't "AI"; it was that the metadata didn't exist anywhere and was expensive to create by hand.
 2. **Make the output typed and constrained.** If the model can only choose from your categories, it can't invent new ones.
-3. **Decide the confidence policy with the business, not for it.** The threshold is a business decision; the system should make it adjustable.
-4. **Log the prompt and model with every result.** You will be asked, and you'll need to compare when you change models.
-5. **Measure before and after a model change.** An evaluation harness is cheap compared to discovering quality drift in production.
+3. **Don't take the model's word for its own confidence.** Cheap, deterministic checks (length, keywords, placeholder text, hedging, duplicates) catch most bad outputs, and they explain themselves.
+4. **Decide the confidence policy with the business, not for it.** The threshold is a business decision; the system should make it adjustable.
+5. **Log the prompt and model with every result.** You will be asked, and you'll need to compare when you change models.
+6. **Measure before and after a model change.** An evaluation harness is cheap compared to discovering quality drift in production.
 
 If your team has a manual, repetitive data job like this - product data, documents, emails, tickets - [that's the kind of work I take on](/services). The first 30-minute call is free.
