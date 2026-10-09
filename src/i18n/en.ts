@@ -91,6 +91,7 @@ export const en = {
   'blog.rss': 'RSS feed',
   'blog.back': 'All posts',
   'blog.updated': 'Updated',
+  'blog.by': 'by',
   'blog.toc': 'On this page',
   'blog.empty': 'No posts yet.',
   'comments.title': 'Comments',

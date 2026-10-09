@@ -94,6 +94,7 @@ export const da: Record<keyof typeof en, string> = {
   'blog.rss': 'RSS-feed',
   'blog.back': 'Alle indlæg',
   'blog.updated': 'Opdateret',
+  'blog.by': 'af',
   'blog.toc': 'På denne side',
   'blog.empty': 'Ingen indlæg endnu.',
   'comments.title': 'Kommentarer',

@@ -17,7 +17,7 @@ role: Sole developer - design through production
 context: WEXO A/S internship · client Illux · final exam project
 start: 2025-10
 end: 2026-01
-stack: [PHP 8.1+, Shopware 6, Symfony Messenger, RabbitMQ, Generative AI / LLM APIs, TypeScript, Vue, SSE, MySQL]
+stack: [PHP 8.2+, Shopware 6.6-6.7, Symfony Messenger, RabbitMQ, Google Gemini, Generative AI / LLM APIs, TypeScript, Vue, SSE, MySQL]
 repos: [ai-auto-product-enrichment]
 live: https://www.illux.dk/illu-grafica/eye-on-the-ball/?material=17782-mat-fine-art-papir-230g
 metrics:
@@ -35,25 +35,31 @@ Illux sells artwork online, and the categories, tags, metadata and translations 
 
 ## What I built
 
-A Shopware 6 plugin with two halves, a **PHP 8.1+** backend, a **Vue** admin UI and a **TypeScript** storefront, built end to end as sole developer: problem framing, design, data modelling, implementation, testing, deployment and operation. I made the key technical decisions (messaging, processing flow, resilience) in close dialogue with my mentor, the project lead and the customer.
+A Shopware 6 plugin with two halves, a **PHP 8.2+** backend, a **Vue** admin UI and a **TypeScript** storefront, built end to end as sole developer: problem framing, design, data modelling, implementation, testing, deployment and operation. I made the key technical decisions (messaging, processing flow, resilience) in close dialogue with my mentor, the project lead and the customer.
 
 It started as an ambitious exam project where only part was expected to get built. It was finished in full and deployed to production a few days before the internship ended.
 
-**Product enrichment.** Product images, plus name, manufacturer and attributes, go to a generative-AI API through a shared, **provider-agnostic abstraction layer**, and come back as schema-enforced JSON: SEO metadata, customer-facing descriptions and whitelisted property, category and tag assignments in every configured language from a single call (four at launch). Processing runs asynchronously through **Symfony Messenger over RabbitMQ**, so batches never block a web request.
+**Product enrichment.** Product images, plus name, manufacturer and attributes, go to a generative-AI API through a shared, **provider-agnostic abstraction layer**, and come back as schema-enforced JSON: SEO metadata, customer-facing descriptions and whitelisted property, category and tag assignments in every configured language from a single call (four at launch).
 
-**Artwork visualization.** On the product page, shoppers choose frame, size and approximate print material, then pick curated room scenes or **upload a photo of their own room**. The piece is composited into each scene with frame-accurate rendering, and each tile updates the moment it's ready over **server-sent events**. An admin module generates new photorealistic interiors from structured photographic parameters (scene type, décor style, lens, angle, lighting, mood, palette), held in a pending-approval queue. Try it live on an Illux product page: click "visualiser i flere rum".
+Each call carries up to six products, with a system instruction, the prompt and an enforced JSON response schema; the exam version runs on **Google Gemini** (2.5 Flash for analysis, 2.5 Flash Image for scenes). Length limits are settings too: meta title 60 characters, meta description 155, description 500, five keywords per language by default. Processing runs asynchronously through **Symfony Messenger over RabbitMQ**, so batches never block a web request.
+
+**Properties the shop can trust.** The AI fills artwork properties such as style, subject and mood from a **whitelist of the shop's existing options**. When nothing fits, it may propose a new option, but proposals land in an admin queue and are only added once approved.
+
+**Artwork visualization.** On the product page, shoppers choose frame, size and approximate print material, then pick curated room scenes or **upload a photo of their own room**. The piece is composited into each scene with frame-accurate rendering (the product's frame-corner reference images guide the frame, the artwork's real dimensions lock its aspect ratio, and furniture in the room serves as a scale reference), and each tile updates the moment it's ready over **server-sent events**. An admin module generates new photorealistic interiors from structured photographic parameters (scene type, décor style, lens, angle, lighting, mood, palette), held in a pending-approval queue, with a prompt preview before anything is generated. Try it live on an Illux product page: click "visualiser i flere rum".
 
 ## Technical highlights
 
 - **Event-driven modular monolith** - architecture chosen from concrete analysis of payload sizes, product volume and scaling needs
 - **Schema-enforced AI output** - no brittle text parsing; every configured language in one call; the LLM provider can be swapped without touching domain logic
-- **Resilient batching** - up to 500 products per run (6 per API call), retry with exponential backoff, idempotency, rate limiting and caching against external AI services
-- **Configurable confidence model** - every weight is adjustable, with thresholds for description, title and metadata length and keyword counts, plus customer-managed lists of unwanted words that lower the score
-- **Human-in-the-loop approval** - a transaction-safe workflow with an adjustable review threshold; the customer can switch off review routing (full auto-apply) or auto-apply (everything reviewed), plus a time-savings dashboard
+- **Resilient batching** - up to 500 products per run (6 per API call, 30 per queue chunk), retry with exponential backoff, rate limiting and caching against external AI services. Result records are created up front, so a redelivered message can't produce duplicates; jobs report live progress, can be cancelled mid-run, and watch their own memory use
+- **Configurable confidence heuristics** - the model's per-field confidence, weighted per field, minus deterministic penalties for short or over-long text, too few keywords, generic stock phrases, hedging words, cross-language duplicates, missing or uncertain properties and incomplete responses. Every weight, penalty, threshold and word list is a setting, the total penalty is capped, and each penalty leaves a plain-language warning for the reviewer
+- **Human-in-the-loop approval** - a transaction-safe workflow with an adjustable review threshold; the customer can switch off review routing (full auto-apply) or auto-apply (everything reviewed)
+- **Time-savings dashboard** - hours saved, calculated from configurable minutes per description, per extra translation, per SEO set and per property
 - **Full audit trail** - reviewer, exact prompt, model + version, confidence, approval history and batch provenance for every analysis
 - **Evaluation & regression harness** - compares models and prompt strategies on average confidence, and catches quality drift across model and prompt changes
 - **Deliberate patterns** - orchestrators per workflow, Builder + Director for prompts, factories for requests and schemas, Message/Handler commands, cache-invalidating subscribers
-- **Deep Shopware integration** - custom DAL entities + translations, 8 migrations, installers, a scheduled task and a CLI command
+- **Hands-off operation** - a scheduled task analyses new artwork products automatically (every 8 hours by default), a second cleans up old jobs, and a CLI command and admin API cover bulk runs
+- **Deep Shopware integration** - custom DAL entities + translations, 8 migrations, installers, cache-invalidating subscribers, and a Vue admin module in Danish and English
 
 ## Result
 

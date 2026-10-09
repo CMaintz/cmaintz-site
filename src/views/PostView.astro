@@ -8,6 +8,7 @@ import Comments from '../components/Comments.astro';
 import AreaChips from '../components/AreaChips.astro';
 import { type Lang, localize, useT, formatDate, withSlash } from '../i18n/ui';
 import { type Post, readingTime } from '../lib/content';
+import { site } from '../data/site';
 import { graph, breadcrumbLd, personLd, ogImageFor } from '../lib/seo';
 
 interface Props { post: Post; lang: Lang; prev?: Post; next?: Post }
@@ -24,7 +25,7 @@ const posting = {
   description: post.data.description,
   datePublished: post.data.pubDate.toISOString(),
   dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
-  author: { '@id': `${Astro.site}#person` },
+  author: { '@type': 'Person', '@id': `${Astro.site}#person`, name: site.name, url: new URL(localize('/about', 'en'), Astro.site).toString() },
   inLanguage: post.data.lang,
 };
 const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog', '/blog'], [post.data.title, `/blog/${post.id}`]]));
@@ -35,6 +36,8 @@ const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog
   <article>
     <PageHead as="header" back={{ href: localize('/blog', lang), label: t('blog.back') }} title={post.data.title} lede={post.data.description} glow>
       <p slot="before" class="meta mono">
+        <span>{t('blog.by')} <a href={localize('/about', lang)} rel="author">{site.name}</a></span>
+        <span>·</span>
         <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate, lang, { year: 'numeric', month: 'long', day: 'numeric' })}</time>
         <span>·</span><span>{mins} {t('blog.read')}</span>
         {post.data.updatedDate && <><span>·</span><span>{t('blog.updated')} {formatDate(post.data.updatedDate, lang)}</span></>}

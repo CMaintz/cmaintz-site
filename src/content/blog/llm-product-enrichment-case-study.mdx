@@ -28,7 +28,7 @@ Product images, plus name, manufacturer and attributes, go to a generative-AI mo
 
 Three decisions carry most of the weight:
 
-- **Schema-enforced output, not prose.** The model fills a typed structure, so there's no brittle text parsing, and it can only pick categories and tags that already exist.
+- **Schema-enforced output, not prose.** The model fills a typed structure, so there's no brittle text parsing. Properties come from a whitelist of the shop's existing options; when nothing fits, the model can propose a new one, but it waits in an admin queue until someone approves it.
 - **A provider-agnostic abstraction.** The domain logic talks to an interface, not to one vendor. Swapping the LLM provider doesn't touch the business code.
 - **Configuration over code.** Output languages, length limits, keyword counts and the scoring rules are all settings, so the shop can tune the system without a developer.
 
@@ -69,7 +69,7 @@ Wall art is hard to sell online because people can't picture it at home. The sam
 ## What I'd tell a team considering this
 
 1. **Start from the data you don't have.** The win here wasn't "AI"; it was that the metadata didn't exist anywhere and was expensive to create by hand.
-2. **Make the output typed and constrained.** If the model can only choose from your categories, it can't invent new ones.
+2. **Make the output typed and constrained.** If the model chooses from your own options and has to ask before adding one, it can't quietly invent new ones.
 3. **Don't take the model's word for its own confidence.** Cheap, deterministic checks (length, keywords, placeholder text, hedging, duplicates) catch most bad outputs, and they explain themselves.
 4. **Decide the confidence policy with the business, not for it.** The threshold is a business decision; the system should make it adjustable.
 5. **Log the prompt and model with every result.** You will be asked, and you'll need to compare when you change models.
