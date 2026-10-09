@@ -109,7 +109,8 @@ export const da: Record<keyof typeof en, string> = {
   'comments.delete': 'Slet',
   'comments.error': 'Noget gik galt. Prøv igen.',
   'comments.loading': 'Indlæser kommentarer…',
-  'comments.privacy': 'Kun dine initialer vises og gemmes ved din kommentar, aldrig dit navn eller billede. Gemt i EU (Supabase). Du kan altid slette dine kommentarer.',
+  'comments.privacy':
+    'Kun dine initialer vises og gemmes ved din kommentar, aldrig dit navn eller billede. Gemt i EU (Supabase). Du kan altid slette dine kommentarer.',
   'about.title': 'Om mig',
   'about.lede':
     'Udvikler fra Aarhus. Konsulent i DevOps, automatisering og AI-assisted development, med et forretningskritisk AI-system bag mig og en vane med at bygge de værktøjer, jeg selv mangler.',

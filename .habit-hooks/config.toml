@@ -13,6 +13,6 @@ files = ["**/*.ts", "**/*.tsx", "!**/*.spec.ts", "!**/*.spec.tsx", "!**/*.test.t
 [sensors.line-count]
 args = ["--max", "300"]
 
-# No ESLint in this repo yet; the sensor can't run without it and marks every run incomplete.
+# ESLint runs directly in the `lint` verb, so the sensor would only report it twice.
 [sensors.eslint]
 disabled = true

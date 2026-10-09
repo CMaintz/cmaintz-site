@@ -106,7 +106,8 @@ export const en = {
   'comments.delete': 'Delete',
   'comments.error': 'Something went wrong. Please try again.',
   'comments.loading': 'Loading comments…',
-  'comments.privacy': 'Only your initials are shown and stored with your comment, never your name or picture. Stored in the EU (Supabase). Delete your comments any time.',
+  'comments.privacy':
+    'Only your initials are shown and stored with your comment, never your name or picture. Stored in the EU (Supabase). Delete your comments any time.',
   'about.title': 'About',
   'about.lede':
     'Developer from Aarhus. Consultant in DevOps, automation and AI-assisted development, with a business-critical AI system behind me and a habit of building the tools I wish I had.',
