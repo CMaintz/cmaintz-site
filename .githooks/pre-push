@@ -4,6 +4,8 @@
 # leave the machine. `npm install` points git here (the "prepare" script).
 #
 # Bypass once (e.g. a WIP branch) with: git push --no-verify
+# CI runs its own gate; bots that push from Actions (bootstrap) must not run it twice.
+[ -n "${CI:-}" ] && exit 0
 command -v mise >/dev/null 2>&1 || { echo "pre-push: mise not found, skipping checks" >&2; exit 0; }
 
 zero=0000000000000000000000000000000000000000
