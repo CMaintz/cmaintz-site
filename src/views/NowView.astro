@@ -49,7 +49,9 @@ const lede = lang === 'da' ? 'Hvad jeg går og laver lige nu. Inspireret af nown
 
 <style>
   .log { display: grid; grid-template-columns: 9rem 1fr; gap: 0.9rem 1.5rem; margin: 0; }
-  dt { color: var(--accent); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 0.2rem; }
+  dt {
+    color: var(--accent); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 0.2rem;
+  }
   dt::before { content: '> '; color: var(--fg-faint); }
   dd { margin: 0; }
   .more { margin-top: 2rem; font-size: 0.9rem; }

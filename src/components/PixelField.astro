@@ -150,6 +150,8 @@ const { cell = 7 } = Astro.props;
     pointer-events: none;
     opacity: var(--pixel-alpha);
     /* Keep the reading column calm: fade the field out behind the content. */
-    mask-image: linear-gradient(to right, #000 0%, rgb(0 0 0 / 0.25) 30%, rgb(0 0 0 / 0.15) 50%, rgb(0 0 0 / 0.3) 70%, #000 100%);
+    mask-image: linear-gradient(
+      to right, #000 0%, rgb(0 0 0 / 0.25) 30%, rgb(0 0 0 / 0.15) 50%, rgb(0 0 0 / 0.3) 70%, #000 100%
+    );
   }
 </style>

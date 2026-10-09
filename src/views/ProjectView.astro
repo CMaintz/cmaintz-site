@@ -124,7 +124,9 @@ const ld = graph(work, personLd(Astro.site), breadcrumbLd(Astro.site, [['Project
   .layout { display: grid; grid-template-columns: 19rem 1fr; gap: clamp(1.5rem, 4vw, 3.5rem); align-items: start; }
   .meta { position: sticky; top: 5rem; display: grid; gap: 1.5rem; }
   dl { display: grid; gap: 0.2rem; margin: 0; font-size: 0.8rem; }
-  dt { color: var(--fg-faint); text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.06em; margin-top: 0.6rem; }
+  dt {
+    color: var(--fg-faint); text-transform: uppercase; font-size: 0.68rem; letter-spacing: 0.06em; margin-top: 0.6rem;
+  }
   dt:first-child { margin-top: 0; }
   dd { margin: 0; }
   .langs { margin-top: 1.2rem; }

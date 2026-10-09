@@ -105,7 +105,10 @@ import DisplayMenu from './DisplayMenu.astro';
   .name { font-size: 0.9rem; font-weight: 600; }
   .brand:hover { color: var(--fg); }
   .brand:hover .logo { animation: glitch 300ms steps(3) infinite; }
-  @keyframes glitch { 33% { transform: translate(-2px, 1px); } 66% { transform: translate(2px, -1px); filter: hue-rotate(60deg); } }
+  @keyframes glitch {
+    33% { transform: translate(-2px, 1px); }
+    66% { transform: translate(2px, -1px); filter: hue-rotate(60deg); }
+  }
 
   .nav { margin-left: 1rem; }
   .nav ul { display: flex; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
@@ -119,7 +122,8 @@ import DisplayMenu from './DisplayMenu.astro';
   .nav a[aria-current='page']::before { content: '>'; margin-right: 0.3em; }
 
   .tools { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
-  /* Global so DisplayMenu's summary gets the same look; two classes keep the old specificity, so .lang and .status-link still override it. */
+  /* Global so DisplayMenu's summary gets the same look; two classes keep the old specificity,
+     so .lang and .status-link still override it. */
   :global(.site-header .tool) {
     display: inline-grid; place-items: center;
     height: 2.1rem; min-width: 2.1rem; padding: 0 0.5rem;

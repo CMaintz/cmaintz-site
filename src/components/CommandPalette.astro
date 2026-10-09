@@ -216,15 +216,34 @@ const items = [...pages, ...areaItems, ...projects, ...repoItems, ...posts, ...a
   @keyframes pop { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
   .cmdk__body { padding: 0.75rem; }
   @media (hover: none) and (pointer: coarse) { .help { display: none !important; } }
-  .help { margin: 0.6rem 0 0; font-size: 0.7rem; color: var(--fg-faint); display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap; }
-  .prompt { display: flex; gap: 0.6rem; align-items: center; border: 2px solid var(--line); padding: 0.55rem 0.75rem; background: var(--bg); }
-  .prompt input { flex: 1; background: none; border: 0; outline: 0; color: var(--fg); font: 500 1rem var(--font-mono); min-width: 0; }
+  .help {
+    margin: 0.6rem 0 0; font-size: 0.7rem; color: var(--fg-faint); display: flex; gap: 0.35rem; align-items: center;
+    flex-wrap: wrap;
+  }
+  .prompt {
+    display: flex; gap: 0.6rem; align-items: center; border: 2px solid var(--line); padding: 0.55rem 0.75rem;
+    background: var(--bg);
+  }
+  .prompt input {
+    flex: 1; background: none; border: 0; outline: 0; color: var(--fg); font: 500 1rem var(--font-mono); min-width: 0;
+  }
   ul { list-style: none; margin: 0.6rem 0 0; padding: 0; max-height: 50vh; overflow-y: auto; }
-  ul :global(li) { display: grid; grid-template-columns: 5.5rem 1fr; gap: 0 0.8rem; padding: 0.5rem 0.6rem; cursor: pointer; border: 1px solid transparent; }
-  ul :global(li .g) { grid-row: span 2; font: 400 0.65rem var(--font-pixel); text-transform: uppercase; color: var(--fg-faint); padding-top: 0.25rem; }
+  ul :global(li) {
+    display: grid; grid-template-columns: 5.5rem 1fr; gap: 0 0.8rem; padding: 0.5rem 0.6rem; cursor: pointer;
+    border: 1px solid transparent;
+  }
+  ul :global(li .g) {
+    grid-row: span 2; font: 400 0.65rem var(--font-pixel); text-transform: uppercase; color: var(--fg-faint);
+    padding-top: 0.25rem;
+  }
   ul :global(li .l) { font-weight: 600; }
-  ul :global(li .h) { font: 0.78rem var(--font-mono); color: var(--fg-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  ul :global(li .h) {
+    font: 0.78rem var(--font-mono); color: var(--fg-dim); white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis;
+  }
   @media (max-width: 600px) { ul :global(li) { grid-template-columns: 3.2rem 1fr; padding: 0.4rem 0.5rem; } }
   ul :global(li[aria-selected='true']) { background: var(--accent); color: var(--accent-ink); }
-  ul :global(li[aria-selected='true'] .g), ul :global(li[aria-selected='true'] .h) { color: var(--accent-ink); opacity: 0.8; }
+  ul :global(li[aria-selected='true'] .g), ul :global(li[aria-selected='true'] .h) {
+    color: var(--accent-ink); opacity: 0.8;
+  }
 </style>

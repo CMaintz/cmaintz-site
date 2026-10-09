@@ -9,19 +9,9 @@
       "count": 1
     }
   },
-  "scripts/smoke-interactions.mjs": {
-    "max-len": {
-      "count": 1
-    }
-  },
-  "src/components/Callout.astro": {
-    "max-len": {
-      "count": 2
-    }
-  },
   "src/components/CommandPalette.astro": {
     "max-len": {
-      "count": 8
+      "count": 1
     }
   },
   "src/components/Comments.astro": {
@@ -30,147 +20,41 @@
     }
   },
   "src/components/DisplayMenu.astro": {
-    "max-len": {
-      "count": 2
-    },
     "no-empty": {
       "count": 1
     }
   },
   "src/components/DoomLauncher.astro": {
     "max-len": {
-      "count": 6
-    }
-  },
-  "src/components/Footer.astro": {
-    "max-len": {
-      "count": 3
+      "count": 2
     }
   },
   "src/components/Header.astro": {
-    "max-len": {
-      "count": 2
-    },
     "no-empty": {
       "count": 1
-    }
-  },
-  "src/components/PageHead.astro": {
-    "max-len": {
-      "count": 1
-    }
-  },
-  "src/components/Pager.astro": {
-    "max-len": {
-      "count": 1
-    }
-  },
-  "src/components/PixelField.astro": {
-    "max-len": {
-      "count": 1
-    }
-  },
-  "src/components/PostItem.astro": {
-    "max-len": {
-      "count": 2
-    }
-  },
-  "src/components/ProjectCard.astro": {
-    "max-len": {
-      "count": 3
-    }
-  },
-  "src/components/ServiceCard.astro": {
-    "max-len": {
-      "count": 1
-    }
-  },
-  "src/components/StatGrid.astro": {
-    "max-len": {
-      "count": 1
-    }
-  },
-  "src/components/SupabaseComments.astro": {
-    "max-len": {
-      "count": 4
     }
   },
   "src/components/WhoamiTerminal.astro": {
     "max-len": {
-      "count": 5
+      "count": 1
     }
   },
   "src/layouts/Base.astro": {
     "max-len": {
-      "count": 2
+      "count": 1
     },
     "no-empty": {
       "count": 1
     }
   },
-  "src/pages/404.astro": {
-    "max-len": {
-      "count": 2
-    }
-  },
-  "src/views/AboutView.astro": {
-    "max-len": {
-      "count": 2
-    }
-  },
-  "src/views/BlogIndexView.astro": {
-    "max-len": {
-      "count": 1
-    }
-  },
   "src/views/ContactView.astro": {
-    "max-len": {
-      "count": 2
-    }
-  },
-  "src/views/CvView.astro": {
-    "max-len": {
-      "count": 2
-    }
-  },
-  "src/views/HomeView.astro": {
-    "max-len": {
-      "count": 8
-    }
-  },
-  "src/views/NowView.astro": {
-    "max-len": {
-      "count": 1
-    }
-  },
-  "src/views/PostView.astro": {
-    "max-len": {
-      "count": 1
-    }
-  },
-  "src/views/ProjectView.astro": {
     "max-len": {
       "count": 1
     }
   },
   "src/views/ProjectsView.astro": {
     "max-len": {
-      "count": 6
-    }
-  },
-  "src/views/SearchView.astro": {
-    "max-len": {
-      "count": 1
-    }
-  },
-  "src/views/ServicesView.astro": {
-    "max-len": {
-      "count": 1
-    }
-  },
-  "src/views/WhatIDoView.astro": {
-    "max-len": {
-      "count": 1
+      "count": 4
     }
   }
 }
