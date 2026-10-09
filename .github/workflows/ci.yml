@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
+    # edited and labeled only matter to the preview job: retitling a PR to feat:
+    # or adding the preview label should produce a preview without a new push.
+    types: [opened, synchronize, reopened, edited, labeled]
   schedule:
     - cron: '17 * * * *' # hourly: redeploy with fresh GitHub data
     - cron: '0 5 * * 1' # Mondays: also commit the GitHub snapshot to main
@@ -14,7 +17,7 @@ permissions:
 
 jobs:
   build:
-    if: github.event_name != 'schedule'
+    if: github.event_name != 'schedule' && github.event.action != 'edited' && github.event.action != 'labeled'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -50,6 +53,9 @@ jobs:
       url: https://maintz.dev
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history: the sitemap's <lastmod> comes from each page's last commit (src/lib/lastmod.ts).
+          fetch-depth: 0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22
@@ -76,11 +82,21 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
 
-  # Uploads each PR as a Worker version that isn't deployed, at its own preview
-  # URL, and comments the link on the PR. Fork PRs get no secrets, so they're skipped.
+  # Uploads a PR as a Worker version that isn't deployed, at its own preview URL,
+  # and comments the link on the PR. Only feat and style PRs, or any PR with the
+  # preview label, get one. Fork PRs get no secrets, so they're skipped. Edits
+  # count only when the title changed, labels only when it's the preview label.
   preview:
     needs: build
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    if: >-
+      always() && !failure() && !cancelled() &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (startsWith(github.event.pull_request.title, 'feat') ||
+       startsWith(github.event.pull_request.title, 'style') ||
+       contains(github.event.pull_request.labels.*.name, 'preview')) &&
+      (github.event.action != 'edited' || github.event.changes.title.from != null) &&
+      (github.event.action != 'labeled' || github.event.label.name == 'preview')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -90,6 +106,9 @@ jobs:
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history: the sitemap's <lastmod> comes from each page's last commit (src/lib/lastmod.ts).
+          fetch-depth: 0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 22

@@ -1,0 +1,67 @@
+---
+title: 'Case study: a cheap, typed model in front of the expensive one'
+description: Three open-source tools - an agent guardrail, a GitHub issue-triage Action and a bulk classifier - built on one pattern for AI automation that's cheap enough to run on everything.
+pubDate: 2026-10-09
+areas: [ai, devops, platform]
+tags: [ai-automation, case-study, llm, github-actions]
+---
+
+import Callout from '../../components/Callout.astro';
+
+Most AI automation ideas die on one of two numbers: what it costs to run an LLM on *every* item, or how long it takes. Triage every issue, check every agent tool call, classify a million rows - the LLM bill or the latency makes it a non-starter, and you still have to parse the prose it hands back.
+
+[jev-tools](/projects/jev-tools) is my answer: three open-source TypeScript tools that share one pattern.
+
+<Callout type="note" title="The pattern">
+Run a cheap, typed model on everything. Branch on the typed answer in code. Send only the uncertain cases to a human or a real LLM.
+</Callout>
+
+## The cheap model
+
+The tools are built on Jev from TypeSafe AI, a _System One_ model: text in, **typed decisions** out - `choice`, `score` or `noul` - each with a calibrated confidence, in roughly 70-500 ms at near-zero cost. That changes what's affordable. You can ask a narrow question about every single item, and because the answer is typed, ordinary code can act on it.
+
+The three tools share one core package for providers, retries, timeouts and response validation. It replaced three identical copies of that code when I merged them into one repo.
+
+## Tool 1: a guardrail for AI agents' tool calls
+
+`jev-guard` checks every tool call an agent proposes. You declare the risk questions in a policy - blast radius, destructiveness, exfiltration risk - and one request answers all of them. A small decision function maps the typed answer to **allow**, **block** or **hold** (ask a human).
+
+The important property is that it **fails safe**: low confidence, a missing answer or a provider error never turns into `allow`. It plugs into LangChain JS and the Vercel AI SDK. It is explicitly not a security boundary: think second opinion, not sandbox.
+
+## Tool 2: issue triage that costs fractions of a cent
+
+`jev-triage` is a GitHub Action that labels every new issue in milliseconds: type, priority, area, and whether it looks security-related. Labels are applied only when confidence clears the threshold. Everything else gets `triage:needs-human`, or is re-asked to any OpenAI-compatible LLM, which leaves a one-line rationale.
+
+A few decisions that matter in a real repo:
+
+- **Routing stays in code.** Jev answers "which area?"; a plain map decides which team gets mentioned.
+- **Nothing is auto-closed.** Duplicate detection suggests a candidate; a person decides.
+- **Possible security issues raise an alert** instead of getting a label.
+- **Every run reports its estimated cost** in the job summary.
+
+It's on the [GitHub Marketplace](https://github.com/marketplace/actions/jev-triage).
+
+## Tool 3: jq for judgment
+
+`jev-sort` streams JSONL or CSV rows through Jev and appends typed columns plus a confidence:
+
+```sh title="classify a support export"
+jev-sort -q 'team:choice(billing,tech,sales)' -q 'urgent:noul' \
+  --escalate 'conf<0.6' < tickets.jsonl > labelled.jsonl
+```
+
+Uncertain rows go to a review file and rows Jev couldn't answer go to a reject file, so nothing disappears silently. It earns its place at 10k to 1M rows, where an LLM per row *is* the problem. Below a few thousand rows, a one-off LLM script is simpler - and if the rule is crisp, plain code wins.
+
+## Where the threshold sits
+
+"Send the uncertain ones onward" only works if you know where *uncertain* starts. A companion project, [jev-eval](/projects/jev-eval), measures where each tool's confidence cut-point should sit instead of guessing. The same idea shows up in [jev-rerank](/projects/jev-rerank) for RAG in Python, and in [Leash](/projects/leash), which keeps a coding agent to a project's rules.
+
+## When this pattern fits your business
+
+It fits when you have **lots of small, repetitive decisions** - routing tickets, tagging documents, screening requests, checking actions - where:
+
+1. most items are easy and a few are genuinely hard,
+2. a wrong automatic answer is costly, so the hard ones need a person or a bigger model,
+3. the volume makes "just call GPT on everything" too slow or too expensive.
+
+If that sounds like a queue at your company, [let's talk](/contact?topic=freelance). I build this kind of AI automation as a freelancer, and the first 30-minute call is free.
