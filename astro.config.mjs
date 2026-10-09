@@ -12,15 +12,23 @@ import { unified } from '@astrojs/markdown-remark';
 import { appendFile } from 'node:fs/promises';
 import { loadEnv } from 'vite';
 import { headersFileBlock } from './src/lib/security-headers.ts';
+import { linkHeadersBlock } from './src/lib/api-catalog.ts';
+import { writeMarkdownPages } from './src/lib/markdown-pages.ts';
+import { pageDates, lastmodFor } from './src/lib/lastmod.ts';
+import { rehypeCanonicalLinks } from './src/lib/rehype-canonical-links.ts';
+import { fileURLToPath } from 'node:url';
 
 // Build-time: canonical URLs, RSS, sitemap and OG tags. Read from the shell/CI env
 // or .env; set it to the workers.dev URL after the first deploy, then the domain.
 const fileEnv = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '');
 // `||`, not `??`: an unset GitHub variable reaches the build as an empty string.
 const SITE = process.env.SITE_URL || fileEnv.SITE_URL || 'https://maintz.dev';
+// When each page last changed (git + post front matter): sitemap <lastmod> and JSON-LD dateModified.
+const PAGE_DATES = pageDates();
 
 /**
- * Appends the site-wide security headers to the `_headers` file Cloudflare serves static assets with.
+ * Appends the site-wide security headers, and the homepage's discovery Link header,
+ * to the `_headers` file Cloudflare serves static assets with.
  * @type {import('astro').AstroIntegration}
  */
 const securityHeaders = {
@@ -30,8 +38,21 @@ const securityHeaders = {
       appendFile(
         new URL('_headers', dir),
         `
-${headersFileBlock()}`,
+${headersFileBlock()}
+${linkHeadersBlock()}`,
       ),
+  },
+};
+
+/**
+ * Writes a Markdown twin of every page for `Accept: text/markdown` requests (see src/worker.ts).
+ * @type {import('astro').AstroIntegration}
+ */
+const markdownPages = {
+  name: 'markdown-pages',
+  hooks: {
+    'astro:build:done': async ({ dir, logger }) =>
+      logger.info(`${await writeMarkdownPages(fileURLToPath(dir), SITE)} Markdown pages written`),
   },
 };
 
@@ -60,6 +81,7 @@ export default defineConfig({
   },
   integrations: [
     securityHeaders,
+    markdownPages,
     mermaid({ theme: 'dark', autoTheme: true }),
     expressiveCode({
       themes: ['github-dark-dimmed', 'github-light'],
@@ -76,10 +98,12 @@ export default defineConfig({
     mdx(),
     sitemap({
       i18n: { defaultLocale: 'en', locales: { en: 'en', da: 'da' } },
+      serialize: (item) => ({ ...item, lastmod: lastmodFor(PAGE_DATES, item.url) }),
     }),
   ],
+  vite: { define: { 'import.meta.env.PAGE_DATES': JSON.stringify(PAGE_DATES) } },
   markdown: {
-    processor: unified({ remarkPlugins: [remarkMath], rehypePlugins: [rehypeKatex] }),
+    processor: unified({ remarkPlugins: [remarkMath], rehypePlugins: [rehypeKatex, rehypeCanonicalLinks] }),
   },
   env: {
     schema: {

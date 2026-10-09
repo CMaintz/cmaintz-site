@@ -70,11 +70,12 @@ postinstall = "mise run setup:habit-hooks"
 
 [tasks.fix]
 description = "Auto-fix what is mechanically fixable; never opinionated"
-# Prettier formats; ESLint fixes what it can, then the prune pass drops suppressions whose
+# Prettier formats; ESLint fixes what it can (stale suppressions would make --fix bail,
+# hence the pass flag), then the prune pass drops suppressions whose
 # violation is gone, so eslint-suppressions.json only ever shrinks.
 run = [
     "prettier --write .",
-    "eslint . --fix",
+    "eslint . --fix --pass-on-unpruned-suppressions",
     "eslint . --prune-suppressions",
 ]
 

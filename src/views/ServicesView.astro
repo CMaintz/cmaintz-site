@@ -6,13 +6,21 @@ import Window from '../components/Window.astro';
 import { type Lang, localize, useT } from '../i18n/ui';
 import { services, workLanguages, process, HOURLY_RATE_DKK } from '../data/services';
 import { values } from '../data/values';
+import { faq } from '../data/faq';
+import { graph, personLd, offerCatalogLd, faqLd, breadcrumbLd } from '../lib/seo';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useT(lang);
+const ld = graph(
+  personLd(Astro.site),
+  offerCatalogLd(Astro.site, lang),
+  faqLd(lang),
+  breadcrumbLd(Astro.site, [[t('services.title'), localize('/services', lang)]]),
+);
 ---
 
-<Base lang={lang} title={t('services.title')} description={t('services.lede')}>
+<Base lang={lang} title={t('services.title')} description={t('services.lede')} jsonLd={ld}>
   <PageHead eyebrow="~/services" title={t('services.title')} lede={t('services.lede')} />
 
   <section class="wrap">
@@ -39,6 +47,15 @@ const t = useT(lang);
     </div>
   </section>
 
+  <section class="wrap section faq" aria-labelledby="faq-h">
+    <h2 id="faq-h" class="mono label-h">{t('services.faq')}</h2>
+    <dl>
+      {faq[lang].map(({ q, a }) => (
+        <div><dt>{q}</dt><dd class="dim">{a}</dd></div>
+      ))}
+    </dl>
+  </section>
+
   <section class="wrap values mono" aria-label={t('about.values')}>
     <span class="faint">{t('about.values')}:</span>
     {values.map((v) => <a href={localize('/about', lang) + '#values-h'}>◆ {v.title[lang]}</a>)}
@@ -60,5 +77,10 @@ const t = useT(lang);
   .values { display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem; font-size: 0.82rem; margin-bottom: 2.5rem; }
   .values a { color: var(--accent); text-decoration: none; }
   .cta { text-align: center; }
+  .faq dl {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1.5rem 3rem; margin: 0;
+  }
+  .faq dt { font-weight: 700; margin-bottom: 0.35rem; }
+  .faq dd { margin: 0; }
   @media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
 </style>

@@ -54,7 +54,7 @@ export const services: Service[] = [
     id: 'ai-integration',
     areas: ['ai'],
     glyph: '◈',
-    title: { en: 'AI integrations', da: 'AI-integrationer' },
+    title: { en: 'AI automation & integrations', da: 'AI-automatisering & integrationer' },
     body: {
       en: 'LLM features that survive production: schema-enforced output, retries and idempotency, confidence scoring, human-in-the-loop review and an audit trail. Any major LLM provider, behind an abstraction you can swap.',
       da: 'LLM-funktioner, der holder i produktion: skemabundet output, retries og idempotens, confidence-scoring, menneskelig godkendelse og audit trail. Enhver større LLM-udbyder bag en abstraktion, der kan udskiftes.',
