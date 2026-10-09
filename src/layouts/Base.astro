@@ -16,6 +16,7 @@ import PixelField from '../components/PixelField.astro';
 import CommandPalette from '../components/CommandPalette.astro';
 import DoomLauncher from '../components/DoomLauncher.astro';
 import { site } from '../data/site';
+import { DISPLAY_EFFECTS } from '../data/display-effects';
 import { type Lang, localize, unlocalize, useT } from '../i18n/ui';
 import { clipDescription, graph, personLd, websiteLd } from '../lib/seo';
 
@@ -75,7 +76,7 @@ const metaDescription = clipDescription(description);
     {publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
     <meta name="twitter:card" content="summary_large_image" />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(ld)} />
-    <script is:inline>
+    <script is:inline define:vars={{ effects: DISPLAY_EFFECTS }}>
       // Apply stored theme and display-effect prefs before first paint (no flash).
       (() => {
         const d = document.documentElement;
@@ -86,10 +87,11 @@ const metaDescription = clipDescription(description);
           d.dataset.theme = theme;
           // 'crt' is the old single switch for scanlines and glow together.
           const legacy = localStorage.getItem('crt');
-          const fx = (k, fallback) => localStorage.getItem(`fx-${k}`) ?? fallback;
-          d.dataset.scan = fx('scan', legacy ?? 'on');
-          d.dataset.glow = fx('glow', legacy ?? 'on');
-          d.dataset.motion = fx('motion', matchMedia('(prefers-reduced-motion: reduce)').matches ? 'off' : 'on');
+          const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+          const fallbacks = { 'legacy-crt': legacy ?? 'on', 'reduced-motion': reducedMotion ? 'off' : 'on' };
+          for (const { id, fallback } of effects) {
+            d.dataset[id] = localStorage.getItem(`fx-${id}`) ?? fallbacks[fallback];
+          }
         } catch {}
       })();
     </script>

@@ -1,13 +1,12 @@
 ---
 // Header dropdown for the retro display effects, each on its own switch:
 // scanlines, the glow on accent text and the background animation.
-// Each is a data-* flag on <html>, stored as fx-<name> and set before first
-// paint by Base.astro; listeners hear `fxchange`.
+// The effects themselves are listed in data/display-effects.ts; listeners hear `fxchange`.
 import { type Lang, useT } from '../i18n/ui';
+import { DISPLAY_EFFECT_IDS } from '../data/display-effects';
 
 interface Props { lang: Lang }
 const t = useT(Astro.props.lang);
-const effects = ['scan', 'glow', 'motion'] as const;
 ---
 
 <details class="fx">
@@ -16,7 +15,7 @@ const effects = ['scan', 'glow', 'motion'] as const;
   </summary>
   <div class="fx__panel win mono">
     <p class="fx__head">{t('fx.menu')}</p>
-    {effects.map((e) => (
+    {DISPLAY_EFFECT_IDS.map((e) => (
       <label><input type="checkbox" data-fx={e} checked /> {t(`fx.${e}`)}</label>
     ))}
   </div>
