@@ -16,7 +16,12 @@ async function startScreencast(page, frames) {
     frames.push({ data, t: metadata.timestamp });
     cdp.send('Page.screencastFrameAck', { sessionId }).catch(() => {});
   });
-  await cdp.send('Page.startScreencast', { format: 'jpeg', quality: 85, maxWidth: VIEWPORT.width, maxHeight: VIEWPORT.height });
+  await cdp.send('Page.startScreencast', {
+    format: 'jpeg',
+    quality: 85,
+    maxWidth: VIEWPORT.width,
+    maxHeight: VIEWPORT.height,
+  });
   return cdp;
 }
 
