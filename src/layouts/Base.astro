@@ -80,7 +80,8 @@ const metaDescription = clipDescription(description);
         const d = document.documentElement;
         d.classList.add('js');
         try {
-          const theme = localStorage.getItem('theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          const prefersLight = matchMedia('(prefers-color-scheme: light)').matches;
+          const theme = localStorage.getItem('theme') ?? (prefersLight ? 'light' : 'dark');
           d.dataset.theme = theme;
           // 'crt' is the old single switch for scanlines, glow and vignette together.
           const legacy = localStorage.getItem('crt');

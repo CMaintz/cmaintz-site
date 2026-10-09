@@ -65,7 +65,11 @@ const items = [...pages, ...areaItems, ...projects, ...repoItems, ...posts, ...a
     if (it.group === 'secret') return (it.hint ?? '').split(' ').includes(q) ? 1000 : -1;
     const names = [it.label.toLowerCase(), ...(it.alias ?? '').split(' ')];
     if (names.includes(q)) return 1000;
-    return Math.max(matchScore(q, it.label), matchScore(q, it.alias ?? '') - 1, matchScore(q, it.hint ?? '', false) - 5);
+    return Math.max(
+      matchScore(q, it.label),
+      matchScore(q, it.alias ?? '') - 1,
+      matchScore(q, it.hint ?? '', false) - 5,
+    );
   }
 
   function search(q: string): Item[] {

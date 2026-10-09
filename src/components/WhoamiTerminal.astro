@@ -153,7 +153,8 @@ const link = (path: string) => localize(path, lang);
     await sleep(cmd ? 160 : 90);
   }
 
-  const setPending = (lines: HTMLElement[], pending: boolean) => lines.forEach((l) => l.classList.toggle('pending', pending));
+  const setPending = (lines: HTMLElement[], pending: boolean) =>
+    lines.forEach((l) => l.classList.toggle('pending', pending));
 
   async function play(panel: HTMLElement) {
     if (panel.dataset.played) return;
