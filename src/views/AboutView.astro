@@ -118,14 +118,19 @@ const highlights = [
   .actions { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-top: 0.8rem; }
   .intro { display: grid; grid-template-columns: 1fr 18rem; gap: 3rem; align-items: start; padding-block: 1.5rem 0; }
   .values-sec { padding-top: clamp(2.5rem, 6vw, 4rem); }
-  .values { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem 2.5rem; }
+  .values {
+    list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem 2.5rem;
+  }
   @media (max-width: 760px) { .values { grid-template-columns: 1fr; } }
   .values li { display: grid; grid-template-columns: 2.4rem 1fr; gap: 0.8rem; }
   .values .n { color: var(--accent); font-size: 0.9rem; padding-top: 0.2rem; }
   .values h3 { font-size: 1.15rem; margin-bottom: 0.35rem; }
   .timeline h3 { margin-bottom: 0.4rem; }
   .earlier { margin-top: 2rem; }
-  .earlier summary { cursor: pointer; font-size: 0.85rem; color: var(--fg-dim); padding: 0.6rem 0.9rem; border: 1px dashed var(--line); display: inline-block; margin-bottom: 1.5rem; }
+  .earlier summary {
+    cursor: pointer; font-size: 0.85rem; color: var(--fg-dim); padding: 0.6rem 0.9rem; border: 1px dashed var(--line);
+    display: inline-block; margin-bottom: 1.5rem;
+  }
   .earlier:not([open]) summary { margin-bottom: 0; }
   .earlier summary:hover { color: var(--accent); border-color: var(--accent); }
   /* Boxes stay wide enough for every title and item; the row count follows. */

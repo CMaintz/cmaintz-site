@@ -109,7 +109,8 @@ const KONAMI_KEYS = [
   'Shift+A',
 ];
 
-/** The Konami code opens DOOM even with a stray extra ↑ and Caps Lock on, and claims the b/a so Firefox's find bar can't. */
+/** The Konami code opens DOOM even with a stray extra ↑ and Caps Lock on,
+ *  and claims the b/a so Firefox's find bar can't. */
 async function konamiOpensDoom(page) {
   await page.goto(`${BASE}/about`);
   await page.evaluate(() =>

@@ -98,8 +98,15 @@ const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', '
 </Base>
 
 <style>
-  .hero { display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; padding-block: clamp(1.5rem, 4vw, 3rem) clamp(2rem, 5vw, 4rem); }
-  .status { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-dim); border: 1px solid var(--line); padding: 0.3rem 0.7rem; background: var(--bg-2); margin-bottom: 1.5rem; text-decoration: none; }
+  .hero {
+    display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center;
+    padding-block: clamp(1.5rem, 4vw, 3rem) clamp(2rem, 5vw, 4rem);
+  }
+  .status {
+    display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--fg-dim); border: 1px solid var(--line); padding: 0.3rem 0.7rem;
+    background: var(--bg-2); margin-bottom: 1.5rem; text-decoration: none;
+  }
   .status:hover { color: var(--accent); border-color: var(--accent); }
   /* The hero's bottom padding is the gap before the first section. */
   .hero + .section { padding-top: 0; }
@@ -107,15 +114,24 @@ const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', '
   .ctas { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2rem; align-items: center; }
   /* The logo's glitch, played once per hover. */
   .ctas .btn--primary:hover { animation: jiggle 300ms steps(3) 1; }
-  @keyframes jiggle { 33% { transform: translate(-2px, 1px); } 66% { transform: translate(2px, -1px); filter: hue-rotate(60deg); } }
+  @keyframes jiggle {
+    33% { transform: translate(-2px, 1px); }
+    66% { transform: translate(2px, -1px); filter: hue-rotate(60deg); }
+  }
   .kb { font-size: 0.75rem; color: var(--fg-dim); gap: 0.3rem; }
   @media (hover: none) and (pointer: coarse) { .kb { display: none; } }
 
   /* Five areas: one row when wide, three over two in between, then a column.
      Each box draws its top and left dashes and is pulled 1px up and left, so the
      outer ones tuck under the frame and only the inner dividers show. */
-  .focus { grid-template-columns: repeat(5, 1fr); gap: 0; border: 2px solid var(--line); background: var(--bg-2); overflow: hidden; }
-  .focus__item { padding: 1.5rem; border-left: 1px dashed var(--line); border-top: 1px dashed var(--line); margin: -1px 0 0 -1px; display: flex; flex-direction: column; gap: 0.6rem; }
+  .focus {
+    grid-template-columns: repeat(5, 1fr); gap: 0; border: 2px solid var(--line); background: var(--bg-2);
+    overflow: hidden;
+  }
+  .focus__item {
+    padding: 1.5rem; border-left: 1px dashed var(--line); border-top: 1px dashed var(--line); margin: -1px 0 0 -1px;
+    display: flex; flex-direction: column; gap: 0.6rem;
+  }
   .focus__glyph { font-size: 1.4rem; color: var(--accent); text-shadow: var(--glow); }
   .focus__item { text-decoration: none; color: inherit; transition: background 120ms; }
   .focus__item:hover { background: var(--bg-3); color: inherit; }
@@ -133,14 +149,22 @@ const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', '
     .focus__item, .focus__item:nth-last-child(-n + 2) { grid-column: auto; }
   }
 
-  .marquee { position: relative; z-index: 1; overflow: hidden; border-block: 2px solid var(--line); background: var(--bg-2); padding: 0.9rem 0; margin-block: 1rem; }
+  .marquee {
+    position: relative; z-index: 1; overflow: hidden; border-block: 2px solid var(--line); background: var(--bg-2);
+    padding: 0.9rem 0; margin-block: 1rem;
+  }
   .marquee__track { display: flex; width: max-content; gap: 0; font-size: 0.9rem; color: var(--fg-dim); }
-  .marquee__track span { display: inline-flex; align-items: center; gap: 1.4rem; padding-right: 1.4rem; white-space: nowrap; }
+  .marquee__track span {
+    display: inline-flex; align-items: center; gap: 1.4rem; padding-right: 1.4rem; white-space: nowrap;
+  }
   .marquee__track i { font-style: normal; color: var(--accent); }
   @media (prefers-reduced-motion: no-preference) { .marquee__track { animation: marquee 60s linear infinite; } }
   @keyframes marquee { to { transform: translateX(-50%); } }
 
-  .cta__inner { display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap; padding: 1rem 0.5rem; }
+  .cta__inner {
+    display: flex; justify-content: space-between; align-items: center; gap: 2rem; flex-wrap: wrap;
+    padding: 1rem 0.5rem;
+  }
   .cta__inner h2 { margin-bottom: 0.5rem; }
   .cta__inner .ctas { margin-top: 0; }
 

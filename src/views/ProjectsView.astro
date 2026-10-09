@@ -68,10 +68,15 @@ const areaCounts = Object.fromEntries(AREA_IDS.map((a) => [a, projects.filter((p
   .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; }
   .filters.tech { margin-bottom: 2rem; }
   .filters.areas button { color: var(--accent); }
-  .filters button { font: 500 0.82rem var(--font-mono); background: var(--bg-2); color: var(--fg-dim); border: 1px solid var(--line); padding: 0.45rem 0.8rem; cursor: pointer; }
+  .filters button {
+    font: 500 0.82rem var(--font-mono); background: var(--bg-2); color: var(--fg-dim); border: 1px solid var(--line);
+    padding: 0.45rem 0.8rem; cursor: pointer;
+  }
   .filters button span { color: var(--fg-faint); margin-left: 0.3rem; }
   .filters button:hover { border-color: var(--accent); color: var(--fg); }
-  .filters button[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .filters button[aria-pressed='true'] {
+    background: var(--accent); border-color: var(--accent); color: var(--accent-ink);
+  }
   .filters button[aria-pressed='true'] span { color: inherit; opacity: 0.7; }
   [hidden] { display: none !important; }
 </style>

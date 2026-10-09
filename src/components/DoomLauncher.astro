@@ -93,14 +93,24 @@
 
 <style>
   /* Sized by width and height so the whole window fits a laptop screen without scrolling. */
-  .doom { width: min(960px, calc(100vw - 2rem), calc((100dvh - 7.5rem) * 4 / 3)); max-width: none; overflow: hidden; padding: 0; margin: auto; color: var(--fg); }
+  .doom {
+    width: min(960px, calc(100vw - 2rem), calc((100dvh - 7.5rem) * 4 / 3)); max-width: none; overflow: hidden;
+    padding: 0; margin: auto; color: var(--fg);
+  }
   .doom::backdrop { background: rgb(0 0 0 / 0.75); }
-  .close { background: var(--bg-3); border: 0; font: inherit; color: var(--fg); cursor: pointer; text-transform: uppercase; }
+  .close {
+    background: var(--bg-3); border: 0; font: inherit; color: var(--fg); cursor: pointer; text-transform: uppercase;
+  }
   .close:hover { color: var(--accent); }
   .screen { aspect-ratio: 4 / 3; background: #000; outline: none; }
   @media (pointer: coarse) { .hint { display: none; } }
   .screen :global(iframe) { width: 100%; height: 100%; border: 0; display: block; }
-  .screen :global(.nokb) { margin: 0; height: 100%; display: grid; place-items: center; padding: 2rem; text-align: center; font: 1rem var(--font-mono); color: var(--accent); }
-  .hint { font-size: 0.72rem; color: var(--fg-dim); padding: 0.5rem 0.8rem; margin: 0; border-top: 1px solid var(--line); }
+  .screen :global(.nokb) {
+    margin: 0; height: 100%; display: grid; place-items: center; padding: 2rem; text-align: center;
+    font: 1rem var(--font-mono); color: var(--accent);
+  }
+  .hint {
+    font-size: 0.72rem; color: var(--fg-dim); padding: 0.5rem 0.8rem; margin: 0; border-top: 1px solid var(--line);
+  }
   .hint a { color: var(--fg-dim); }
 </style>

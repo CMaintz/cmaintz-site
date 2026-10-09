@@ -56,15 +56,24 @@ const year = new Date().getFullYear();
 </script>
 
 <style>
-  .site-footer { position: relative; z-index: 1; margin-top: 4rem; border-top: 2px solid var(--line); background: color-mix(in srgb, var(--bg) 88%, transparent); }
+  .site-footer {
+    position: relative; z-index: 1; margin-top: 4rem; border-top: 2px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+  }
   .cols { display: grid; grid-template-columns: 1.2fr 1fr 1.4fr; gap: 2rem; padding-block: 2.5rem; }
   .big { font-size: 1.05rem; margin-bottom: 0.3rem; }
-  .links { display: grid; grid-template-columns: repeat(3, auto); gap: 0.35rem 1.2rem; align-content: start; font-size: 0.85rem; }
+  .links {
+    display: grid; grid-template-columns: repeat(3, auto); gap: 0.35rem 1.2rem; align-content: start;
+    font-size: 0.85rem;
+  }
   .links a, .ext a { text-decoration: none; color: var(--fg-dim); }
   .links a:hover, .ext a:hover { color: var(--accent); }
   .ext { display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.85rem; align-items: flex-start; }
   .ext .small a { color: var(--fg-dim); text-decoration: underline; }
-  .statusbar { border-top: 1px solid var(--line); background: var(--bg-2); font-size: 0.72rem; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.05em; }
+  .statusbar {
+    border-top: 1px solid var(--line); background: var(--bg-2); font-size: 0.72rem; color: var(--fg-dim);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
   .row { display: flex; gap: 1.5rem; justify-content: space-between; padding-block: 0.45rem; flex-wrap: wrap; }
   .row > span { display: inline-flex; gap: 0.5rem; align-items: center; }
   @media (max-width: 760px) {
