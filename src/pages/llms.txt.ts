@@ -20,6 +20,19 @@ function intro(base: URL) {
   ].join('\n\n');
 }
 
+/** Danish summary, so Danish questions have quotable Danish text to land on. */
+function danish(base: URL) {
+  return [
+    site.description.da,
+    `Freelance- og konsulentopgaver, remote eller on-site i Aarhus. Timepris fra ${HOURLY_RATE_DKK} kr. ekskl. moms; ` +
+      'opgaver til fast pris får et tilbud efter afgrænsning; det første opkald på 30 minutter er gratis.',
+    link(base, 'Ydelser og priser', '/da/services'),
+    link(base, 'Kontakt', '/da/contact'),
+    ...services.map((s) => `- **${s.title.da}**: ${s.body.da}`),
+    ...faq.da.map(({ q, a }) => `- **${q}** ${a}`),
+  ];
+}
+
 async function sections(base: URL) {
   const [projects, posts] = await Promise.all([getProjects(), getPosts()]);
   return [
@@ -28,7 +41,8 @@ async function sections(base: URL) {
     ['Projects', projects.map((p) => link(base, p.data.title, `/projects/${p.id}`, p.data.tagline.en))],
     ['Writing', posts.map((p) => link(base, p.data.title, `/blog/${p.id}`, p.data.description))],
     ['FAQ', faq.en.map(({ q, a }) => `- **${q}** ${a}`)],
-    ['Optional', [link(base, 'About', '/about'), link(base, 'CV (PDF)', '/cv.pdf'), link(base, 'Danish version', '/da/')]],
+    ['På dansk', danish(base)],
+    ['Optional', [link(base, 'About', '/about'), link(base, 'CV (PDF)', '/cv.pdf'), link(base, 'CV på dansk (PDF)', '/cv-da.pdf')]],
   ] as const;
 }
 
