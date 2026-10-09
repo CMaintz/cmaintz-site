@@ -97,12 +97,7 @@ kbd {
   background: repeating-linear-gradient(to bottom, rgb(0 0 0 / var(--scan-alpha)) 0 1px, transparent 1px 3px);
   mix-blend-mode: multiply;
 }
-.crt-vignette {
-  position: fixed; inset: 0; z-index: 49; pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.45) 100%);
-}
-:root[data-theme='light'] .crt-vignette { background: radial-gradient(ellipse at center, transparent 60%, rgb(60 50 30 / 0.12) 100%); }
-:root[data-scan='off'] .crt-scan, :root[data-vignette='off'] .crt-vignette { display: none; }
+:root[data-scan='off'] .crt-scan { display: none; }
 :root[data-glow='off'] { --glow: none; }
 
 /* ── Layout primitives ──────────────────────────────────────── */
@@ -240,7 +235,7 @@ a.chip:hover { border-color: var(--accent); color: var(--accent); }
 }
 
 @media print {
-  .crt-scan, .crt-vignette, .pixel-field, .site-header, .site-footer, .no-print { display: none !important; }
+  .crt-scan, .pixel-field, .site-header, .site-footer, .no-print { display: none !important; }
   body { background: #fff; color: #000; }
 }
 

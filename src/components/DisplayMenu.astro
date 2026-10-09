@@ -1,13 +1,13 @@
 ---
 // Header dropdown for the retro display effects, each on its own switch:
-// scanlines, the glow on accent text, the vignette and the background animation.
+// scanlines, the glow on accent text and the background animation.
 // Each is a data-* flag on <html>, stored as fx-<name> and set before first
 // paint by Base.astro; listeners hear `fxchange`.
 import { type Lang, useT } from '../i18n/ui';
 
 interface Props { lang: Lang }
 const t = useT(Astro.props.lang);
-const effects = ['scan', 'glow', 'vignette', 'motion'] as const;
+const effects = ['scan', 'glow', 'motion'] as const;
 ---
 
 <details class="fx">

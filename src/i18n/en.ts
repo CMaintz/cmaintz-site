@@ -16,7 +16,6 @@ export const en = {
   'fx.menu': 'Display effects',
   'fx.scan': 'Scanlines',
   'fx.glow': 'Glow',
-  'fx.vignette': 'Vignette',
   'fx.motion': 'Background animation',
   'lang.label': 'Language',
   'home.status': 'open to new roles',

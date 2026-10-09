@@ -18,7 +18,6 @@ export const da: Record<keyof typeof en, string> = {
   'fx.menu': 'Skærmeffekter',
   'fx.scan': 'Scanlines',
   'fx.glow': 'Glød',
-  'fx.vignette': 'Vignet',
   'fx.motion': 'Baggrundsanimation',
   'lang.label': 'Sprog',
   'home.status': 'åben for nye roller',
