@@ -1,0 +1,30 @@
+#!/bin/sh
+# Runs before every `git push` from any branch or worktree of this repo: a secret scan
+# of the commits being pushed, then the gate. Same checks CI runs, caught before they
+# leave the machine. `npm install` points git here (the "prepare" script).
+#
+# Bypass once (e.g. a WIP branch) with: git push --no-verify
+command -v mise >/dev/null 2>&1 || { echo "pre-push: mise not found, skipping checks" >&2; exit 0; }
+
+zero=0000000000000000000000000000000000000000
+while read -r _local_ref local_sha _remote_ref remote_sha; do
+  [ "$local_sha" = "$zero" ] && continue  # deleting a branch
+  if [ "$remote_sha" = "$zero" ]; then
+    range="origin/main..$local_sha"  # new branch: everything not on main yet
+  else
+    range="$remote_sha..$local_sha"
+  fi
+  echo "pre-push: scanning $range for secrets..."
+  mise exec -- gitleaks git --no-banner --redact --log-opts="$range" || {
+    echo "pre-push: gitleaks found a possible secret - push aborted. See /foundry-secret to triage it." >&2
+    exit 1
+  }
+done
+
+# Empty FOUNDRY_SINCE scopes lint and tests to what changed since origin/main, like
+# the in-loop checks; CI still runs them whole-tree.
+echo "pre-push: running 'mise run gate'..."
+FOUNDRY_SINCE="" mise run gate || {
+  echo "pre-push: gate failed - push aborted. Fix it, or bypass once with 'git push --no-verify'." >&2
+  exit 1
+}
