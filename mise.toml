@@ -3,6 +3,7 @@
 
 [tools]
 node = "22.14.0"
+gitleaks = "8.30.1"  # pre-push secret scan (.githooks/pre-push)
 # deno = "2.9.7"  # uncomment if the repo has Deno code (see FOUNDRY_DENO_PATHS below)
 
 [env]
