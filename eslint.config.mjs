@@ -4,6 +4,26 @@ import astro from 'eslint-plugin-astro';
 import globals from 'globals';
 import foundry from './eslint.config.foundry.mjs';
 
+// Import layering: pages -> views -> layouts -> components -> lib -> data -> i18n.
+// Each layer may import itself and anything to its right, never to its left.
+const LAYERS = ['pages', 'views', 'layouts', 'components', 'lib', 'data', 'i18n'];
+const layerRules = LAYERS.slice(1).map((layer, i) => ({
+  files: [`src/${layer}/**`],
+  rules: {
+    'no-restricted-imports': [
+      'error',
+      {
+        patterns: [
+          {
+            regex: `(^|/)(${LAYERS.slice(0, i + 1).join('|')})/`,
+            message: `${layer} sits below these layers and must not import from them.`,
+          },
+        ],
+      },
+    ],
+  },
+}));
+
 export default [
   {
     ignores: [
@@ -31,4 +51,5 @@ export default [
       'no-unused-vars': 'off',
     },
   },
+  ...layerRules,
 ];
