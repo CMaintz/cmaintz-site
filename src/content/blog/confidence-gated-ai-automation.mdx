@@ -18,26 +18,37 @@ Run a cheap, typed model on everything. Branch on the typed answer in code. Send
 
 ## The cheap model
 
-The tools are built on Jev from TypeSafe AI, a _System One_ model: text in, **typed decisions** out - `choice`, `score` or `noul` - each with a calibrated confidence, in roughly 70-500 ms at near-zero cost. That changes what's affordable. You can ask a narrow question about every single item, and because the answer is typed, ordinary code can act on it.
+The tools are built on Jev from TypeSafe AI: text in, **typed answers** out - `choice`, `score` or `noul` (a yes-probability) - with a probability or confidence instead of prose. TypeSafe quotes 70-500 ms end to end, $0.042 per million input tokens and free output tokens. That changes what's affordable: you can ask a narrow question about every single item, and because the answer is typed, ordinary code can act on it.
 
-The three tools share one core package for providers, retries, timeouts and response validation. It replaced three identical copies of that code when I merged them into one repo.
+It is not an oracle, and the repo says so. On TypeSafe's own evals Jev agrees with frontier-model reference labels 67.8% of the time. It's text only, gives no rationale and can't count or do date arithmetic, so routing tables, limits and dates stay in code. That accuracy figure is exactly why every tool here **gates on confidence** instead of trusting the answer.
+
+The three tools share one zero-dependency core package for the TypeSafe and Cloudflare Workers AI providers, retries with backoff, timeouts and response validation. A malformed or out-of-range answer is dropped, so callers see "no answer" and can fail safe. The core replaced three identical copies of that code when I merged the tools into one repo, with their history.
 
 ## Tool 1: a guardrail for AI agents' tool calls
 
 `jev-guard` checks every tool call an agent proposes. You declare the risk questions in a policy - blast radius, destructiveness, exfiltration risk - and one request answers all of them. A small decision function maps the typed answer to **allow**, **block** or **hold** (ask a human).
 
-The important property is that it **fails safe**: low confidence, a missing answer or a provider error never turns into `allow`. It plugs into LangChain JS and the Vercel AI SDK. It is explicitly not a security boundary: think second opinion, not sandbox.
+The important property is that it **fails safe**: an answer below the confidence floor, a missing or malformed answer, or a provider error never turns into `allow`. On `hold`, an `onHold` handler can ask a person.
+
+- **Presets** for shell, filesystem, SQL and payments, which you spread and tweak
+- **`perTool`** decisions for cheap, safe tools, which skip the Jev call entirely
+- **An `audit` hook** on every verdict, because Jev returns numbers, not reasons
+- **A verdict cache** for identical calls (provider failures are never cached)
+- **Adapters** for LangChain JS (middleware) and the Vercel AI SDK, with structural types so neither framework is a dependency
+
+It is explicitly not a security boundary: keep sandboxing and least-privilege credentials, and treat this as a cheap semantic second opinion on top.
 
 ## Tool 2: issue triage that costs fractions of a cent
 
-`jev-triage` is a GitHub Action that labels every new issue in milliseconds: type, priority, area, and whether it looks security-related. Labels are applied only when confidence clears the threshold. Everything else gets `triage:needs-human`, or is re-asked to any OpenAI-compatible LLM, which leaves a one-line rationale.
+`jev-triage` is a GitHub Action that sends each new issue's title and body to Jev in **one request** with your configured questions, typically type, priority, area and "is this a security vulnerability?". Confident answers become labels, a priority and a team mention. Low-confidence answers are never applied: they get `triage:needs-human`, or are re-asked to any OpenAI-compatible LLM, whose answers are validated against the same questions and which leaves a one-line rationale.
 
 A few decisions that matter in a real repo:
 
 - **Routing stays in code.** Jev answers "which area?"; a plain map decides which team gets mentioned.
 - **Nothing is auto-closed.** Duplicate detection suggests a candidate; a person decides.
-- **Possible security issues raise an alert** instead of getting a label.
-- **Every run reports its estimated cost** in the job summary.
+- **Some questions also alert.** A likely security issue gets its `security` label *and* raises a workflow warning, so it isn't just one more label.
+- **Every run reports its cost**: labels, escalations, duplicates, input tokens and an estimated price in the job summary.
+- **A backlog sweep** on a schedule triages existing open issues too, and **dry-run** mode comments the suggested labels instead of applying them.
 
 It's on the [GitHub Marketplace](https://github.com/marketplace/actions/jev-triage).
 
@@ -47,14 +58,17 @@ It's on the [GitHub Marketplace](https://github.com/marketplace/actions/jev-tria
 
 ```sh title="classify a support export"
 jev-sort -q 'team:choice(billing,tech,sales)' -q 'urgent:noul' \
-  --escalate 'conf<0.6' < tickets.jsonl > labelled.jsonl
+  --escalate 'conf<0.6' --review-out review.jsonl --reject-out rejects.jsonl \
+  < tickets.jsonl > labeled.jsonl
 ```
 
-Uncertain rows go to a review file and rows Jev couldn't answer go to a reject file, so nothing disappears silently. It earns its place at 10k to 1M rows, where an LLM per row *is* the problem. Below a few thousand rows, a one-off LLM script is simpler - and if the rule is crisp, plain code wins.
+Rows below the confidence bar go to the review file, and rows Jev couldn't answer go to the reject file, so nothing disappears silently. Exit codes (2 for flagged rows, 3 for rejects) make it safe to drop into a pipeline. It also has concurrency and rate limits, `--dedupe` for identical rows, and `--eval` to measure agreement on a hand-labeled sample *before* a big run.
+
+It pays off on thousands of rows or more, where an LLM per row *is* the expensive part. For a few hundred rows a one-off LLM script is simpler, and if the rule is crisp, plain code beats both.
 
 ## Where the threshold sits
 
-"Send the uncertain ones onward" only works if you know where *uncertain* starts. A companion project, [jev-eval](/projects/jev-eval), measures where each tool's confidence cut-point should sit instead of guessing. The same idea shows up in [jev-rerank](/projects/jev-rerank) for RAG in Python, and in [Leash](/projects/leash), which keeps a coding agent to a project's rules.
+"Send the uncertain ones onward" only works if you know where *uncertain* starts. A companion project, [jev-eval](/projects/jev-eval), measures it instead of guessing. It runs Jev over *your* labeled data, reports per-question accuracy, whether the confidence can be trusted at all (calibration error and a reliability table) and a risk-coverage table, then recommends the cut-point for a target accuracy: for example, "gate at 0.82: auto-handle 59% at 95% accuracy, escalate the rest". The same idea shows up in [jev-rerank](/projects/jev-rerank) for RAG in Python, and in [Leash](/projects/leash), which keeps a coding agent to a project's rules.
 
 ## When this pattern fits your business
 
