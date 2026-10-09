@@ -56,13 +56,21 @@ async function render(page, html, path) {
   await page.screenshot({ path });
 }
 
-const DEFAULT_CARD = { label: 'DEVELOPER · AARHUS', title: 'Christoffer Maintz', text: 'DevOps · Developer Experience · Platform · AI' };
+const DEFAULT_CARD = {
+  label: 'DEVELOPER · AARHUS',
+  title: 'Christoffer Maintz',
+  text: 'DevOps · Developer Experience · Platform · AI',
+};
 
 async function renderPages(page) {
   const pages = KINDS.flatMap(pagesOf);
   for (const p of pages) {
     mkdirSync(`public/og/${p.kind.out}`, { recursive: true });
-    await render(page, template({ label: p.kind.label, title: p.title, text: p.text }), `public/og/${p.kind.out}/${p.id}.png`);
+    await render(
+      page,
+      template({ label: p.kind.label, title: p.title, text: p.text }),
+      `public/og/${p.kind.out}/${p.id}.png`,
+    );
   }
   return pages.length;
 }

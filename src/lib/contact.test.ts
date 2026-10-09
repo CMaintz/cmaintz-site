@@ -38,7 +38,14 @@ describe('parseInquiry', () => {
   });
 
   it('defaults missing fields to empty strings and the topic to "other"', () => {
-    expect(parseInquiry(new FormData())).toEqual({ name: '', email: '', company: '', topic: 'other', budget: '', message: '' });
+    expect(parseInquiry(new FormData())).toEqual({
+      name: '',
+      email: '',
+      company: '',
+      topic: 'other',
+      budget: '',
+      message: '',
+    });
   });
 });
 

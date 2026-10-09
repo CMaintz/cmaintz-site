@@ -43,7 +43,8 @@ async function loadHeaderRules() {
   return rules;
 }
 
-const ruleMatches = (pattern, path) => (pattern.endsWith('*') ? path.startsWith(pattern.slice(0, -1)) : path === pattern);
+const ruleMatches = (pattern, path) =>
+  pattern.endsWith('*') ? path.startsWith(pattern.slice(0, -1)) : path === pattern;
 
 /** Every matching rule's headers, merged (later rules win). */
 const headersFor = (rules, path) => Object.assign({}, ...rules.filter(([p]) => ruleMatches(p, path)).map(([, h]) => h));

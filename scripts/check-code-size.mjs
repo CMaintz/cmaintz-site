@@ -30,7 +30,8 @@ function chunks(file, text) {
   }));
 }
 
-const isFunction = (n) => ts.isFunctionDeclaration(n) || ts.isFunctionExpression(n) || ts.isArrowFunction(n) || ts.isMethodDeclaration(n);
+const isFunction = (n) =>
+  ts.isFunctionDeclaration(n) || ts.isFunctionExpression(n) || ts.isArrowFunction(n) || ts.isMethodDeclaration(n);
 
 const nameOf = (n) => n.name?.getText?.() ?? (ts.isVariableDeclaration(n.parent) ? n.parent.name.getText() : '');
 const TWO_THINGS = /[a-z]And[A-Z]/;
@@ -82,5 +83,7 @@ function report(file) {
 
 const problems = ROOTS.flatMap(walk).flatMap(report);
 problems.forEach((p) => console.log(p));
-console.log(problems.length ? `\n${problems.length} problem(s)` : `all functions <= ${MAX} lines, all files <= ${MAX_FILE} lines`);
+console.log(
+  problems.length ? `\n${problems.length} problem(s)` : `all functions <= ${MAX} lines, all files <= ${MAX_FILE} lines`,
+);
 process.exit(problems.length ? 1 : 0);
