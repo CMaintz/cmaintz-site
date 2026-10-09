@@ -6,7 +6,7 @@ import PageHead from '../components/PageHead.astro';
 import Pager from '../components/Pager.astro';
 import Comments from '../components/Comments.astro';
 import AreaChips from '../components/AreaChips.astro';
-import { type Lang, useT, formatDate } from '../i18n/ui';
+import { type Lang, localize, useT, formatDate, withSlash } from '../i18n/ui';
 import { type Post, readingTime } from '../lib/content';
 import { graph, breadcrumbLd, personLd, ogImageFor } from '../lib/seo';
 
@@ -33,14 +33,14 @@ const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog
 <Base lang={post.data.lang} title={post.data.title} description={post.data.description} type="article" alternates={false} langSwitchPath="/blog" publishedTime={post.data.pubDate} jsonLd={ld} ogImage={ogImageFor('blog', post.id)}>
   <div class="progress" aria-hidden="true"></div>
   <article>
-    <PageHead as="header" back={{ href: '/blog', label: t('blog.back') }} title={post.data.title} lede={post.data.description} glow>
+    <PageHead as="header" back={{ href: localize('/blog', lang), label: t('blog.back') }} title={post.data.title} lede={post.data.description} glow>
       <p slot="before" class="meta mono">
         <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate, lang, { year: 'numeric', month: 'long', day: 'numeric' })}</time>
         <span>·</span><span>{mins} {t('blog.read')}</span>
         {post.data.updatedDate && <><span>·</span><span>{t('blog.updated')} {formatDate(post.data.updatedDate, lang)}</span></>}
       </p>
       <AreaChips areas={post.data.areas} lang={lang} />
-      <ul class="chips">{post.data.tags.map((tag) => <li><a class="chip" href={`/blog/tags/${tag}`}>#{tag}</a></li>)}</ul>
+      <ul class="chips">{post.data.tags.map((tag) => <li><a class="chip" href={localize(`/blog/tags/${tag}`, lang)}>#{tag}</a></li>)}</ul>
     </PageHead>
 
     <div class="wrap layout">
@@ -59,8 +59,8 @@ const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog
 
     <Pager
       label="Posts"
-      prev={prev && { href: `/blog/${prev.id}`, label: prev.data.title }}
-      next={next && { href: `/blog/${next.id}`, label: next.data.title }}
+      prev={prev && { href: withSlash(`/blog/${prev.id}`), label: prev.data.title }}
+      next={next && { href: withSlash(`/blog/${next.id}`), label: next.data.title }}
     />
   </article>
 </Base>
