@@ -1,0 +1,54 @@
+---
+title: "AI i webshoppen: fra flot demo til noget, der holder i drift"
+description: Hvad der skal til, før AI-genererede produkttekster kan køre i en rigtig webshop - erfaringer fra en løsning, der har beriget over 3.000 produkter.
+pubDate: 2026-10-09
+lang: da
+areas: [ai, platform]
+tags: [ai, e-handel, shopware, automatisering]
+---
+
+import Callout from '../../components/Callout.astro';
+
+Det tager en eftermiddag at få en AI-model til at skrive en flot produktbeskrivelse. Det tager væsentligt længere at få den til at skrive tusindvis af dem, på fire sprog, uden at nogen skal læse dem alle sammen igennem.
+
+Forskellen mellem de to er det, der afgør, om AI sparer tid eller bare flytter den. Her er hvad jeg lærte af at bygge [Illux Product AI](/projects/illux-product-ai) - en løsning, der i dag er en forretningskritisk del af Illux' webshop og har beriget over 3.000 produkter.
+
+## 1. Bed om data, ikke tekst
+
+En AI, der svarer med fri tekst, skal man efterfølgende pille fra hinanden - og det går galt på produkt nummer 800. I stedet skal modellen svare i en fast struktur: titel, beskrivelse, SEO-felter, kategorier og tags, hver i sit felt og for hvert sprog.
+
+Kategorier og tags bør desuden vælges fra en liste, I selv styrer. Så kan AI'en ikke opfinde en ny kategori, som ingen har bedt om.
+
+## 2. Lad den vurdere sig selv - og lad et menneske tage resten
+
+Ikke alle svar er lige gode. Løsningen giver hvert resultat en score ud fra regler, virksomheden selv kan justere: længde på tekster, antal søgeord, ord man ikke vil se. Alt over grænsen kan godkendes automatisk; alt under ryger i en kø til et menneske.
+
+<Callout type="note" title="Det er her, tiden spares">
+Målet er ikke, at AI'en aldrig tager fejl. Målet er, at mennesker kun skal kigge på de tilfælde, hvor den måske gør.
+</Callout>
+
+Grænsen kan skrues op og ned. I starten kan man godkende alt i hånden, og så lempe, efterhånden som tilliden vokser.
+
+## 3. Kør det i baggrunden
+
+Tusindvis af produkter kan ikke behandles, mens nogen venter på en side, der loader. Arbejdet skal i kø og køre i baggrunden, med genforsøg når AI-tjenesten er overbelastet, og uden at det samme produkt bliver behandlet - og betalt for - to gange.
+
+## 4. Gem hvem, hvad og hvorfor
+
+For hvert resultat gemmes, hvilken model og prompt der lavede det, hvilken score det fik, og hvem der godkendte det. Det lyder bureaukratisk, men det er det, der gør det muligt at svare på "hvorfor står der det her?" et halvt år senere - og at skifte model uden at gætte.
+
+## 5. Mål, før du stoler på det
+
+Før man skifter model eller ændrer i sine instruktioner, skal man kunne se, om resultatet blev bedre eller dårligere. Et lille testsæt af produkter, der køres igen ved hver ændring, fanger det, før kunderne gør.
+
+## Er det noget for jer?
+
+AI til produktdata giver mest mening, når:
+
+- I har **mange produkter** eller tilføjer nye løbende,
+- I sælger på **flere sprog**,
+- og teksterne følger et **genkendeligt mønster**.
+
+Har I 40 produkter, der sjældent ændrer sig, er det nok hurtigere at skrive dem selv.
+
+Er I i tvivl, så er det præcis det, mit [AI-afklaringssprint](/da/services#packages-h) er til: tre dage, hvor jeg bygger en prototype på jeres egne data og måler, hvor godt den reelt virker - og I får en ærlig go / no-go med driftsomkostninger. Eller start med en [gratis mini-audit](/da/contact?topic=audit).

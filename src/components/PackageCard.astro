@@ -1,0 +1,34 @@
+---
+// One fixed-price starter package: price, duration, what's included and a CTA
+// that opens the contact form with the right topic preselected.
+import Window from './Window.astro';
+import { type Lang, localize, useT } from '../i18n/ui';
+import type { Package } from '../data/packages';
+
+interface Props { pkg: Package; lang: Lang }
+const { pkg: p, lang } = Astro.props;
+const t = useT(lang);
+const price = p.priceDkk === 0 ? t('services.free') : `${p.priceDkk.toLocaleString(lang === 'da' ? 'da-DK' : 'en-GB')} DKK`;
+const href = `${localize('/contact', lang)}?topic=${p.topic}&package=${p.id}`;
+---
+
+<Window title={`${p.id}.pkg`} as="article" class:list={['pkg', 'reveal', { 'pkg--free': p.priceDkk === 0 }]}>
+  <h3 class="title">{p.title[lang]}</h3>
+  <p class="dur mono">{p.duration[lang]}</p>
+  <p class="price">{price}{p.priceDkk > 0 && <span class="mono"> {t('services.vat')}</span>}</p>
+  <p class="dim">{p.body[lang]}</p>
+  <ul class="inc mono">{p.includes[lang].map((i) => <li>{i}</li>)}</ul>
+  <a class:list={['btn', 'btn--sm', { 'btn--primary': p.priceDkk === 0 }]} href={href}>{t(p.priceDkk === 0 ? 'services.package.claim' : 'services.package.cta')} <span class="arrow">→</span></a>
+</Window>
+
+<style>
+  .pkg :global(.win__body) { display: grid; gap: 0.7rem; height: 100%; grid-template-rows: auto auto auto 1fr auto auto; }
+  .pkg--free { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .title { font-size: 1.2rem; margin: 0; }
+  .dur { font-size: 0.75rem; color: var(--fg-faint); margin: 0; }
+  .price { font: 800 1.9rem var(--font-sans); color: var(--accent); letter-spacing: -0.03em; margin: 0; }
+  .price span { font-size: 0.75rem; font-weight: 500; color: var(--fg-dim); letter-spacing: 0; }
+  .inc { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.3rem; font-size: 0.8rem; }
+  .inc li::before { content: '[x] '; color: var(--accent-2); }
+  .btn { justify-self: start; }
+</style>

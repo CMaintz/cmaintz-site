@@ -1,0 +1,54 @@
+---
+title: A quality gate for a codebase nobody dares touch - a one-week plan
+description: How to add linting, tests and security scanning to a legacy repository without a cleanup sprint, a red build on day one, or a revolt.
+pubDate: 2026-10-09
+areas: [devops, dx]
+tags: [ci, legacy-code, quality-gate, developer-experience]
+---
+
+import Callout from '../../components/Callout.astro';
+
+Every team has one: the repository with no linter, a handful of tests that may or may not run, and a deploy that works because nobody touches it. Everybody agrees it needs a quality gate. Nobody wants to be the one who turns the build red for a month.
+
+You don't have to. Here's the plan I use, day by day. The ideas behind it are in [One rule set, three placements](/blog/one-rule-set-three-placements); this post is the practical version.
+
+## Day 1: make it build the same everywhere
+
+Before any rules, pin the toolchain. If one developer runs Node 20 and CI runs Node 22, every later check is noise. A tool like [mise](https://mise.jdx.dev) pins language and tool versions in one file that the laptop and CI both read.
+
+Then make one command build and test the project from a clean checkout. If that already fails, that's your first finding - and the most valuable one.
+
+## Day 2: add the formatter, and only the formatter
+
+A formatter is the one check that is fully mechanical: run it once, commit the result in a single "format everything" commit, and add that commit to `.git-blame-ignore-revs` so history stays readable. From now on, formatting is never discussed in review again.
+
+## Day 3: lint with a baseline, not a cleanup
+
+Turn on the linter and it will report hundreds of problems. Don't fix them. **Record them as a baseline** and fail the build only on *new* violations. When someone fixes an old one, it leaves the baseline for good.
+
+<Callout type="note" title="The ratchet">
+The rule is simple: the number of known violations may go down, never up. Nobody is blocked by old code, and the codebase gets better one pull request at a time.
+</Callout>
+
+## Day 4: tests and a coverage floor that only rises
+
+Same trick for tests. Measure today's coverage and make that the floor - even if it's 12%. The gate fails if coverage drops; when it rises, the floor rises with it. Ask for tests on changed code, not on the whole codebase.
+
+## Day 5: security scanning and the CI pipeline
+
+Add secret scanning (leaked keys are the cheapest disaster to prevent) and a dependency audit. Then wire it all into CI, running exactly the same commands as the laptop and the pre-push hook. Same rules in every place means no "passes locally, fails in CI".
+
+Finally, protect the rules themselves. If a pull request loosens a lint rule *and* changes production code, require a human to sign off - especially if AI coding agents work in the repo, because weakening the rule is the cheapest way to make a check pass.
+
+## What you have after a week
+
+- A build that is reproducible on any machine
+- No formatting discussions in review
+- A gate that blocks new problems without demanding a cleanup sprint
+- A codebase that measurably improves with every merge
+
+None of it requires stopping feature work. That's the point.
+
+---
+
+I package exactly this as a fixed-price [CI quality-gate starter](/services#packages-h): one repository, three days, and a hand-over for the team. If you'd like a second opinion first, ask for a [free mini-audit](/contact?topic=audit) - point me at the repo and you'll get a one-page health check.

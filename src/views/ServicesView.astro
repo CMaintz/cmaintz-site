@@ -2,24 +2,52 @@
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import ServiceCard from '../components/ServiceCard.astro';
+import PackageCard from '../components/PackageCard.astro';
+import CaseCard from '../components/CaseCard.astro';
 import Window from '../components/Window.astro';
 import { type Lang, localize, useT } from '../i18n/ui';
-import { services, workLanguages, process, HOURLY_RATE_DKK } from '../data/services';
+import { services, workLanguages, process, HOURLY_RATE_DKK, type Audience } from '../data/services';
+import { packages } from '../data/packages';
+import { cases } from '../data/cases';
 import { values } from '../data/values';
+import { site } from '../data/site';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useT(lang);
+const audiences: Audience[] = ['business', 'tech'];
+const contact = localize('/contact', lang);
 ---
 
 <Base lang={lang} title={t('services.title')} description={t('services.lede')}>
   <PageHead eyebrow="~/services" title={t('services.title')} lede={t('services.lede')} />
 
-  <section class="wrap">
-    <div class="grid grid-2">
-      {services.map((s) => <ServiceCard service={s} lang={lang} />)}
-    </div>
+  <section class="wrap grid grid-2 paths" aria-label={t('services.who')}>
+    {audiences.map((a) => (
+      <a class="path" href={`#for-${a}`}>
+        <span class="mono label-h">{t(`services.for.${a}`)}</span>
+        <span class="path__body">{t(`services.for.${a}.body`)}</span>
+        <span class="mono arrow-link">{t('services.for.see')} ↓</span>
+      </a>
+    ))}
   </section>
+
+  <section class="wrap section" aria-labelledby="packages-h">
+    <div class="section-head"><h2 id="packages-h">{t('services.packages')}</h2><p class="dim lede">{t('services.packages.lede')}</p></div>
+    <div class="grid grid-2">{packages.map((p) => <PackageCard pkg={p} lang={lang} />)}</div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="cases-h">
+    <div class="section-head"><h2 id="cases-h">{t('services.cases')}</h2><p class="dim lede">{t('services.cases.lede')}</p></div>
+    <div class="grid grid-2">{cases.map((c) => <CaseCard study={c} lang={lang} />)}</div>
+  </section>
+
+  {audiences.map((a) => (
+    <section class="wrap section" aria-labelledby={`for-${a}`}>
+      <div class="section-head"><h2 id={`for-${a}`}>{t(`services.for.${a}`)}</h2></div>
+      <div class="grid grid-2">{services.filter((s) => s.audience === a).map((s) => <ServiceCard service={s} lang={lang} level={3} />)}</div>
+    </section>
+  ))}
 
   <section class="wrap section two">
     <Window title="pricing.txt" class="reveal">
@@ -45,11 +73,20 @@ const t = useT(lang);
   </section>
 
   <section class="wrap cta">
-    <a class="btn btn--primary" href={localize('/contact', lang) + '?topic=freelance'}>{t('services.ask')} <span class="arrow">→</span></a>
+    <a class="btn btn--primary" href={`${contact}?topic=audit`}>{t('services.package.claim')} <span class="arrow">→</span></a>
+    {site.booking && <a class="btn" href={site.booking} rel="noopener">{t('services.book')} ↗</a>}
+    <a class="btn btn--ghost" href={`${contact}?topic=freelance`}>{t('services.ask')}</a>
   </section>
 </Base>
 
 <style>
+  .paths { padding-top: 0.5rem; }
+  .path { display: grid; gap: 0.5rem; padding: 1.3rem 1.4rem; border: 2px solid var(--line-strong); background: var(--bg-2); text-decoration: none; color: var(--fg); box-shadow: 4px 4px 0 var(--shadow-c); }
+  .path:hover { border-color: var(--accent); }
+  .path .label-h { margin: 0; color: var(--accent); }
+  .path__body { font-size: 1.05rem; }
+  .arrow-link { font-size: 0.8rem; color: var(--fg-dim); }
+  .lede { max-width: 38rem; margin: 0; }
   .two { display: grid; grid-template-columns: 1fr 1.2fr; gap: 3rem; align-items: start; }
   .price { font: 800 3.5rem var(--font-sans); color: var(--accent); letter-spacing: -0.04em; margin-block: 0.4rem; }
   .price span { font: 500 1rem var(--font-mono); color: var(--fg-dim); letter-spacing: 0; }
@@ -59,6 +96,6 @@ const t = useT(lang);
   .steps .n { color: var(--accent); font-size: 0.9rem; padding-top: 0.15rem; }
   .values { display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem; font-size: 0.82rem; margin-bottom: 2.5rem; }
   .values a { color: var(--accent); text-decoration: none; }
-  .cta { text-align: center; }
+  .cta { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
   @media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
 </style>

@@ -5,11 +5,13 @@ import PageHead from '../components/PageHead.astro';
 import Window from '../components/Window.astro';
 import { type Lang, useT } from '../i18n/ui';
 import { site } from '../data/site';
+import { packages } from '../data/packages';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useT(lang);
-const topics = ['job', 'freelance', 'consulting', 'other'] as const;
+const topics = ['job', 'freelance', 'audit', 'consulting', 'other'] as const;
+const packageTitles = JSON.stringify(Object.fromEntries(packages.map((p) => [p.id, p.title[lang]])));
 ---
 
 <Base lang={lang} title={t('contact.title')} description={t('contact.lede')}>
@@ -18,7 +20,7 @@ const topics = ['job', 'freelance', 'consulting', 'other'] as const;
 
   <section class="wrap layout">
     <Window title="new_message.eml" meta="✉">
-      <form class="form" method="post" action="/api/contact" data-contact data-email={site.email}>
+      <form class="form" method="post" action="/api/contact" data-contact data-email={site.email} data-packages={packageTitles} data-package-label={t('contact.package')}>
         <div class="row2">
           <label>{t('contact.name')}<input class="field" name="name" required maxlength="120" autocomplete="name" /></label>
           <label>{t('contact.email')}<input class="field" name="email" type="email" required maxlength="200" autocomplete="email" /></label>
@@ -44,6 +46,7 @@ const topics = ['job', 'freelance', 'consulting', 'other'] as const;
     <aside class="direct">
       <h2 class="mono label-h">{t('contact.direct')}</h2>
       <a class="big" href={`mailto:${site.email}`}>{site.email}</a>
+      {site.booking && <a class="btn btn--sm" href={site.booking} rel="noopener">{t('services.book')} ↗</a>}
       <a class="mono" href={site.socials.github}>GitHub ↗</a>
       {site.socials.linkedin && <a class="mono" href={site.socials.linkedin}>LinkedIn ↗</a>}
       <p class="mono faint small">{site.location} · CET/CEST</p>
@@ -96,7 +99,17 @@ const topics = ['job', 'freelance', 'consulting', 'other'] as const;
     if (q.has('sent') || q.has('error')) showResult(q.has('sent'));
   }
 
+  /** ?package=<id> from a /services starter: name it at the top of the message. */
+  function presetPackage() {
+    const id = new URLSearchParams(location.search).get('package');
+    const titles = JSON.parse(form?.dataset.packages ?? '{}') as Record<string, string>;
+    const title = id && Object.hasOwn(titles, id) ? titles[id] : undefined;
+    const message = form?.querySelector('textarea');
+    if (title && message && !message.value) message.value = `${form!.dataset.packageLabel} ${title}\n\n`;
+  }
+
   presetTopic();
+  presetPackage();
   showRedirectResult();
   form?.addEventListener('submit', onSubmit);
 </script>
@@ -112,6 +125,7 @@ const topics = ['job', 'freelance', 'consulting', 'other'] as const;
   .status[data-state='ok'] { color: var(--ok); }
   .status[data-state='err'] { color: var(--warn); }
   .direct { display: grid; gap: 0.7rem; }
+  .direct .btn { justify-self: start; }
   .big { font: 700 1.3rem var(--font-sans); color: var(--accent); word-break: break-all; }
   .direct a.mono { text-decoration: none; color: var(--fg-dim); }
   @media (max-width: 860px) { .layout, .row2 { grid-template-columns: 1fr; } }

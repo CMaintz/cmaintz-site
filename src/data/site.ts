@@ -13,6 +13,8 @@ export const site = {
   // form still delivers to CONTACT_TO_EMAIL (Outlook) until Resend verifies maintz.dev.
   email: 'christoffer@maintz.dev',
   available: true,
+  // Cal.com/Calendly link for the free intro call; the "Book a call" buttons stay hidden while null.
+  booking: null as string | null,
   socials: {
     github: 'https://github.com/CMaintz',
     linkedin: 'https://www.linkedin.com/in/christoffer-maintz/' as string | null,

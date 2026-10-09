@@ -10,10 +10,11 @@ export interface Inquiry {
   message: string;
 }
 
-const TOPICS = ['job', 'freelance', 'consulting', 'other'];
+const TOPICS = ['job', 'freelance', 'audit', 'consulting', 'other'];
 const TOPIC_LABELS: Record<string, string> = {
   job: 'job opportunity',
   freelance: 'freelance project',
+  audit: 'free mini-audit request',
   consulting: 'consulting',
   other: 'message',
 };

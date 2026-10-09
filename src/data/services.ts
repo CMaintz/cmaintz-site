@@ -12,6 +12,9 @@ export const HOURLY_RATE_DKK = 650;
  */
 type Pricing = 'quote' | 'hourly' | 'either';
 
+/** Who a service is written for: business owners and managers, or dev teams. */
+export type Audience = 'business' | 'tech';
+
 export interface Service {
   id: string;
   glyph: string;
@@ -20,11 +23,29 @@ export interface Service {
   deliverables: Record<Lang, string[]>;
   pricing: Pricing;
   areas: AreaId[];
+  audience: Audience;
 }
 
 export const services: Service[] = [
   {
+    id: 'automation',
+    audience: 'business',
+    areas: ['platform', 'ai'],
+    glyph: '⟳',
+    title: { en: 'Workflow automation & integrations', da: 'Automatisering & integrationer' },
+    body: {
+      en: 'The copy-paste between webshop, accounting, spreadsheets and email - done by the systems instead of by people. I find the tasks that eat your week and connect the tools you already have.',
+      da: 'Copy-paste mellem webshop, regnskab, regneark og mail - klaret af systemerne i stedet for af medarbejderne. Jeg finder de opgaver, der æder jeres uge, og forbinder de værktøjer, I allerede har.',
+    },
+    deliverables: {
+      en: ['Map of manual tasks & time spent', 'Integrations between your systems', 'Error alerts instead of silent failures', 'Plain-language hand-over'],
+      da: ['Overblik over manuelle opgaver og tidsforbrug', 'Integrationer mellem jeres systemer', 'Fejlbeskeder i stedet for stille fejl', 'Overdragelse i almindeligt sprog'],
+    },
+    pricing: 'either',
+  },
+  {
     id: 'quality-gate',
+    audience: 'tech',
     areas: ['devops', 'dx'],
     glyph: '▣',
     title: { en: 'CI/CD & quality-gate setup', da: 'CI/CD & kvalitets-gates' },
@@ -52,6 +73,7 @@ export const services: Service[] = [
   },
   {
     id: 'ai-integration',
+    audience: 'business',
     areas: ['ai'],
     glyph: '◈',
     title: { en: 'AI integrations', da: 'AI-integrationer' },
@@ -73,6 +95,7 @@ export const services: Service[] = [
   },
   {
     id: 'ai-dev',
+    audience: 'tech',
     areas: ['ai', 'dx'],
     glyph: '◎',
     title: { en: 'AI-assisted development enablement', da: 'AI-assisteret udvikling' },
@@ -88,6 +111,7 @@ export const services: Service[] = [
   },
   {
     id: 'shopware',
+    audience: 'business',
     areas: ['platform'],
     glyph: '▤',
     title: { en: 'Shopware 6 & PHP plugins', da: 'Shopware 6- & PHP-plugins' },
@@ -103,6 +127,7 @@ export const services: Service[] = [
   },
   {
     id: 'fullstack',
+    audience: 'business',
     areas: ['platform'],
     glyph: '▦',
     title: { en: 'Full-stack web apps', da: 'Full-stack webapps' },
@@ -118,6 +143,7 @@ export const services: Service[] = [
   },
   {
     id: 'anything',
+    audience: 'tech',
     areas: [],
     glyph: '▢',
     title: { en: 'Everything else', da: 'Alt det andet' },
