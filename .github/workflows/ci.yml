@@ -106,7 +106,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run crosspost
+      # Skips cleanly if this lands before the script does.
+      - if: hashFiles('scripts/crosspost.mjs') != ''
+        run: npm run crosspost
         env:
           SITE_URL: ${{ vars.SITE_URL }}
           DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
