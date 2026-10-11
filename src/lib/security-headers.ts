@@ -13,7 +13,8 @@ const CSP = [
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "media-src 'self'",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cloudflareinsights.com",
+  // api.github.com: the /keystatic blog editor reads and commits through GitHub from the browser.
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cloudflareinsights.com https://api.github.com",
   "frame-src 'self' https://*.maintz.dev https://challenges.cloudflare.com https://giscus.app",
   "frame-ancestors 'self'",
   "base-uri 'self'",

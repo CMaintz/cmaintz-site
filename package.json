@@ -21,23 +21,29 @@
     "smoke": "node scripts/smoke-interactions.mjs",
     "test:comments": "node scripts/test-comments-sql.mjs",
     "clip": "node scripts/encode-clip.mjs",
-    "lint:size": "node scripts/check-code-size.mjs"
+    "lint:size": "node scripts/check-code-size.mjs",
+    "crosspost": "node --experimental-strip-types scripts/crosspost.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.3",
     "@astrojs/markdown-remark": "^7.3.1",
     "@astrojs/mdx": "^8.0.2",
+    "@astrojs/react": "^7.0.1",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@fontsource/hanken-grotesk": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
     "@fontsource/silkscreen": "^5.3.0",
+    "@keystatic/astro": "^6.0.0",
+    "@keystatic/core": "^0.6.9",
     "@supabase/supabase-js": "^2.117.2",
     "astro": "^7.3.5",
     "astro-expressive-code": "^0.44.2",
     "astro-mermaid": "^2.1.0",
     "katex": "^0.18.9",
     "mermaid": "^11.17.2",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0"
   },
@@ -50,6 +56,8 @@
     "@electric-sql/pglite": "^0.5.8",
     "@eslint/js": "^10.0.1",
     "@types/hast": "^3.0.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@vitest/coverage-v8": "^5.0.3",
     "eslint": "^10.12.0",
     "eslint-plugin-astro": "^1.7.0",
@@ -71,6 +79,7 @@
     "unified": "^11.0.5",
     "vite": "^8.3.3",
     "vitest": "^5.0.3",
-    "wrangler": "^4.141.0"
+    "wrangler": "^4.141.0",
+    "yaml": "^2.9.1"
   }
 }

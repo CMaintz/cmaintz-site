@@ -2,6 +2,7 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { AREA_IDS } from './data/areas';
+import { CROSSPOST_IDS } from './data/crosspost';
 
 const areas = z.array(z.enum(AREA_IDS)).default([]);
 
@@ -22,6 +23,8 @@ const blog = defineCollection({
       draft: z.boolean().default(false),
       cover: image().optional(),
       comments: z.boolean().default(true),
+      /** Platforms to cross-post to once published (scripts/crosspost.mjs). */
+      crosspost: z.array(z.enum(CROSSPOST_IDS)).default([]),
     }),
 });
 

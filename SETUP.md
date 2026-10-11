@@ -90,13 +90,36 @@ Free tier: 2 active projects, 50,000 monthly active users, 500 MB database. Free
 2. **You:** Workers & Pages -> `cmaintz-site` -> Settings -> Domains & Routes -> Add custom domain.
 3. **Claude:** `SITE_URL=https://yourdomain.dk`, rebuild, redeploy; add the domain to Turnstile hostnames and Supabase redirect URLs; verify it in Resend and switch the sender address.
 
+## Phase 8 - Blog editor (Keystatic) and cross-posting
+
+The editor lives at `https://maintz.dev/keystatic`. It signs in with GitHub and commits through a GitHub App, one branch per post (`post/<slug>`). The PR then goes through the gate like any other change, and merging it publishes the post. `draft: true` still hides a merged post.
+
+1. **You:** create a GitHub App: GitHub -> Settings -> Developer settings -> GitHub Apps -> New.
+   - Homepage URL: `https://maintz.dev`.
+   - Callback URL: `https://maintz.dev/api/keystatic/github/oauth/callback`. Add `http://127.0.0.1:4321/api/keystatic/github/oauth/callback` as well if you want to sign in locally.
+   - Tick "Expire user authorization tokens" and "Request user authorization (OAuth) during installation". Untick Webhook "Active".
+   - Repository permissions: Contents **Read & write**, Pull requests **Read & write**, Metadata Read.
+   - "Only on this account". Create it, generate a client secret, then **Install App** on `CMaintz/cmaintz-site` only.
+2. **You:** in your own terminal:
+   - `npx wrangler secret put KEYSTATIC_GITHUB_CLIENT_ID --name cmaintz-site` (the app's Client ID).
+   - `npx wrangler secret put KEYSTATIC_GITHUB_CLIENT_SECRET --name cmaintz-site`.
+   - `npx wrangler secret put KEYSTATIC_SECRET --name cmaintz-site` (any random string of 40 or more characters, e.g. `openssl rand -hex 32`).
+3. **You:** add the GitHub repo variable `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` (the app's URL name), then re-run the latest `main` deploy. It's a build-time value.
+4. **Optional:** Cloudflare Zero Trust -> Access -> add a self-hosted application for `maintz.dev/keystatic*` and `maintz.dev/api/keystatic*`, allowing only your email. GitHub sign-in already limits writes to people with access to the repo; this keeps the editor itself private.
+5. **Cross-posting:** in the editor, tick the platforms under "Cross-post when published". After a push to `main` deploys, the `crosspost` job in `ci.yml` does the following:
+   - **dev.to:** creates the article with `canonical_url` pointing to maintz.dev, or updates it when the post changed in that push. **You:** dev.to -> Settings -> Extensions -> generate an API key, and add it as the GitHub repo **secret** `DEVTO_API_KEY`. Without the key, this step is skipped.
+   - **LinkedIn:** opens an issue labelled `crosspost` with a drafted post. You edit it, post it by hand, and close the issue.
+   - Try it locally without posting anything: `npm run crosspost -- --dry-run`.
+
+In dev (`npm run dev`), `/keystatic` is meant to edit files on disk with no GitHub involved. As of Astro 7.3 with the Cloudflare adapter, though, React islands don't hydrate under `astro dev` at all (`before-hydration.js` returns 404). That's an upstream dev-server issue, and production builds aren't affected. Until it's fixed, write posts in the deployed editor, or as `.mdx` files.
+
 ---
 
 ## Day-to-day
 
 | Task                                                  | Command                                                                                                        |
 | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| New blog post                                         | add `src/content/blog/<slug>.mdx` (see `hello-world.mdx`); `draft: true` hides it in production                |
+| New blog post                                         | write it at `/keystatic` (Phase 8), or add `src/content/blog/<slug>.mdx`; `draft: true` hides it in production |
 | Refresh GitHub data + READMEs                         | `npm run sync` (deploys fetch it hourly; CI commits it every Monday)                                           |
 | Regenerate CV PDFs after editing `src/data/resume.ts` | `npm run build && npm run cv:pdf`                                                                              |
 | Regenerate share images (after a new post or project) | `npm run build && npm run og && npm run build`                                                                 |

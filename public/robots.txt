@@ -4,5 +4,6 @@ Content-Signal: search=yes, ai-input=yes, ai-train=yes
 Allow: /
 Disallow: /api/
 Disallow: /doom/
+Disallow: /keystatic/
 
 Sitemap: https://maintz.dev/sitemap-index.xml
