@@ -106,7 +106,7 @@ The editor lives at `https://maintz.dev/keystatic`. It signs in with GitHub and 
    - `npx wrangler secret put KEYSTATIC_SECRET --name cmaintz-site` (any random string of 40 or more characters, e.g. `openssl rand -hex 32`).
 3. **You:** add the GitHub repo variable `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` (the app's URL name), then re-run the latest `main` deploy. It's a build-time value.
 4. **Optional:** Cloudflare Zero Trust -> Access -> add a self-hosted application for `maintz.dev/keystatic*` and `maintz.dev/api/keystatic*`, allowing only your email. GitHub sign-in already limits writes to people with access to the repo; this keeps the editor itself private.
-5. **Cross-posting:** in the editor, tick the platforms under "Cross-post when published". After a push to `main` deploys, the `crosspost` job in `ci.yml` does the following:
+5. **Cross-posting:** in the editor, tick the platforms under "Cross-post when published". After a push to `main` deploys, the `crosspost` job in `ci.yml` (added in a separate workflow PR, as the ruleset guard requires) does the following:
    - **dev.to:** creates the article with `canonical_url` pointing to maintz.dev, or updates it when the post changed in that push. **You:** dev.to -> Settings -> Extensions -> generate an API key, and add it as the GitHub repo **secret** `DEVTO_API_KEY`. Without the key, this step is skipped.
    - **LinkedIn:** opens an issue labelled `crosspost` with a drafted post. You edit it, post it by hand, and close the issue.
    - Try it locally without posting anything: `npm run crosspost -- --dry-run`.
