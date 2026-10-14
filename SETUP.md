@@ -111,7 +111,7 @@ The editor lives at `https://maintz.dev/keystatic`. It signs in with GitHub and 
    - **LinkedIn:** opens an issue labelled `crosspost` with a drafted post. You edit it, post it by hand, and close the issue.
    - Try it locally without posting anything: `npm run crosspost -- --dry-run`.
 
-In dev (`npm run dev`), `/keystatic` is meant to edit files on disk with no GitHub involved. As of Astro 7.3 with the Cloudflare adapter, though, React islands don't hydrate under `astro dev` at all (`before-hydration.js` returns 404). That's an upstream dev-server issue, and production builds aren't affected. Until it's fixed, write posts in the deployed editor, or as `.mdx` files.
+To write locally, run `npm run editor` and open `http://localhost:4321/editor` (it redirects to `/keystatic`). It runs the site with the Node adapter, because Keystatic's local mode edits files on disk and needs Node's `fs`, which the Cloudflare dev server (`npm run dev`) doesn't provide. Commit the changed `.mdx` files as usual. Use `npm run dev` for everything else: there, `/keystatic` loads but can't read posts.
 
 ---
 
@@ -119,7 +119,7 @@ In dev (`npm run dev`), `/keystatic` is meant to edit files on disk with no GitH
 
 | Task                                                  | Command                                                                                                        |
 | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| New blog post                                         | write it at `/keystatic` (Phase 8), or add `src/content/blog/<slug>.mdx`; `draft: true` hides it in production |
+| New blog post                                         | write it at `/editor` (Phase 8, or `npm run editor` locally), or add `src/content/blog/<slug>.mdx`; `draft: true` hides it in production |
 | Refresh GitHub data + READMEs                         | `npm run sync` (deploys fetch it hourly; CI commits it every Monday)                                           |
 | Regenerate CV PDFs after editing `src/data/resume.ts` | `npm run build && npm run cv:pdf`                                                                              |
 | Regenerate share images (after a new post or project) | `npm run build && npm run og && npm run build`                                                                 |

@@ -56,6 +56,29 @@ const markdownPages = {
   },
 };
 
+/**
+ * Dev only: the Cloudflare Vite plugin hands every request matching `run_worker_first` to the
+ * Worker before Vite can serve its own modules, so island scripts 404 and nothing hydrates
+ * (cloudflare/workers-sdk#14626). Moves that middleware to just after Vite's transform step.
+ * If the internal names change it does nothing.
+ * @type {import('vite').Plugin}
+ */
+const viteModulesBeforeWorker = {
+  name: 'vite-modules-before-worker',
+  apply: 'serve',
+  configureServer(server) {
+    return () => {
+      const stack = server.middlewares.stack;
+      /** @param {string} name */
+      const named = (name) => stack.findIndex((m) => /** @type {Function} */ (m.handle).name === name);
+      const i = named('cloudflarePreMiddleware');
+      if (i === -1) return;
+      const [pre] = stack.splice(i, 1);
+      stack.splice(named('viteTransformMiddleware') + 1, 0, pre);
+    };
+  },
+};
+
 export default defineConfig({
   site: SITE,
   adapter: cloudflare({ imageService: 'passthrough' }),
@@ -63,6 +86,8 @@ export default defineConfig({
   // No server sessions needed; avoids provisioning a KV namespace on Cloudflare.
   session: false,
   redirects: {
+    // Friendlier address for the blog editor; Keystatic itself always lives at /keystatic.
+    '/editor': '/keystatic',
     '/projects/reel-scout': '/projects/movie-explorer',
     '/da/projects/reel-scout': '/da/projects/movie-explorer',
     '/projects/movie-db': '/projects/movie-explorer',
@@ -104,7 +129,13 @@ export default defineConfig({
       serialize: (item) => ({ ...item, lastmod: lastmodFor(PAGE_DATES, item.url) }),
     }),
   ],
-  vite: { define: { 'import.meta.env.PAGE_DATES': JSON.stringify(PAGE_DATES) } },
+  vite: {
+    plugins: [viteModulesBeforeWorker],
+    define: { 'import.meta.env.PAGE_DATES': JSON.stringify(PAGE_DATES) },
+    // Keystatic's API route is injected from node_modules, so the dev scanner never finds it and
+    // its CommonJS deps reach the Worker unbundled ("exports is not defined").
+    optimizeDeps: { include: ['@keystatic/core/api/generic', '@keystatic/core', '@keystatic/core/content-components'] },
+  },
   markdown: {
     processor: unified({ rehypePlugins: [rehypeCanonicalLinks] }),
   },
