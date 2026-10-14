@@ -9,6 +9,7 @@ Live at https://maintz.dev. (If you find the Konami code works, that's on purpos
 ```sh
 npm install
 npm run dev        # http://localhost:4321
+npm run editor     # blog editor on disk: http://localhost:4321/editor
 npm run build      # site + search index -> dist/
 npm run preview    # Workers runtime locally
 npm run check      # types, code-size rules (functions <= 18 lines, files <= 300), comments SQL tests
