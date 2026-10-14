@@ -7,8 +7,6 @@ import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
 import expressiveCode from 'astro-expressive-code';
 import mermaid from 'astro-mermaid';
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
 import { unified } from '@astrojs/markdown-remark';
 
 import { appendFile } from 'node:fs/promises';
@@ -139,7 +137,7 @@ export default defineConfig({
     optimizeDeps: { include: ['@keystatic/core/api/generic', '@keystatic/core', '@keystatic/core/content-components'] },
   },
   markdown: {
-    processor: unified({ remarkPlugins: [remarkMath], rehypePlugins: [rehypeKatex, rehypeCanonicalLinks] }),
+    processor: unified({ rehypePlugins: [rehypeCanonicalLinks] }),
   },
   env: {
     schema: {

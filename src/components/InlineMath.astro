@@ -1,0 +1,7 @@
+---
+import MathBlock from './Math.astro';
+
+interface Props { expr: string }
+---
+
+<MathBlock expr={Astro.props.expr} inline />

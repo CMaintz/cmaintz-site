@@ -7,6 +7,8 @@ import Pager from '../components/Pager.astro';
 import Comments from '../components/Comments.astro';
 import AreaChips from '../components/AreaChips.astro';
 import Callout from '../components/Callout.astro';
+import MathBlock from '../components/Math.astro';
+import InlineMath from '../components/InlineMath.astro';
 import { type Lang, localize, useT, formatDate, withSlash } from '../i18n/ui';
 import { type Post, readingTime } from '../lib/content';
 import { site } from '../data/site';
@@ -49,7 +51,7 @@ const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog
 
     <div class="wrap layout">
       <div class="prose reading" data-pagefind-body>
-        <Content components={{ Callout }} />
+        <Content components={{ Callout, Math: MathBlock, InlineMath }} />
       </div>
       {toc.length > 2 && (
         <nav class="toc mono" aria-label={t('blog.toc')}>

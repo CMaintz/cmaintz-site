@@ -4,6 +4,7 @@ import {
   absolutize,
   calloutsToQuotes,
   devtoArticle,
+  devtoMarkdown,
   devtoTags,
   linkedinDraft,
   planDevto,
@@ -20,7 +21,7 @@ const source = `---
 title: One rule set
 description: Why CI and AI standards are one thing.
 pubDate: 2026-09-28
-tags: [ci, developer-experience, AI, foundry, extra]
+tags: [ci, developer-experience, foundry, devops, ai]
 crosspost: [devto, linkedin]
 ---
 
@@ -69,21 +70,44 @@ describe('markdown for other platforms', () => {
 
 });
 
+const fence = '```';
+
+describe('devtoMarkdown', () => {
+  it('turns math components into KaTeX Liquid tags, keeping "{{" away from Liquid', () => {
+    expect(devtoMarkdown('If <InlineMath expr="n_t" /> then\n\n<Math expr="\\frac{1}{{a}}" />')).toBe(
+      'If {% katex inline %}n_t{% endkatex %} then\n\n{% katex %}\n\\frac{1}{ {a}}\n{% endkatex %}',
+    );
+  });
+
+  it('renders Mermaid through mermaid.ink and keeps only the language of other fences', () => {
+    const md = `${fence}mermaid title="Flow"\ngraph LR\n  A --> B\n${fence}\n${fence}ts title="a b" {3}\nx\n${fence}`;
+    const img = `![Diagram](https://mermaid.ink/img/${Buffer.from('graph LR\n  A --> B').toString('base64url')})`;
+    expect(devtoMarkdown(md)).toBe(`${img}\n${fence}ts\nx\n${fence}`);
+  });
+
+  it('leaves code samples alone, nested fences included', () => {
+    const md = `${fence}\`md\n<Math expr="x" />\n${fence}ts title="inner"\n${fence}\n${fence}\``;
+    expect(devtoMarkdown(md)).toBe(md);
+  });
+});
+
+describe('devtoTags', () => {
+  it('maps tags to dev.to in src/data/tags.ts order, dropping ones without an equivalent and duplicates', () => {
+    expect(devtoTags(['jev', 'ai-assisted-development', 'llm', 'ai', 'unknown'])).toEqual(['ai', 'llm']);
+  });
+});
+
 describe('dev.to article', () => {
   it('builds a dev.to article with canonical URL, cleaned tags and a back-link', () => {
     const { data, body } = splitPost(source, parse);
     const { article } = devtoArticle({ meta: toMeta('one-rule-set', data), body }, SITE, `${SITE}/og.png`);
     expect(article.canonical_url).toBe('https://maintz.dev/blog/one-rule-set');
-    expect(article.tags).toEqual(['ci', 'developerexperience', 'ai', 'foundry']);
+    expect(article.tags).toEqual(['ai', 'devops', 'tooling', 'cicd']);
     expect(article.main_image).toBe('https://maintz.dev/og.png');
     expect(article.body_markdown).not.toContain('import Callout');
     expect(article.body_markdown).toContain('> **The exit code is the evidence**');
     expect(article.body_markdown).toContain('(https://maintz.dev/projects/foundry)');
     expect(article.body_markdown).toContain('Originally published at [maintz.dev](https://maintz.dev/blog/one-rule-set)');
-  });
-
-  it('dedupes tags after cleaning', () => {
-    expect(devtoTags(['C#', 'c', 'Dev-Ops', 'devops'])).toEqual(['c', 'devops']);
   });
 });
 
@@ -112,7 +136,7 @@ describe('planDevto', () => {
 
 describe('linkedinDraft', () => {
   it('includes the title, description, link and hashtags', () => {
-    const text = linkedinDraft(toMeta('x', { title: 'T', description: 'D', pubDate: '2026-01-01', tags: ['CI'] }), SITE);
-    expect(text).toBe('T\n\nD\n\nFull post: https://maintz.dev/blog/x\n\n#ci');
+    const text = linkedinDraft(toMeta('x', { title: 'T', description: 'D', pubDate: '2026-01-01', tags: ['ci'] }), SITE);
+    expect(text).toBe('T\n\nD\n\nFull post: https://maintz.dev/blog/x\n\n#cicd');
   });
 });
