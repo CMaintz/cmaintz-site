@@ -58,11 +58,9 @@ CI, git hooks and agent skills all call **verbs, never tools**. A skill says `mi
 
 Bolt strict linters onto a real codebase and everything is red on day one. You abandon it in week two. So instead, existing violations become a **baseline that may only shrink**. Fix a violation and it's pruned for good; add a new one and the gate fails.
 
-If $n_t$ is the number of baselined violations at commit $t$, the only invariant the gate enforces is:
+If <InlineMath expr="n_t" /> is the number of baselined violations at commit <InlineMath expr="t" />, the only invariant the gate enforces is:
 
-$$
-n_{t+1} \le n_t
-$$
+<Math expr="n_{t+1} \le n_t" />
 
 The cheapest way to satisfy a linter is to weaken the rule, so a small `ruleset-guard` refuses any PR that touches both a ruleset *and* production source unless a human labels it deliberate. It's tightening-aware: loosening needs a human, tightening sails through.
 

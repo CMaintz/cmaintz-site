@@ -3,7 +3,8 @@
 // post goes live the way any change does: PR, gate, merge. The fields mirror the
 // blog schema in src/content.config.ts.
 import { config, collection, fields } from '@keystatic/core';
-import { wrapper } from '@keystatic/core/content-components';
+import { block, inline, mark, wrapper } from '@keystatic/core/content-components';
+import { createElement } from 'react';
 import { AREA_IDS, areas } from './src/data/areas';
 import { CROSSPOST_TARGETS } from './src/data/crosspost';
 
@@ -25,6 +26,20 @@ const callout = wrapper({
     }),
     title: fields.text({ label: 'Title' }),
   },
+});
+
+const tex = fields.text({
+  label: 'TeX',
+  description: 'KaTeX syntax, without $ delimiters.',
+  validation: { isRequired: true },
+});
+const math = block({ label: 'Math (block)', schema: { expr: tex } });
+const inlineMath = inline({ label: 'Math (inline)', schema: { expr: tex } });
+const kbd = mark({
+  label: 'Keyboard key',
+  tag: 'kbd',
+  icon: createElement('span', { 'aria-hidden': true }, '⌨'),
+  schema: {},
 });
 
 const postSchema = {
@@ -53,7 +68,16 @@ const postSchema = {
     description: 'Ticking a platform is the approval to post there (see scripts/crosspost.mjs).',
     options: CROSSPOST_TARGETS.map((t) => ({ label: t.label, value: t.id })),
   }),
-  content: fields.mdx({ label: 'Content', extension: 'mdx', components: { Callout: callout } }),
+  // Keystatic 0.6.9 keeps only the first word of a code fence's meta on save
+  // (title="a b" -> title="a), which breaks Expressive Code titles.
+  // patches/@keystatic+core+*.patch fixes it on postinstall. The patch targets a hashed
+  // 0.6.9 chunk, so a Keystatic bump fails npm ci until it is regenerated or, once
+  // upstream's proseMirrorToMDX stops using lang.split(' ', 2), deleted.
+  content: fields.mdx({
+    label: 'Content',
+    extension: 'mdx',
+    components: { Callout: callout, Math: math, InlineMath: inlineMath, kbd },
+  }),
 };
 
 export default config({
