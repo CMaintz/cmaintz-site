@@ -2,6 +2,8 @@
 import { defineConfig, envField } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
 import mdx from '@astrojs/mdx';
+import react from '@astrojs/react';
+import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
 import expressiveCode from 'astro-expressive-code';
 import mermaid from 'astro-mermaid';
@@ -96,6 +98,9 @@ export default defineConfig({
       },
     }),
     mdx(),
+    // Blog editor at /keystatic (keystatic.config.ts). React only loads on that page.
+    react(),
+    keystatic(),
     sitemap({
       i18n: { defaultLocale: 'en', locales: { en: 'en', da: 'da' } },
       serialize: (item) => ({ ...item, lastmod: lastmodFor(PAGE_DATES, item.url) }),
@@ -126,6 +131,11 @@ export default defineConfig({
       PUBLIC_GISCUS_REPO_ID: envField.string({ context: 'client', access: 'public', optional: true }),
       PUBLIC_GISCUS_CATEGORY: envField.string({ context: 'client', access: 'public', optional: true }),
       PUBLIC_GISCUS_CATEGORY_ID: envField.string({ context: 'client', access: 'public', optional: true }),
+      // Blog editor (Keystatic GitHub mode) - see SETUP.md. Optional: without them /keystatic can't sign in.
+      KEYSTATIC_GITHUB_CLIENT_ID: envField.string({ context: 'server', access: 'secret', optional: true }),
+      KEYSTATIC_GITHUB_CLIENT_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
+      KEYSTATIC_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
+      PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: envField.string({ context: 'client', access: 'public', optional: true }),
       // Cloudflare Web Analytics beacon token - omitted when unset.
       PUBLIC_CF_BEACON_TOKEN: envField.string({ context: 'client', access: 'public', optional: true }),
     },
