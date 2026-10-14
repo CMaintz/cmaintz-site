@@ -102,7 +102,7 @@ describe('dev.to article', () => {
     const { data, body } = splitPost(source, parse);
     const { article } = devtoArticle({ meta: toMeta('one-rule-set', data), body }, SITE, `${SITE}/og.png`);
     expect(article.canonical_url).toBe('https://maintz.dev/blog/one-rule-set');
-    expect(article.tags).toEqual(['ai', 'devops', 'cicd', 'dx']);
+    expect(article.tags).toEqual(['ai', 'devops', 'tooling', 'cicd']);
     expect(article.main_image).toBe('https://maintz.dev/og.png');
     expect(article.body_markdown).not.toContain('import Callout');
     expect(article.body_markdown).toContain('> **The exit code is the evidence**');
