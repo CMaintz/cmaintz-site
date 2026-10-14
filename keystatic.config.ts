@@ -7,6 +7,7 @@ import { block, inline, mark, wrapper } from '@keystatic/core/content-components
 import { createElement } from 'react';
 import { AREA_IDS, areas } from './src/data/areas';
 import { CROSSPOST_TARGETS } from './src/data/crosspost';
+import { TAGS } from './src/data/tags';
 
 const storage = import.meta.env.DEV
   ? ({ kind: 'local' } as const)
@@ -47,7 +48,11 @@ const postSchema = {
   description: fields.text({ label: 'Description', multiline: true, validation: { isRequired: true } }),
   pubDate: fields.date({ label: 'Published', defaultValue: { kind: 'today' }, validation: { isRequired: true } }),
   updatedDate: fields.date({ label: 'Updated' }),
-  tags: fields.array(fields.text({ label: 'Tag' }), { label: 'Tags', itemLabel: (p) => p.value }),
+  tags: fields.multiselect({
+    label: 'Tags',
+    description: 'Tags with a dev.to name also go to dev.to; src/data/tags.ts says which four a post sends.',
+    options: TAGS.map((t) => ({ label: 'devto' in t ? `${t.id} (dev.to: ${t.devto})` : t.id, value: t.id })),
+  }),
   areas: fields.multiselect({
     label: 'Areas',
     options: AREA_IDS.map((id) => ({ label: areas[id].label.en, value: id })),
