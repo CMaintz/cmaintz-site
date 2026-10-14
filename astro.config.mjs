@@ -7,8 +7,6 @@ import keystatic from '@keystatic/astro';
 import sitemap from '@astrojs/sitemap';
 import expressiveCode from 'astro-expressive-code';
 import mermaid from 'astro-mermaid';
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
 import { unified } from '@astrojs/markdown-remark';
 
 import { appendFile } from 'node:fs/promises';
@@ -108,7 +106,7 @@ export default defineConfig({
   ],
   vite: { define: { 'import.meta.env.PAGE_DATES': JSON.stringify(PAGE_DATES) } },
   markdown: {
-    processor: unified({ remarkPlugins: [remarkMath], rehypePlugins: [rehypeKatex, rehypeCanonicalLinks] }),
+    processor: unified({ rehypePlugins: [rehypeCanonicalLinks] }),
   },
   env: {
     schema: {

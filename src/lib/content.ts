@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import snapshot from '../data/github.json';
+import type { TagId } from '../data/tags';
 
 export type Repo = (typeof snapshot.repos)[number];
 export type Project = CollectionEntry<'projects'>;
@@ -50,7 +51,7 @@ const wordCount = (text: string) => text.split(/\s+/).filter(Boolean).length;
 export const readingTime = (body: string | undefined) => Math.max(1, Math.round(wordCount(proseOf(body ?? '')) / 220));
 
 export function allTags(posts: Post[]) {
-  const counts = new Map<string, number>();
+  const counts = new Map<TagId, number>();
   for (const p of posts) for (const t of p.data.tags) counts.set(t, (counts.get(t) ?? 0) + 1);
   return [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
 }

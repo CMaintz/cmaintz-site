@@ -3,6 +3,7 @@ import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { AREA_IDS } from './data/areas';
 import { CROSSPOST_IDS } from './data/crosspost';
+import { TAG_IDS } from './data/tags';
 
 const areas = z.array(z.enum(AREA_IDS)).default([]);
 
@@ -16,7 +17,7 @@ const blog = defineCollection({
       description: z.string(),
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
-      tags: z.array(z.string()).default([]),
+      tags: z.array(z.enum(TAG_IDS)).default([]),
       /** Which 'What I do' areas the post belongs to. */
       areas,
       lang: z.enum(['en', 'da']).default('en'),

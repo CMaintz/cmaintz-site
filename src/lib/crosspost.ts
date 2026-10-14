@@ -1,6 +1,8 @@
 // Pure helpers for scripts/crosspost.mjs: turn a blog post's MDX source into what
 // each platform needs, and decide what to create or update. No network or disk here.
 import type { CrosspostTarget } from '../data/crosspost';
+// The .ts extension lets scripts/crosspost.mjs load this under Node's plain type stripping.
+import { TAGS } from '../data/tags.ts';
 
 export interface PostMeta {
   slug: string;
@@ -61,14 +63,53 @@ export function absolutize(md: string, site: string) {
   return md.replace(/\]\((\/[^)\s]*)/g, `](${base}$1`).replace(/(src|href)="(\/[^"]*)"/g, `$1="${base}$2"`);
 }
 
+const decodeAttr = (s: string) => s.replace(/&(?:quot|#x22|#34);/g, '"').replace(/&amp;/g, '&');
+// dev.to runs Liquid over the KaTeX body too, so "{{" would open a Liquid variable.
+const katex = (tex: string) => decodeAttr(tex).replace(/\{(?=\{)/g, '{ ');
+
+/** <Math> and <InlineMath> become dev.to's KaTeX Liquid tags. */
+function mathToKatex(prose: string) {
+  return prose
+    .replace(/<Math\s+expr="([^"]*)"\s*\/>/g, (_, tex: string) => `{% katex %}\n${katex(tex)}\n{% endkatex %}`)
+    .replace(/<InlineMath\s+expr="([^"]*)"\s*\/>/g, (_, tex: string) => `{% katex inline %}${katex(tex)}{% endkatex %}`);
+}
+
+/**
+ * Keeps only a fence's language: Expressive Code meta (title="...", {3}) would read as part
+ * of it on dev.to. Mermaid, which dev.to doesn't render, becomes an image from mermaid.ink.
+ */
+function devtoFence(ticks: string, info: string, code: string) {
+  const lang = info.trim().split(/\s+/)[0];
+  if (lang === 'mermaid') return `![Diagram](https://mermaid.ink/img/${Buffer.from(code.trim()).toString('base64url')})`;
+  return `${ticks}${lang}\n${code}${ticks}`;
+}
+
+const FENCE = /^(`{3,}|~{3,})([^\n]*)\n([\s\S]*?)^\1[^\S\n]*$/gm;
+
+/** Rewrites site-only syntax for dev.to, leaving the contents of code fences as written. */
+export function devtoMarkdown(md: string) {
+  let out = '';
+  let last = 0;
+  for (const m of md.matchAll(FENCE)) {
+    out += mathToKatex(md.slice(last, m.index)) + devtoFence(m[1], m[2], m[3]);
+    last = m.index + m[0].length;
+  }
+  return out + mathToKatex(md.slice(last));
+}
+
 function devtoBody(post: Post, site: string) {
-  const md = absolutize(calloutsToQuotes(stripEsm(post.body)), site).trim();
+  const md = absolutize(devtoMarkdown(calloutsToQuotes(stripEsm(post.body))), site).trim();
   return `${md}\n\n---\n\n*Originally published at [maintz.dev](${postUrl(site, post.meta.slug)}).*\n`;
 }
 
-/** dev.to allows four lowercase alphanumeric tags. */
-export const devtoTags = (tags: string[]) =>
-  [...new Set(tags.map((t) => t.toLowerCase().replace(/[^a-z0-9]/g, '')).filter(Boolean))].slice(0, 4);
+const DEVTO_TAG = new Map<string, string>(TAGS.flatMap((t) => ('devto' in t ? [[t.id, t.devto]] : [])));
+const PRIORITY = new Map<string, number>(TAGS.map((t, i) => [t.id, i]));
+
+/** A post's dev.to tags: the first four distinct ones its site tags map to, in src/data/tags.ts order. */
+export function devtoTags(tags: string[]) {
+  const ranked = [...tags].sort((a, b) => (PRIORITY.get(a) ?? Infinity) - (PRIORITY.get(b) ?? Infinity));
+  return [...new Set(ranked.flatMap((t) => DEVTO_TAG.get(t) ?? []))].slice(0, 4);
+}
 
 export function devtoArticle(post: Post, site: string, mainImage?: string) {
   return {
@@ -99,7 +140,10 @@ export function planDevto(posts: Post[], existing: Map<string, number>, changed:
   return actions;
 }
 
-/** A starting point for the LinkedIn post; it's edited and posted by hand. */
+/**
+ * A starting point for the LinkedIn post; it's edited and posted by hand. Hashtags reuse the
+ * dev.to mapping, since both want short, followed tags.
+ */
 export function linkedinDraft(meta: PostMeta, site: string) {
   const hashtags = devtoTags(meta.tags).map((t) => `#${t}`).join(' ');
   return [meta.title, '', meta.description, '', `Full post: ${postUrl(site, meta.slug)}`, '', hashtags].join('\n').trim();

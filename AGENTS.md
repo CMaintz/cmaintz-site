@@ -21,6 +21,10 @@ Consult these guides before working on related tasks:
 - [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
 - [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
 
+## Blog posts
+
+Writing or editing a post in `src/content/blog/`, or adding an MDX component: read [docs/blog-posts.md](docs/blog-posts.md) first.
+
 ## One home per concept
 
 Don't hand-copy the same thing into several files. When two places would have to change together, give the concept one home:
