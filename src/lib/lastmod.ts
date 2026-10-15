@@ -17,6 +17,7 @@ const PAGE_SOURCES: Record<string, string[]> = {
   '/now/': ['src/views/NowView.astro'],
   '/uses/': ['src/views/UsesView.astro'],
   '/contact/': ['src/views/ContactView.astro'],
+  '/start/': ['src/views/StartView.astro', 'src/components/ScopeWizard.astro', 'src/data/wizard.ts'],
   '/developers/': ['src/pages/developers.astro', 'src/lib/api-catalog.ts'],
 };
 

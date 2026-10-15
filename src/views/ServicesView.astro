@@ -40,6 +40,8 @@ const ld = graph(
     ))}
   </section>
 
+  <p class="wrap guide"><a class="btn" href={localize('/start', lang)}>{t('start.link')} <span class="arrow">→</span></a></p>
+
   <section class="wrap section" aria-labelledby="packages-h">
     <div class="section-head"><h2 id="packages-h">{t('services.packages')}</h2><p class="dim lede">{t('services.packages.lede')}</p></div>
     <div class="grid grid-2">{packages.map((p) => <PackageCard pkg={p} lang={lang} />)}</div>
@@ -98,6 +100,7 @@ const ld = graph(
 
 <style>
   .paths { padding-top: 0.5rem; }
+  .guide { margin-top: 1.5rem; }
   .path {
     display: grid; gap: 0.5rem; padding: 1.3rem 1.4rem; border: 2px solid var(--line-strong); background: var(--bg-2);
     text-decoration: none; color: var(--fg); box-shadow: 4px 4px 0 var(--shadow-c);

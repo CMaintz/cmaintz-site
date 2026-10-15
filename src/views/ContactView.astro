@@ -3,7 +3,7 @@ import { PUBLIC_TURNSTILE_SITE_KEY } from 'astro:env/client';
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import Window from '../components/Window.astro';
-import { type Lang, useT } from '../i18n/ui';
+import { type Lang, localize, useT } from '../i18n/ui';
 import { site } from '../data/site';
 import { packages } from '../data/packages';
 
@@ -47,6 +47,7 @@ const packageTitles = JSON.stringify(Object.fromEntries(packages.map((p) => [p.i
       <h2 class="mono label-h">{t('contact.direct')}</h2>
       <a class="big" href={`mailto:${site.email}`}>{site.email}</a>
       {site.booking && <a class="btn btn--sm" href={site.booking} rel="noopener">{t('services.book')} ↗</a>}
+      <a class="mono" href={localize('/start', lang)}>{t('start.link')} →</a>
       <a class="mono" href={site.socials.github}>GitHub ↗</a>
       {site.socials.linkedin && <a class="mono" href={site.socials.linkedin}>LinkedIn ↗</a>}
       <p class="mono faint small">{site.location} · CET/CEST</p>
@@ -103,16 +104,23 @@ const packageTitles = JSON.stringify(Object.fromEntries(packages.map((p) => [p.i
   }
 
   /** ?package=<id> from a /services starter: name it at the top of the message. */
-  function presetPackage() {
-    const id = new URLSearchParams(location.search).get('package');
+  /** Text for the message field: the /start wizard's brief, else the chosen package's name. */
+  function presetText(q: URLSearchParams) {
+    const brief = q.get('message');
+    if (brief) return brief.slice(0, 2000);
+    const id = q.get('package');
     const titles = JSON.parse(form?.dataset.packages ?? '{}') as Record<string, string>;
-    const title = id && Object.hasOwn(titles, id) ? titles[id] : undefined;
+    return id && Object.hasOwn(titles, id) ? `${form!.dataset.packageLabel} ${titles[id]}\n\n` : '';
+  }
+
+  function presetMessage() {
     const message = form?.querySelector('textarea');
-    if (title && message && !message.value) message.value = `${form!.dataset.packageLabel} ${title}\n\n`;
+    const text = presetText(new URLSearchParams(location.search));
+    if (text && message && !message.value) message.value = text;
   }
 
   presetTopic();
-  presetPackage();
+  presetMessage();
   showRedirectResult();
   form?.addEventListener('submit', onSubmit);
 </script>
