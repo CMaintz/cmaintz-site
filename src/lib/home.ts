@@ -1,4 +1,3 @@
-// Homepage helpers.
 import { github } from './content';
 
 export function recentRepos(n = 5) {

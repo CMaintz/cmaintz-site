@@ -38,8 +38,18 @@ export const services: Service[] = [
       da: 'Copy-paste mellem webshop, regnskab, regneark og mail - klaret af systemerne i stedet for af medarbejderne. Jeg finder de opgaver, der æder jeres uge, og forbinder de værktøjer, I allerede har.',
     },
     deliverables: {
-      en: ['Map of manual tasks & time spent', 'Integrations between your systems', 'Error alerts instead of silent failures', 'Plain-language hand-over'],
-      da: ['Overblik over manuelle opgaver og tidsforbrug', 'Integrationer mellem jeres systemer', 'Fejlbeskeder i stedet for stille fejl', 'Overdragelse i almindeligt sprog'],
+      en: [
+        'Map of manual tasks & time spent',
+        'Integrations between your systems',
+        'Error alerts instead of silent failures',
+        'Plain-language hand-over',
+      ],
+      da: [
+        'Overblik over manuelle opgaver og tidsforbrug',
+        'Integrationer mellem jeres systemer',
+        'Fejlbeskeder i stedet for stille fejl',
+        'Overdragelse i almindeligt sprog',
+      ],
     },
     pricing: 'either',
   },
@@ -76,7 +86,7 @@ export const services: Service[] = [
     audience: 'business',
     areas: ['ai'],
     glyph: '◈',
-    title: { en: 'AI integrations', da: 'AI-integrationer' },
+    title: { en: 'AI automation & integrations', da: 'AI-automatisering & integrationer' },
     body: {
       en: 'LLM features that survive production: schema-enforced output, retries and idempotency, confidence scoring, human-in-the-loop review and an audit trail. Any major LLM provider, behind an abstraction you can swap.',
       da: 'LLM-funktioner, der holder i produktion: skemabundet output, retries og idempotens, confidence-scoring, menneskelig godkendelse og audit trail. Enhver større LLM-udbyder bag en abstraktion, der kan udskiftes.',
@@ -89,7 +99,13 @@ export const services: Service[] = [
         'Guardrails & fallbacks',
         'Cost estimate',
       ],
-      da: ['Feasibility-spike', 'Evaluering af prompts og modeller', 'Asynkron pipeline', 'Guardrails & fallbacks', 'Omkostningsestimat'],
+      da: [
+        'Feasibility-spike',
+        'Evaluering af prompts og modeller',
+        'Asynkron pipeline',
+        'Guardrails & fallbacks',
+        'Omkostningsestimat',
+      ],
     },
     pricing: 'quote',
   },
@@ -105,7 +121,12 @@ export const services: Service[] = [
     },
     deliverables: {
       en: ['Claude Code / Codex setup', 'Custom skills & hooks', 'AGENTS.md conventions', 'Team workshop'],
-      da: ['Opsætning af Claude Code / Codex', 'Skræddersyede skills & hooks', 'AGENTS.md-konventioner', 'Workshop for teamet'],
+      da: [
+        'Opsætning af Claude Code / Codex',
+        'Skræddersyede skills & hooks',
+        'AGENTS.md-konventioner',
+        'Workshop for teamet',
+      ],
     },
     pricing: 'quote',
   },
@@ -156,7 +177,20 @@ export const services: Service[] = [
   },
 ];
 
-export const workLanguages = ['TypeScript', 'JavaScript', 'Java', 'Kotlin', 'C#', 'PHP', 'Swift', 'Python', 'Go', 'Rust', 'SQL', 'Shell'];
+export const workLanguages = [
+  'TypeScript',
+  'JavaScript',
+  'Java',
+  'Kotlin',
+  'C#',
+  'PHP',
+  'Swift',
+  'Python',
+  'Go',
+  'Rust',
+  'SQL',
+  'Shell',
+];
 
 export const process: Record<Lang, { step: string; body: string }[]> = {
   en: [

@@ -7,6 +7,8 @@ tagline:
 summary:
   en: A movie and TV browser that pulls titles from TMDB, adds IMDb and Rotten Tomatoes scores, shows where each title streams in your country and, on the TV, launches straight into the right streaming app. Same React tree for mouse and remote.
   da: En film- og tv-browser, der henter titler fra TMDB, tilføjer IMDb- og Rotten Tomatoes-scores, viser hvor hver titel streames i dit land og på tv'et åbner den rigtige streaming-app direkte. Samme React-træ til mus og fjernbetjening.
+areas: [backend]
+frontend: true
 category: personal
 order: 8
 featured: true

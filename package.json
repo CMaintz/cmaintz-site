@@ -3,10 +3,13 @@
   "type": "module",
   "version": "0.0.1",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.13.0"
   },
   "scripts": {
+    "prepare": "git config core.hooksPath .githooks",
+    "postinstall": "patch-package",
     "dev": "astro dev",
+    "editor": "astro dev --config astro.editor.config.mjs",
     "build": "astro build && pagefind --site dist/client",
     "preview": "astro preview",
     "astro": "astro",
@@ -20,25 +23,29 @@
     "smoke": "node scripts/smoke-interactions.mjs",
     "test:comments": "node scripts/test-comments-sql.mjs",
     "clip": "node scripts/encode-clip.mjs",
-    "lint:size": "node scripts/check-code-size.mjs"
+    "lint:size": "node scripts/check-code-size.mjs",
+    "crosspost": "node --experimental-strip-types scripts/crosspost.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.3",
     "@astrojs/markdown-remark": "^7.3.1",
     "@astrojs/mdx": "^8.0.2",
+    "@astrojs/react": "^7.0.1",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@fontsource/hanken-grotesk": "^5.3.0",
     "@fontsource/jetbrains-mono": "^5.3.0",
     "@fontsource/silkscreen": "^5.3.0",
+    "@keystatic/astro": "^6.0.0",
+    "@keystatic/core": "^0.6.9",
     "@supabase/supabase-js": "^2.117.2",
     "astro": "^7.3.5",
     "astro-expressive-code": "^0.44.2",
     "astro-mermaid": "^2.1.0",
     "katex": "^0.18.9",
     "mermaid": "^11.17.2",
-    "rehype-katex": "^7.0.1",
-    "remark-math": "^6.0.0"
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
   },
   "allowScripts": {
     "esbuild": true,
@@ -46,17 +53,35 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@astrojs/node": "^11.1.7",
     "@electric-sql/pglite": "^0.5.8",
+    "@eslint/js": "^10.0.1",
+    "@types/hast": "^3.0.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@vitest/coverage-v8": "^5.0.3",
+    "eslint": "^10.12.0",
+    "eslint-plugin-astro": "^2.0.0",
     "ffmpeg-static": "^5.3.0",
+    "globals": "^17.13.0",
     "jscpd": "^5.4.0",
     "knip": "^6.39.0",
     "pagefind": "^1.5.2",
+    "patch-package": "^8.0.1",
     "playwright": "^1.63.0",
+    "prettier": "^3.9.9",
+    "rehype-parse": "^9.0.1",
+    "rehype-remark": "^10.0.1",
+    "rehype-stringify": "^10.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-stringify": "^11.0.0",
     "ts-morph": "^28.0.0",
     "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.1",
+    "unified": "^11.0.5",
     "vite": "^8.3.3",
     "vitest": "^5.0.3",
-    "wrangler": "^4.141.0"
+    "wrangler": "^4.141.0",
+    "yaml": "^2.9.1"
   }
 }

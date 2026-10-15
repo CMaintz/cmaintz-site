@@ -1,0 +1,12 @@
+---
+import katex from 'katex';
+
+// A component rather than $...$ syntax: the Keystatic editor's MDX parser has no math
+// support and reads TeX braces as JS expressions (Thinkmill/keystatic#1319).
+// KaTeX throws on invalid TeX, so a typo fails the build instead of shipping.
+interface Props { expr: string; inline?: boolean }
+const { expr, inline = false } = Astro.props;
+const html = katex.renderToString(expr, { displayMode: !inline });
+---
+
+<Fragment set:html={html} />

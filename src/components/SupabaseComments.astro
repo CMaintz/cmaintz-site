@@ -50,13 +50,24 @@ const text = {
   .list { list-style: none; padding: 0; margin: 0 0 1.5rem; display: grid; gap: 1rem; }
   .list :global(.comment) { border-left: 3px solid var(--line); padding: 0.2rem 0 0.2rem 1rem; }
   .list :global(.comment--empty) { color: var(--fg-faint); font: 0.85rem var(--font-mono); }
-  .list :global(.comment__meta) { display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; margin-bottom: 0.3rem; flex-wrap: wrap; }
+  .list :global(.comment__meta) {
+    display: flex; align-items: center; gap: 0.6rem; font-size: 0.85rem; margin-bottom: 0.3rem; flex-wrap: wrap;
+  }
   .list :global(.comment__meta time) { color: var(--fg-faint); font: 0.75rem var(--font-mono); }
   .list :global(.comment__body) { white-space: pre-wrap; overflow-wrap: anywhere; }
-  .list :global(.badge-initials) { display: inline-grid; place-items: center; min-width: 2.2rem; height: 1.6rem; padding: 0 0.35rem; background: var(--accent); color: var(--accent-ink); font: 600 0.75rem var(--font-mono); }
+  .list :global(.badge-initials) {
+    display: inline-grid; place-items: center; min-width: 2.2rem; height: 1.6rem; padding: 0 0.35rem;
+    background: var(--accent); color: var(--accent-ink); font: 600 0.75rem var(--font-mono);
+  }
   .list :global(.avatar) { width: 1.6rem; height: 1.6rem; border: 1px solid var(--line); object-fit: cover; }
-  .list :global(.avatar--blank) { display: inline-grid; place-items: center; background: var(--accent); color: var(--accent-ink); font: 0.7rem var(--font-pixel); }
-  .list :global(.comment__delete), .auth :global(.linkish) { background: none; border: 0; padding: 0; color: var(--fg-dim); font: 0.75rem var(--font-mono); text-decoration: underline; cursor: pointer; }
+  .list :global(.avatar--blank) {
+    display: inline-grid; place-items: center; background: var(--accent); color: var(--accent-ink);
+    font: 0.7rem var(--font-pixel);
+  }
+  .list :global(.comment__delete), .auth :global(.linkish) {
+    background: none; border: 0; padding: 0; color: var(--fg-dim); font: 0.75rem var(--font-mono);
+    text-decoration: underline; cursor: pointer;
+  }
   .list :global(.comment__delete) { margin-left: auto; }
   .auth :global(.providers) { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.6rem; }
   .form { display: grid; gap: 0.7rem; justify-items: start; margin-top: 1rem; }

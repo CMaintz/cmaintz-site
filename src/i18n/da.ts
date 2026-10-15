@@ -1,4 +1,3 @@
-// Danish UI strings. Must have exactly the same keys as en.ts.
 import type { en } from './en';
 
 export const da: Record<keyof typeof en, string> = {
@@ -16,7 +15,10 @@ export const da: Record<keyof typeof en, string> = {
   'cmd.hint': 'Søg eller hop til…',
   'cmd.open': 'Åbn kommandopalet',
   'theme.toggle': 'Skift lyst/mørkt',
-  'crt.toggle': 'Slå CRT-effekter til/fra',
+  'fx.menu': 'Skærmeffekter',
+  'fx.scan': 'Scanlines',
+  'fx.glow': 'Glød',
+  'fx.motion': 'Baggrundsanimation',
   'lang.label': 'Sprog',
   'home.status': 'åben for nye roller',
   'home.hello': 'Hej, jeg hedder Christoffer.',
@@ -33,9 +35,13 @@ export const da: Record<keyof typeof en, string> = {
   'home.cta.title': 'Har du noget, der skal bygges?',
   'home.cta.body': 'Jeg søger fuldtidsstilling og tager gerne freelance- og konsulentopgaver i mellemtiden.',
   'focus.dx.title': 'Developer Experience',
-  'focus.dx.body': 'Hurtige feedback-loops, fornuftige standarder og værktøjer, der fjerner friktion i stedet for at tilføje ceremoni.',
+  'focus.dx.body':
+    'Hurtige feedback-loops, fornuftige standarder og værktøjer, der fjerner friktion i stedet for at tilføje ceremoni.',
   'focus.devops.title': 'DevOps & CI/CD',
   'focus.devops.body': 'Genbrugelige pipelines, deterministiske kvalitets-gates, supply-chain- og secret-scanning.',
+  'focus.backend.title': 'Backend',
+  'focus.backend.body':
+    'API’er og datamodeller bygget omkring domænet, med køer og retries, hvor afhængigheder er langsomme.',
   'focus.platform.title': 'Platform & infrastruktur',
   'focus.platform.body': 'Asfalterede veje: fastlåste toolchains, scaffolding, config-as-code og policy-as-code.',
   'focus.ai.title': 'AI-enablement',
@@ -54,6 +60,9 @@ export const da: Record<keyof typeof en, string> = {
   'projects.lede':
     'Produktionsarbejde, open source-værktøjer, personlige projekter og bedømte eksamensprojekter. Repo-data synkroniseres fra GitHub.',
   'projects.filter.all': 'alle',
+  'projects.filter.tech': 'Bygget med',
+  'projects.filter.ai': '✦ AI-drevet',
+  'projects.filter.frontend': '✦ Frontend',
   'projects.cat.professional': 'professionelt',
   'projects.cat.open-source': 'open source',
   'projects.cat.personal': 'personligt',
@@ -85,6 +94,7 @@ export const da: Record<keyof typeof en, string> = {
   'blog.rss': 'RSS-feed',
   'blog.back': 'Alle indlæg',
   'blog.updated': 'Opdateret',
+  'blog.by': 'af',
   'blog.toc': 'På denne side',
   'blog.empty': 'Ingen indlæg endnu.',
   'comments.title': 'Kommentarer',
@@ -101,7 +111,8 @@ export const da: Record<keyof typeof en, string> = {
   'comments.delete': 'Slet',
   'comments.error': 'Noget gik galt. Prøv igen.',
   'comments.loading': 'Indlæser kommentarer…',
-  'comments.privacy': 'Kun dine initialer vises og gemmes ved din kommentar, aldrig dit navn eller billede. Gemt i EU (Supabase). Du kan altid slette dine kommentarer.',
+  'comments.privacy':
+    'Kun dine initialer vises og gemmes ved din kommentar, aldrig dit navn eller billede. Gemt i EU (Supabase). Du kan altid slette dine kommentarer.',
   'about.title': 'Om mig',
   'about.lede':
     'Udvikler fra Aarhus. Konsulent i DevOps, automatisering og AI-assisted development, med et forretningskritisk AI-system bag mig og en vane med at bygge de værktøjer, jeg selv mangler.',
@@ -119,7 +130,7 @@ export const da: Record<keyof typeof en, string> = {
   'about.funfact': 'Fun fact: Jeg byggede min første hjemmeside til min fars forretning, da jeg var 13.',
   'services.title': 'Ydelser',
   'services.lede':
-    'Mindre manuelt arbejde for danske virksomheder, bedre værktøjer for udviklingsteams. Startpakker til fast pris, afgrænsede projekter eller timebasis - remote eller på stedet i Aarhus.',
+    'Mindre manuelt arbejde for danske virksomheder, bedre værktøjer for udviklingsteams.\nStartpakker til fast pris, afgrænsede projekter eller timebasis - remote eller på stedet i Aarhus.',
   'services.pricing': 'Priser',
   'services.pricing.body':
     'Timepris fra {rate} kr. ekskl. moms. Opgaver til fast pris får et tilbud efter afgrænsning, fordi prisen afhænger af kompleksiteten. Det første 30-minutters opkald er gratis.',
@@ -147,8 +158,10 @@ export const da: Record<keyof typeof en, string> = {
   'services.case.solution': 'Det byggede jeg',
   'services.case.read': 'Hele casen',
   'services.book': 'Book et opkald på 20 min',
+  'services.faq': 'Ofte stillede spørgsmål',
   'contact.title': 'Kontakt',
-  'contact.lede': 'Jobmuligheder, freelance, konsulentopgaver eller bare et hej. Jeg svarer typisk inden for en dag eller to.',
+  'contact.lede':
+    'Jobmuligheder, freelance, konsulentopgaver eller bare et hej.\nJeg svarer typisk inden for en dag eller to.',
   'contact.name': 'Navn',
   'contact.email': 'E-mail',
   'contact.company': 'Virksomhed (valgfrit)',

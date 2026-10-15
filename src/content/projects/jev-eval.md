@@ -8,6 +8,7 @@ summary:
   en: A zero-dependency Python CLI and library that reports Jev's accuracy and calibration on your own labeled data, then recommends the confidence threshold for "auto-decide the confident cases, escalate the rest" - with an out-of-bag bootstrap so the number isn't flattering itself.
   da: Et afhængighedsfrit Python-CLI og -bibliotek, der måler Jevs nøjagtighed og kalibrering på dine egne mærkede data og derefter anbefaler confidence-grænsen for "afgør de sikre tilfælde automatisk, eskaler resten" - med out-of-bag bootstrap, så tallet ikke smigrer sig selv.
 areas: [ai]
+aiPowered: true
 category: open-source
 order: 14
 role: Sole developer

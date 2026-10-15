@@ -30,7 +30,8 @@ function chunks(file, text) {
   }));
 }
 
-const isFunction = (n) => ts.isFunctionDeclaration(n) || ts.isFunctionExpression(n) || ts.isArrowFunction(n) || ts.isMethodDeclaration(n);
+const isFunction = (n) =>
+  ts.isFunctionDeclaration(n) || ts.isFunctionExpression(n) || ts.isArrowFunction(n) || ts.isMethodDeclaration(n);
 
 const nameOf = (n) => n.name?.getText?.() ?? (ts.isVariableDeclaration(n.parent) ? n.parent.name.getText() : '');
 const TWO_THINGS = /[a-z]And[A-Z]/;
@@ -39,7 +40,8 @@ function badNames(code) {
   const sf = ts.createSourceFile('x.ts', code, ts.ScriptTarget.Latest, true);
   const found = [];
   const visit = (node) => {
-    if (isFunction(node) && TWO_THINGS.test(nameOf(node))) found.push({ line: sf.getLineAndCharacterOfPosition(node.getStart()).line + 1, name: nameOf(node) });
+    if (isFunction(node) && TWO_THINGS.test(nameOf(node)))
+      found.push({ line: sf.getLineAndCharacterOfPosition(node.getStart()).line + 1, name: nameOf(node) });
     ts.forEachChild(node, visit);
   };
   visit(sf);
@@ -63,12 +65,10 @@ function longFunctions(code) {
 
 function functionProblems(file, text) {
   if (file.endsWith('.css')) return [];
-  return chunks(file, text).flatMap(({ code, offset }) =>
-    [
-      ...longFunctions(code).map((f) => `${file}:${f.line + offset} function is ${f.length} lines (max ${MAX})`),
-      ...badNames(code).map((f) => `${file}:${f.line + offset} "${f.name}" sounds like two functions`),
-    ],
-  );
+  return chunks(file, text).flatMap(({ code, offset }) => [
+    ...longFunctions(code).map((f) => `${file}:${f.line + offset} function is ${f.length} lines (max ${MAX})`),
+    ...badNames(code).map((f) => `${file}:${f.line + offset} "${f.name}" sounds like two functions`),
+  ]);
 }
 
 function fileProblems(file, text) {
@@ -83,5 +83,7 @@ function report(file) {
 
 const problems = ROOTS.flatMap(walk).flatMap(report);
 problems.forEach((p) => console.log(p));
-console.log(problems.length ? `\n${problems.length} problem(s)` : `all functions <= ${MAX} lines, all files <= ${MAX_FILE} lines`);
+console.log(
+  problems.length ? `\n${problems.length} problem(s)` : `all functions <= ${MAX} lines, all files <= ${MAX_FILE} lines`,
+);
 process.exit(problems.length ? 1 : 0);

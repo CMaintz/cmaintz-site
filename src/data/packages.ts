@@ -32,8 +32,16 @@ export const packages: Package[] = [
       da: 'Fortæl mig, hvor tiden går hen - eller giv mig adgang til et repo - og få de tre ting, jeg ville løse først, på skrift. Helt uforpligtende.',
     },
     includes: {
-      en: ['Businesses: your top 3 automation candidates', 'Dev teams: a 1-page CI & code-health check', 'An honest "not worth it" if that’s the answer'],
-      da: ['Virksomheder: jeres 3 bedste kandidater til automatisering', 'Udviklingsteams: et 1-sides tjek af CI og kodekvalitet', 'Et ærligt "det kan ikke betale sig", hvis det er svaret'],
+      en: [
+        'Businesses: your top 3 automation candidates',
+        'Dev teams: a 1-page CI & code-health check',
+        'An honest "not worth it" if that’s the answer',
+      ],
+      da: [
+        'Virksomheder: jeres 3 bedste kandidater til automatisering',
+        'Udviklingsteams: et 1-sides tjek af CI og kodekvalitet',
+        'Et ærligt "det kan ikke betale sig", hvis det er svaret',
+      ],
     },
   },
   {
@@ -48,8 +56,16 @@ export const packages: Package[] = [
       da: 'Vi gennemgår, hvordan arbejdet reelt flyder gennem virksomheden, og I får en prioriteret plan: hvad der skal automatiseres, hvad det sparer, og hvad det koster.',
     },
     includes: {
-      en: ['Workshop on-site in Aarhus or online', 'Map of manual tasks and hours spent', 'Prioritised plan with rough prices'],
-      da: ['Workshop i Aarhus eller online', 'Overblik over manuelle opgaver og timeforbrug', 'Prioriteret plan med vejledende priser'],
+      en: [
+        'Workshop on-site in Aarhus or online',
+        'Map of manual tasks and hours spent',
+        'Prioritised plan with rough prices',
+      ],
+      da: [
+        'Workshop i Aarhus eller online',
+        'Overblik over manuelle opgaver og timeforbrug',
+        'Prioriteret plan med vejledende priser',
+      ],
     },
   },
   {
@@ -65,7 +81,11 @@ export const packages: Package[] = [
     },
     includes: {
       en: ['Working prototype on your data', 'Measured quality, not a demo', 'Go / no-go report with running costs'],
-      da: ['Fungerende prototype på jeres data', 'Målt kvalitet, ikke bare en demo', 'Go / no-go-rapport med driftsomkostninger'],
+      da: [
+        'Fungerende prototype på jeres data',
+        'Målt kvalitet, ikke bare en demo',
+        'Go / no-go-rapport med driftsomkostninger',
+      ],
     },
   },
   {

@@ -9,10 +9,14 @@ const { lang, slug } = Astro.props;
 const t = useT(lang);
 // Supabase is preferred; giscus is the fallback when only its IDs are set.
 const useSupabase = Boolean(PUBLIC_SUPABASE_URL && PUBLIC_SUPABASE_ANON_KEY);
-const configured = Boolean(PUBLIC_GISCUS_REPO && PUBLIC_GISCUS_REPO_ID && PUBLIC_GISCUS_CATEGORY && PUBLIC_GISCUS_CATEGORY_ID);
-const cfg = configured
-  ? { repo: PUBLIC_GISCUS_REPO, repoId: PUBLIC_GISCUS_REPO_ID, category: PUBLIC_GISCUS_CATEGORY, categoryId: PUBLIC_GISCUS_CATEGORY_ID, lang }
-  : null;
+const giscus = {
+  repo: PUBLIC_GISCUS_REPO,
+  repoId: PUBLIC_GISCUS_REPO_ID,
+  category: PUBLIC_GISCUS_CATEGORY,
+  categoryId: PUBLIC_GISCUS_CATEGORY_ID,
+};
+const configured = Object.values(giscus).every(Boolean);
+const cfg = configured ? { ...giscus, lang } : null;
 ---
 
 <section class="comments" aria-labelledby="comments-h" id="comments">
@@ -62,7 +66,7 @@ const cfg = configured
 </script>
 
 <style>
-  .comments { margin-top: 4rem; padding-top: 2rem; border-top: 2px dashed var(--line); max-width: 44rem; }
+  .comments { margin-top: 4rem; padding-top: 2rem; border-top: 2px dashed var(--line); max-width: var(--measure); }
   h2 { font-size: 1rem; color: var(--fg-dim); margin-bottom: 1.2rem; }
   .gate .win__body { display: grid; gap: 1rem; justify-items: start; }
   .off { font-size: 0.85rem; color: var(--fg-faint); border: 1px dashed var(--line); padding: 0.8rem 1rem; }

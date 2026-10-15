@@ -38,7 +38,14 @@ describe('parseInquiry', () => {
   });
 
   it('defaults missing fields to empty strings and the topic to "other"', () => {
-    expect(parseInquiry(new FormData())).toEqual({ name: '', email: '', company: '', topic: 'other', budget: '', message: '' });
+    expect(parseInquiry(new FormData())).toEqual({
+      name: '',
+      email: '',
+      company: '',
+      topic: 'other',
+      budget: '',
+      message: '',
+    });
   });
 });
 
@@ -116,7 +123,8 @@ describe('passesTurnstile request', () => {
     const [url, init] = requestOf(fetch);
     expect(url).toBe('https://challenges.cloudflare.com/turnstile/v0/siteverify');
     expect(init.method).toBe('POST');
-    expect(Object.fromEntries(init.body as URLSearchParams)).toEqual({ secret: 'secret', response: 'token-123', remoteip: '1.2.3.4' });
+    const sent = Object.fromEntries(init.body as URLSearchParams);
+    expect(sent).toEqual({ secret: 'secret', response: 'token-123', remoteip: '1.2.3.4' });
   });
 
   it('omits remoteip when the client IP is unknown', async () => {

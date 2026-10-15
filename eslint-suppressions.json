@@ -1,0 +1,27 @@
+{
+  "scripts/lib/serve-static.mjs": {
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "scripts/screenshots.mjs": {
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/components/DisplayMenu.astro": {
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/components/Header.astro": {
+    "no-empty": {
+      "count": 1
+    }
+  },
+  "src/layouts/Base.astro": {
+    "no-empty": {
+      "count": 1
+    }
+  }
+}

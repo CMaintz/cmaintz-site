@@ -19,7 +19,10 @@ export interface Job {
 
 export const basics = {
   name: 'Christoffer Maintz',
-  label: { en: 'Software Developer - DevOps, Developer Experience & AI', da: 'Softwareudvikler - DevOps, Developer Experience & AI' } as L,
+  label: {
+    en: 'Software Developer - DevOps, Developer Experience & AI',
+    da: 'Softwareudvikler - DevOps, Developer Experience & AI',
+  } as L,
   summary: {
     en: 'Developer (AP Degree in Computer Science) with hands-on experience building and running production-critical systems. I work across backend, DevOps and developer tooling: CI/CD pipelines and quality gates, containerised and reproducible environments, and AI integrations with the guardrails needed to trust them. As sole developer I built a business-critical AI automation system that is still in daily use, and today I work as a consultant on DevOps, automation and AI-assisted development.',
     da: 'Datamatiker med praktisk erfaring fra udvikling og drift af produktionskritiske systemer. Jeg arbejder på tværs af backend, DevOps og udviklerværktøjer: CI/CD-pipelines og quality gates, containeriserede og reproducerbare miljøer samt AI-integrationer med de guardrails, der skal til for at kunne stole på dem. Som eneste udvikler byggede jeg et forretningskritisk AI-automatiseringssystem, der fortsat er i daglig drift, og i dag arbejder jeg som konsulent med DevOps, automatisering og AI-assisted development.',
@@ -57,7 +60,10 @@ export const work: Job[] = [
   },
   {
     org: 'WEXO A/S',
-    role: { en: 'Software Developer / Backend Engineer (intern)', da: 'Softwareudvikler / Backend Software Engineer (praktikant)' },
+    role: {
+      en: 'Software Developer / Backend Engineer (intern)',
+      da: 'Softwareudvikler / Backend Software Engineer (praktikant)',
+    },
     start: '2025-08',
     end: '2026-01',
     summary: {
@@ -114,7 +120,10 @@ export const earlier: Job[] = [
 export const education = [
   {
     institution: 'Erhvervsakademi Aarhus (Business Academy Aarhus)',
-    degree: { en: 'AP Degree in Computer Science (Datamatiker)', da: 'Datamatiker (AP Degree in Computer Science)' } as L,
+    degree: {
+      en: 'AP Degree in Computer Science (Datamatiker)',
+      da: 'Datamatiker (AP Degree in Computer Science)',
+    } as L,
     start: '2023-08',
     end: '2026-01',
     note: { en: 'Electives: Advanced Databases, iOS', da: 'Valgfag: Avancerede Databaser, iOS' } as L,
@@ -129,7 +138,10 @@ export const education = [
 
 export const courses = [
   {
-    name: { en: 'Leadership, Communication & Employee Development', da: 'Ledelse, Kommunikation & Medarbejderudvikling' } as L,
+    name: {
+      en: 'Leadership, Communication & Employee Development',
+      da: 'Ledelse, Kommunikation & Medarbejderudvikling',
+    } as L,
     org: 'Niels Holte Kurser',
     year: '2018',
   },
@@ -184,12 +196,28 @@ export const skills: { name: L; keywords: string[] }[] = [
     ],
   },
   {
-    name: { en: 'Cloud, data & messaging', da: 'Cloud, data & messaging' },
+    name: { en: 'Backend', da: 'Backend' },
+    keywords: [
+      'ASP.NET Core & MVC',
+      'Spring Boot',
+      'Quarkus',
+      'Symfony / Shopware 6',
+      'Node.js / Express',
+      'REST APIs',
+      'RabbitMQ',
+      'Symfony Messenger',
+    ],
+  },
+  {
+    name: { en: 'Frontend & apps', da: 'Frontend & apps' },
+    keywords: ['Angular', 'React', 'Vue', 'Astro', 'SwiftUI', 'WPF', 'JavaFX'],
+  },
+  {
+    name: { en: 'Cloud & data', da: 'Cloud & data' },
     keywords: [
       'Azure (Functions, SQL)',
       'Cloudflare',
       'Serverless',
-      'RabbitMQ',
       'PostgreSQL',
       'MS SQL / T-SQL',
       'MySQL',
@@ -201,28 +229,11 @@ export const skills: { name: L; keywords: string[] }[] = [
     ],
   },
   {
-    name: { en: 'Programming languages', da: 'Programmeringssprog' },
+    name: { en: 'Languages', da: 'Programmeringssprog' },
     keywords: ['C# / .NET', 'Java', 'PHP', 'TypeScript', 'JavaScript', 'Python', 'Kotlin', 'Swift', 'SQL', 'Shell'],
   },
   {
-    name: { en: 'Frameworks', da: 'Frameworks' },
-    keywords: [
-      'ASP.NET Core & MVC',
-      'Spring Boot',
-      'Quarkus',
-      'Symfony / Shopware 6',
-      'Node.js / Express',
-      'Angular',
-      'React',
-      'Vue',
-      'Astro',
-      'SwiftUI',
-      'WPF',
-      'JavaFX',
-    ],
-  },
-  {
-    name: { en: 'Architecture & practice', da: 'Arkitektur & praksis' },
+    name: { en: 'Architecture & craft', da: 'Arkitektur & håndværk' },
     keywords: [
       'Hexagonal / clean architecture',
       'Event-driven architecture',

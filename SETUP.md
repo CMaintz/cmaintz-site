@@ -32,13 +32,22 @@ Public repo `CMaintz/cmaintz-site`. CI (`ci.yml`) builds and runs `npm run check
 The `deploy` job in `ci.yml` runs on every push to `main` once the build, tests and smoke test pass, so a broken build never ships. It needs:
 
 - **Secret** `CLOUDFLARE_API_TOKEN`: Cloudflare -> My Profile -> API Tokens -> Create Token -> "Edit Cloudflare Workers" template, scoped to this account and the `maintz.dev` zone.
-- **Variables** `CLOUDFLARE_ACCOUNT_ID`, `SITE_URL` and the `PUBLIC_*` values from `.env`. They end up in the client bundle anyway, so they're variables, not secrets. Add any new `PUBLIC_*` value to both the repo variables and the deploy job's `env`.
+- **Variables** `CLOUDFLARE_ACCOUNT_ID`, `SITE_URL` and the `PUBLIC_*` values from `.env`. They end up in the client bundle anyway, so they're variables, not secrets. Add any new `PUBLIC_*` value to the repo variables and to the `env` of both the deploy and preview jobs.
+
+### PR previews
+
+The `preview` job uploads every PR from this repo as a Worker version that isn't deployed, at `https://pr-<number>-cmaintz-site.<subdomain>.workers.dev`, and comments the link on the PR. Merging deploys as before.
+
+- Previews run the PR's code with the production Worker's secrets and bindings and the production Supabase project, so a comment or contact message sent from a preview is real.
+- Canonical links and share cards in a preview still point at `maintz.dev`.
+- Sign-in on a preview needs `https://*-cmaintz-site.<subdomain>.workers.dev/**` in Supabase -> Authentication -> URL Configuration -> Redirect URLs.
+- **Secrets:** once a preview exists, the newest version isn't the deployed one, and `wrangler secret put` refuses to run. Re-run the latest `main` deploy first (Actions -> ci -> the newest `main` run -> Re-run all jobs), then `wrangler secret put`. Don't use `wrangler versions secret put` here: it builds the new version on the newest upload, which may be a PR's code.
 
 ## Phase 3 - Contact form (Resend)
 
 1. **You:** sign up at https://resend.com **with `cmaintz@outlook.com`**. Until you verify a domain, Resend's test sender can only deliver to your own account address, which is exactly the inbox we want.
 2. **You:** Resend -> API Keys -> Create (permission "Sending access").
-3. **You:** in your own terminal (not the chat `!`): `npx wrangler secret put RESEND_API_KEY --name cmaintz-site` and paste the key when prompted.
+3. **You:** in your own terminal (not the chat `!`): `npx wrangler secret put RESEND_API_KEY --name cmaintz-site` and paste the key when prompted. If it refuses, see "Secrets" under PR previews above.
 4. **Claude:** submit the live form once and you confirm the mail arrived. This is the one path that hasn't been tested yet.
 
 Later, with a domain: verify it in Resend, then `npx wrangler secret put CONTACT_FROM_EMAIL --name cmaintz-site` (e.g. `maintz.dev contact form <contact@maintz.dev>`) and update `CONTACT_TO_EMAIL` if you get a domain mailbox.
@@ -81,17 +90,40 @@ Free tier: 2 active projects, 50,000 monthly active users, 500 MB database. Free
 2. **You:** Workers & Pages -> `cmaintz-site` -> Settings -> Domains & Routes -> Add custom domain.
 3. **Claude:** `SITE_URL=https://yourdomain.dk`, rebuild, redeploy; add the domain to Turnstile hostnames and Supabase redirect URLs; verify it in Resend and switch the sender address.
 
+## Phase 8 - Blog editor (Keystatic) and cross-posting
+
+The editor lives at `https://maintz.dev/keystatic`. It signs in with GitHub and commits through a GitHub App, one branch per post (`post/<slug>`). The PR then goes through the gate like any other change, and merging it publishes the post. `draft: true` still hides a merged post.
+
+1. **You:** create a GitHub App: GitHub -> Settings -> Developer settings -> GitHub Apps -> New.
+   - Homepage URL: `https://maintz.dev`.
+   - Callback URL: `https://maintz.dev/api/keystatic/github/oauth/callback`. Add `http://127.0.0.1:4321/api/keystatic/github/oauth/callback` as well if you want to sign in locally.
+   - Tick "Expire user authorization tokens" and "Request user authorization (OAuth) during installation". Untick Webhook "Active".
+   - Repository permissions: Contents **Read & write**, Pull requests **Read & write**, Metadata Read.
+   - "Only on this account". Create it, generate a client secret, then **Install App** on `CMaintz/cmaintz-site` only.
+2. **You:** in your own terminal:
+   - `npx wrangler secret put KEYSTATIC_GITHUB_CLIENT_ID --name cmaintz-site` (the app's Client ID).
+   - `npx wrangler secret put KEYSTATIC_GITHUB_CLIENT_SECRET --name cmaintz-site`.
+   - `npx wrangler secret put KEYSTATIC_SECRET --name cmaintz-site` (any random string of 40 or more characters, e.g. `openssl rand -hex 32`).
+3. **You:** add the GitHub repo variable `PUBLIC_KEYSTATIC_GITHUB_APP_SLUG` (the app's URL name), then re-run the latest `main` deploy. It's a build-time value.
+4. **Optional:** Cloudflare Zero Trust -> Access -> add a self-hosted application for `maintz.dev/keystatic*` and `maintz.dev/api/keystatic*`, allowing only your email. GitHub sign-in already limits writes to people with access to the repo; this keeps the editor itself private.
+5. **Cross-posting:** in the editor, tick the platforms under "Cross-post when published". After a push to `main` deploys, the `crosspost` job in `ci.yml` (added in a separate workflow PR, as the ruleset guard requires) does the following:
+   - **dev.to:** creates the article with `canonical_url` pointing to maintz.dev, or updates it when the post changed in that push. **You:** dev.to -> Settings -> Extensions -> generate an API key, and add it as the GitHub repo **secret** `DEVTO_API_KEY`. Without the key, this step is skipped.
+   - **LinkedIn:** opens an issue labelled `crosspost` with a drafted post. You edit it, post it by hand, and close the issue.
+   - Try it locally without posting anything: `npm run crosspost -- --dry-run`.
+
+To write locally, run `npm run editor` and open `http://localhost:4321/editor` (it redirects to `/keystatic`). It runs the site with the Node adapter, because Keystatic's local mode edits files on disk and needs Node's `fs`, which the Cloudflare dev server (`npm run dev`) doesn't provide. Commit the changed `.mdx` files as usual. Use `npm run dev` for everything else: there, `/keystatic` loads but can't read posts.
+
 ---
 
 ## Day-to-day
 
 | Task                                                  | Command                                                                                                        |
 | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| New blog post                                         | add `src/content/blog/<slug>.mdx` (see `hello-world.mdx`); `draft: true` hides it in production                |
-| Refresh GitHub data + READMEs                         | `npm run sync` (CI also refreshes, commits and deploys it every Monday)                                                                     |
+| New blog post                                         | write it at `/editor` (Phase 8, or `npm run editor` locally), or add `src/content/blog/<slug>.mdx`; `draft: true` hides it in production |
+| Refresh GitHub data + READMEs                         | `npm run sync` (deploys fetch it hourly; CI commits it every Monday)                                           |
 | Regenerate CV PDFs after editing `src/data/resume.ts` | `npm run build && npm run cv:pdf`                                                                              |
 | Regenerate share images (after a new post or project) | `npm run build && npm run og && npm run build`                                                                 |
 | Add a looping clip to a project                       | `npm run clip -- <recording.mp4> <name> [start] [end]`, then `video: /media/<name>` in the project frontmatter |
 | Redeploy the www redirect (rarely needed)             | `npx wrangler deploy --config redirect-www/wrangler.jsonc`                                                     |
 | Visual / interaction smoke tests                      | `npm run build && npm run shots && npm run smoke`                                                              |
-| Change pricing                                        | `HOURLY_RATE_DKK` in `src/data/services.ts` (services show a pricing type, not amounts)                                                   |
+| Change pricing                                        | `HOURLY_RATE_DKK` in `src/data/services.ts` (services show a pricing type, not amounts)                        |

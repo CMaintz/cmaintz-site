@@ -8,6 +8,7 @@ summary:
   en: A zero-dependency Python library that scores each retrieved passage's relevance to the query with Jev in one batched call, then sorts and filters - at roughly a hundredth of the cost and latency of a hosted reranker.
   da: Et afhængighedsfrit Python-bibliotek, der scorer hver hentet passages relevans for forespørgslen med Jev i ét samlet kald og derefter sorterer og filtrerer - til cirka en hundrededel af prisen og ventetiden for en hostet reranker.
 areas: [ai]
+aiPowered: true
 category: open-source
 order: 15
 role: Sole developer

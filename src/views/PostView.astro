@@ -6,8 +6,12 @@ import PageHead from '../components/PageHead.astro';
 import Pager from '../components/Pager.astro';
 import Comments from '../components/Comments.astro';
 import AreaChips from '../components/AreaChips.astro';
-import { type Lang, useT, formatDate } from '../i18n/ui';
+import Callout from '../components/Callout.astro';
+import MathBlock from '../components/Math.astro';
+import InlineMath from '../components/InlineMath.astro';
+import { type Lang, localize, useT, formatDate, withSlash } from '../i18n/ui';
 import { type Post, readingTime } from '../lib/content';
+import { site } from '../data/site';
 import { graph, breadcrumbLd, personLd, ogImageFor } from '../lib/seo';
 
 interface Props { post: Post; lang: Lang; prev?: Post; next?: Post }
@@ -24,7 +28,7 @@ const posting = {
   description: post.data.description,
   datePublished: post.data.pubDate.toISOString(),
   dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
-  author: { '@id': `${Astro.site}#person` },
+  author: { '@type': 'Person', '@id': `${Astro.site}#person`, name: site.name, url: new URL(localize('/about', 'en'), Astro.site).toString() },
   inLanguage: post.data.lang,
 };
 const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog', '/blog'], [post.data.title, `/blog/${post.id}`]]));
@@ -33,19 +37,21 @@ const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog
 <Base lang={post.data.lang} title={post.data.title} description={post.data.description} type="article" alternates={false} langSwitchPath="/blog" publishedTime={post.data.pubDate} jsonLd={ld} ogImage={ogImageFor('blog', post.id)}>
   <div class="progress" aria-hidden="true"></div>
   <article>
-    <PageHead as="header" back={{ href: '/blog', label: t('blog.back') }} title={post.data.title} lede={post.data.description} glow>
+    <PageHead as="header" back={{ href: localize('/blog', lang), label: t('blog.back') }} title={post.data.title} lede={post.data.description} glow>
       <p slot="before" class="meta mono">
+        <span>{t('blog.by')} <a href={localize('/about', lang)} rel="author">{site.name}</a></span>
+        <span>·</span>
         <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate, lang, { year: 'numeric', month: 'long', day: 'numeric' })}</time>
         <span>·</span><span>{mins} {t('blog.read')}</span>
         {post.data.updatedDate && <><span>·</span><span>{t('blog.updated')} {formatDate(post.data.updatedDate, lang)}</span></>}
       </p>
       <AreaChips areas={post.data.areas} lang={lang} />
-      <ul class="chips">{post.data.tags.map((tag) => <li><a class="chip" href={`/blog/tags/${tag}`}>#{tag}</a></li>)}</ul>
+      <ul class="chips">{post.data.tags.map((tag) => <li><a class="chip" href={localize(`/blog/tags/${tag}`, lang)}>#{tag}</a></li>)}</ul>
     </PageHead>
 
     <div class="wrap layout">
       <div class="prose reading" data-pagefind-body>
-        <Content />
+        <Content components={{ Callout, Math: MathBlock, InlineMath }} />
       </div>
       {toc.length > 2 && (
         <nav class="toc mono" aria-label={t('blog.toc')}>
@@ -59,23 +65,26 @@ const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog
 
     <Pager
       label="Posts"
-      prev={prev && { href: `/blog/${prev.id}`, label: prev.data.title }}
-      next={next && { href: `/blog/${next.id}`, label: next.data.title }}
+      prev={prev && { href: withSlash(`/blog/${prev.id}`), label: prev.data.title }}
+      next={next && { href: withSlash(`/blog/${next.id}`), label: next.data.title }}
     />
   </article>
 </Base>
 
 <style>
-  .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); transform-origin: 0 50%; z-index: 60; transform: scaleX(0); }
+  .progress {
+    position: fixed; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); transform-origin: 0 50%;
+    z-index: 60; transform: scaleX(0);
+  }
   @supports (animation-timeline: scroll()) {
     .progress { animation: grow linear both; animation-timeline: scroll(root); }
   }
   @keyframes grow { to { transform: scaleX(1); } }
   .meta { display: flex; gap: 0.6rem; flex-wrap: wrap; font-size: 0.8rem; color: var(--fg-faint); }
   article :global(.page-head h1) { font-size: clamp(2.2rem, 5vw, 3.6rem); }
-  article :global(.page-head) { max-width: 54rem; margin-inline: auto 0; }
-  .layout { display: grid; grid-template-columns: minmax(0, 44rem) 1fr; gap: 3rem; align-items: start; }
-  /* Reading panel sits above the CRT scanline/vignette layers (z 49-50), so long
+  article :global(.page-head__main) { max-width: 62rem; }
+  .layout { display: grid; grid-template-columns: minmax(0, var(--measure)) 1fr; gap: 3rem; align-items: start; }
+  /* Reading panel sits above the CRT scanline layer (z 50), so long
      text stays crisp while the rest of the page keeps the effect. */
   .reading { position: relative; z-index: 51; background: var(--bg); box-shadow: 0 0 0 1.2rem var(--bg); }
   .toc { position: sticky; top: 5rem; font-size: 0.8rem; border-left: 2px solid var(--line); padding-left: 1rem; }

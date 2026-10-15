@@ -116,7 +116,13 @@ function buildSnapshot(user, repos) {
   return {
     syncedAt: new Date().toISOString(),
     login: LOGIN,
-    profile: { name: user.name, bio: user.bio, avatarUrl: user.avatarUrl, url: user.url, followers: user.followers.totalCount },
+    profile: {
+      name: user.name,
+      bio: user.bio,
+      avatarUrl: user.avatarUrl,
+      url: user.url,
+      followers: user.followers.totalCount,
+    },
     pinned: user.pinnedItems.nodes.map((n) => n.name),
     repos,
   };

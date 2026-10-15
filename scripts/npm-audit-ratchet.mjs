@@ -34,7 +34,9 @@ try {
   /* no stdin */
 }
 if (!raw.trim()) {
-  console.error('npm-audit-ratchet: no audit JSON on stdin — pipe it in:\n  npm audit --json | node scripts/npm-audit-ratchet.mjs');
+  console.error(
+    'npm-audit-ratchet: no audit JSON on stdin — pipe it in:\n  npm audit --json | node scripts/npm-audit-ratchet.mjs',
+  );
   process.exit(2);
 }
 
@@ -48,10 +50,14 @@ const flagged = Object.entries(vulns)
   .map(([name, v]) => ({
     name,
     severity: v.severity,
-    urls: [...new Set((function collect(via, acc = []) {
-      for (const x of via || []) if (x && typeof x === 'object' && x.url) acc.push(x.url);
-      return acc;
-    })(v.via))],
+    urls: [
+      ...new Set(
+        (function collect(via, acc = []) {
+          for (const x of via || []) if (x && typeof x === 'object' && x.url) acc.push(x.url);
+          return acc;
+        })(v.via),
+      ),
+    ],
   }));
 
 // Allowlist — accepted[].package is the vulnerable package name; reason is required.
@@ -61,7 +67,9 @@ if (existsSync(allowlistPath)) {
   accepted = al.accepted || [];
   const missingReason = accepted.filter((e) => !e.package || !e.reason);
   if (missingReason.length) {
-    console.error(`npm-audit-ratchet: every allowlist entry needs {package, reason}; bad: ${JSON.stringify(missingReason)}`);
+    console.error(
+      `npm-audit-ratchet: every allowlist entry needs {package, reason}; bad: ${JSON.stringify(missingReason)}`,
+    );
     process.exit(2);
   }
 }
@@ -87,7 +95,9 @@ if (unaccepted.length) {
 }
 if (stale.length) {
   ok = false;
-  console.error(`\n❌ ${stale.length} stale allowlist entry(ies) — the advisory is gone, so PRUNE it (ratchets only shrink):`);
+  console.error(
+    `\n❌ ${stale.length} stale allowlist entry(ies) — the advisory is gone, so PRUNE it (ratchets only shrink):`,
+  );
   for (const e of stale) console.error(`  • ${e.package}`);
 }
 if (ok) console.log(`✅ audit ok — no un-accepted ${level}+ advisories.`);

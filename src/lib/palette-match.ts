@@ -1,4 +1,3 @@
-
 const BOUNDARY = /[\s/\-_.,:()]/;
 
 const isWordStart = (s: string, i: number) => i === 0 || BOUNDARY.test(s[i - 1]);

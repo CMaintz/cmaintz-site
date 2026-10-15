@@ -11,15 +11,23 @@ import { packages } from '../data/packages';
 import { cases } from '../data/cases';
 import { values } from '../data/values';
 import { site } from '../data/site';
+import { faq } from '../data/faq';
+import { graph, personLd, offerCatalogLd, faqLd, breadcrumbLd } from '../lib/seo';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useT(lang);
 const audiences: Audience[] = ['business', 'tech'];
 const contact = localize('/contact', lang);
+const ld = graph(
+  personLd(Astro.site),
+  offerCatalogLd(Astro.site, lang),
+  faqLd(lang),
+  breadcrumbLd(Astro.site, [[t('services.title'), localize('/services', lang)]]),
+);
 ---
 
-<Base lang={lang} title={t('services.title')} description={t('services.lede')}>
+<Base lang={lang} title={t('services.title')} description={t('services.lede')} jsonLd={ld}>
   <PageHead eyebrow="~/services" title={t('services.title')} lede={t('services.lede')} />
 
   <section class="wrap grid grid-2 paths" aria-label={t('services.who')}>
@@ -67,6 +75,15 @@ const contact = localize('/contact', lang);
     </div>
   </section>
 
+  <section class="wrap section faq" aria-labelledby="faq-h">
+    <h2 id="faq-h" class="mono label-h">{t('services.faq')}</h2>
+    <dl>
+      {faq[lang].map(({ q, a }) => (
+        <div><dt>{q}</dt><dd class="dim">{a}</dd></div>
+      ))}
+    </dl>
+  </section>
+
   <section class="wrap values mono" aria-label={t('about.values')}>
     <span class="faint">{t('about.values')}:</span>
     {values.map((v) => <a href={localize('/about', lang) + '#values-h'}>◆ {v.title[lang]}</a>)}
@@ -81,7 +98,10 @@ const contact = localize('/contact', lang);
 
 <style>
   .paths { padding-top: 0.5rem; }
-  .path { display: grid; gap: 0.5rem; padding: 1.3rem 1.4rem; border: 2px solid var(--line-strong); background: var(--bg-2); text-decoration: none; color: var(--fg); box-shadow: 4px 4px 0 var(--shadow-c); }
+  .path {
+    display: grid; gap: 0.5rem; padding: 1.3rem 1.4rem; border: 2px solid var(--line-strong); background: var(--bg-2);
+    text-decoration: none; color: var(--fg); box-shadow: 4px 4px 0 var(--shadow-c);
+  }
   .path:hover { border-color: var(--accent); }
   .path .label-h { margin: 0; color: var(--accent); }
   .path__body { font-size: 1.05rem; }
@@ -97,5 +117,10 @@ const contact = localize('/contact', lang);
   .values { display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem; font-size: 0.82rem; margin-bottom: 2.5rem; }
   .values a { color: var(--accent); text-decoration: none; }
   .cta { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+  .faq dl {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1.5rem 3rem; margin: 0;
+  }
+  .faq dt { font-weight: 700; margin-bottom: 0.35rem; }
+  .faq dd { margin: 0; }
   @media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
 </style>

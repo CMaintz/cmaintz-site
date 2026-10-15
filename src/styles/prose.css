@@ -1,7 +1,7 @@
 /* Long-form content: blog posts, case studies and GitHub READMEs. */
 
 /* ── Prose (blog posts, case studies) ───────────────────────── */
-.prose { max-width: 44rem; font-size: 1.075rem; }
+.prose { max-width: var(--measure); font-size: 1.075rem; }
 .prose > * + * { margin-top: 1.15em; }
 .prose h2 { font-size: 1.65rem; margin-top: 2.4em; padding-top: 0.2em; }
 .prose h2::before { content: '## '; font: 500 0.8em var(--font-mono); color: var(--accent); }

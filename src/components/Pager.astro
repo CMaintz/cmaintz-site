@@ -11,7 +11,10 @@ const { prev, next, label } = Astro.props;
 </nav>
 
 <style>
-  .pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: 3.5rem; padding-top: 1.5rem; border-top: 2px dashed var(--line); font-size: 0.85rem; }
+  .pager {
+    display: flex; justify-content: space-between; gap: 1rem; margin-top: 3.5rem; padding-top: 1.5rem;
+    border-top: 2px dashed var(--line); font-size: 0.85rem;
+  }
   .pager a { text-decoration: none; color: var(--fg-dim); }
   .pager a:hover { color: var(--accent); }
 </style>

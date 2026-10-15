@@ -1,9 +1,9 @@
-// The four "What I do" areas. Projects, posts and services reference these ids,
+// The five "What I do" areas. Projects, posts and services reference these ids,
 // which ties content to the focus areas and to the /what-i-do/<area> pages.
 // Principles are drafts grounded in real work; `proof` names a project slug.
 import type { Lang } from '../i18n/ui';
 
-export const AREA_IDS = ['dx', 'devops', 'platform', 'ai'] as const;
+export const AREA_IDS = ['dx', 'devops', 'backend', 'platform', 'ai'] as const;
 export type AreaId = (typeof AREA_IDS)[number];
 
 type L = Record<Lang, string>;
@@ -100,28 +100,29 @@ export const areas: Record<AreaId, Area> = {
       },
     ],
   },
-  platform: {
-    glyph: '▦',
-    label: { en: 'Platform & Infrastructure', da: 'Platform & infrastruktur' },
+  backend: {
+    glyph: '▤',
+    label: { en: 'Backend', da: 'Backend' },
     intro: {
-      en: 'Good platforms are paved roads: the safe, observable, repeatable way is also the quickest way to ship. I build the plumbing that makes that true, from queues and retries to config and policy as code.',
-      da: 'Gode platforme er asfalterede veje: den sikre, observerbare og gentagelige vej er også den hurtigste vej til produktion. Jeg bygger det VVS, der gør det muligt, fra køer og retries til config og policy som kode.',
+      en: 'Most of a product lives in its backend: the APIs, the data and the services behind them. I build those around the domain, so the business rules are easy to find, the data can be trusted and a slow dependency never takes the product down.',
+      da: 'Det meste af et produkt bor i backenden: API’erne, data og de services, der ligger bag. Jeg bygger dem omkring domænet, så forretningsreglerne er nemme at finde, data er til at stole på, og en langsom afhængighed aldrig vælter produktet.',
     },
     principles: [
       {
-        title: { en: 'Paved roads over gatekeeping', da: 'Asfalterede veje frem for gatekeeping' },
+        title: { en: 'The domain model comes first', da: 'Domænemodellen kommer først' },
         body: {
-          en: 'Make the right way the default with templates and shared workflows, instead of reviewing every team into compliance.',
-          da: 'Gør den rigtige vej til standarden med skabeloner og fælles workflows i stedet for at reviewe hvert team på plads.',
+          en: 'Real business rules live in a model that names them, behind an API with clear contracts and validation at the edge. Frameworks and databases plug in around it.',
+          da: 'Rigtige forretningsregler bor i en model, der navngiver dem, bag et API med klare kontrakter og validering ved kanten. Frameworks og databaser kobles på udenom.',
         },
+        proof: 'sall-whisky',
       },
       {
-        title: { en: 'Everything as code', da: 'Alt som kode' },
+        title: { en: 'Know what the database is doing', da: 'Vid, hvad databasen laver' },
         body: {
-          en: 'Pipelines, configuration and policy live in the repo, reviewed and versioned like any other change.',
-          da: 'Pipelines, konfiguration og politikker ligger i repoet og bliver reviewet og versioneret som enhver anden ændring.',
+          en: 'An ORM is a tool, not a hiding place. I design the schema, write SQL where it matters and use what Postgres already does, from full-text to vector search, before adding another service.',
+          da: 'En ORM er et værktøj, ikke et skjulested. Jeg designer skemaet, skriver SQL, hvor det betyder noget, og bruger det, Postgres allerede kan, fra fuldtekst- til vektorsøgning, før jeg tilføjer endnu en service.',
         },
-        proof: 'foundry',
+        proof: 'jobbuddy',
       },
       {
         title: { en: 'Resilient by default', da: 'Robust som standard' },
@@ -138,6 +139,31 @@ export const areas: Record<AreaId, Area> = {
           da: 'Udbydere, databaser og AI-modeller ligger bag porte og adaptere, så et leverandørskift er en ny adapter og ikke en omskrivning.',
         },
         proof: 'jobbuddy',
+      },
+    ],
+  },
+  platform: {
+    glyph: '▦',
+    label: { en: 'Platform & Infrastructure', da: 'Platform & infrastruktur' },
+    intro: {
+      en: 'Good platforms are paved roads: the safe, observable, repeatable way is also the quickest way to ship. I build the plumbing that makes that true, from pinned toolchains and scaffolding to config and policy as code.',
+      da: 'Gode platforme er asfalterede veje: den sikre, observerbare og gentagelige vej er også den hurtigste vej til produktion. Jeg bygger det VVS, der gør det muligt, fra fastlåste toolchains og scaffolding til config og policy som kode.',
+    },
+    principles: [
+      {
+        title: { en: 'Paved roads over gatekeeping', da: 'Asfalterede veje frem for gatekeeping' },
+        body: {
+          en: 'Make the right way the default with templates and shared workflows, instead of reviewing every team into compliance.',
+          da: 'Gør den rigtige vej til standarden med skabeloner og fælles workflows i stedet for at reviewe hvert team på plads.',
+        },
+      },
+      {
+        title: { en: 'Everything as code', da: 'Alt som kode' },
+        body: {
+          en: 'Pipelines, configuration and policy live in the repo, reviewed and versioned like any other change.',
+          da: 'Pipelines, konfiguration og politikker ligger i repoet og bliver reviewet og versioneret som enhver anden ændring.',
+        },
+        proof: 'foundry',
       },
     ],
   },

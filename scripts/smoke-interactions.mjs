@@ -20,9 +20,10 @@ async function togglesFlip(page) {
   const theme = () => page.evaluate(() => document.documentElement.dataset.theme);
   const before = await theme();
   await page.click('[data-theme-toggle]');
-  await page.click('[data-crt-toggle]');
-  const crt = await page.evaluate(() => document.documentElement.dataset.crt);
-  return (await theme()) !== before && crt === 'off';
+  await page.click('details.fx summary');
+  await page.click('[data-fx="scan"]');
+  const fx = await page.evaluate(() => ({ ...document.documentElement.dataset }));
+  return (await theme()) !== before && fx.scan === 'off' && fx.motion === 'on';
 }
 
 /** Cards a filter leaves on screen, read from rendered visibility (a card's own display rule can override hidden). */
@@ -101,12 +102,20 @@ async function terminalTabs(page) {
 }
 
 // An extra ↑ up front, and Caps Lock on for the b and a.
-const KONAMI_KEYS = ['ArrowUp', ...'Up Up Down Down Left Right Left Right'.split(' ').map((k) => `Arrow${k}`), 'Shift+B', 'Shift+A'];
+const KONAMI_KEYS = [
+  'ArrowUp',
+  ...'Up Up Down Down Left Right Left Right'.split(' ').map((k) => `Arrow${k}`),
+  'Shift+B',
+  'Shift+A',
+];
 
-/** The Konami code opens DOOM even with a stray extra ↑ and Caps Lock on, and claims the b/a so Firefox's find bar can't. */
+/** The Konami code opens DOOM even with a stray extra ↑ and Caps Lock on,
+ *  and claims the b/a so Firefox's find bar can't. */
 async function konamiOpensDoom(page) {
   await page.goto(`${BASE}/about`);
-  await page.evaluate(() => addEventListener('keydown', (e) => (window.__claimed = e.key === 'A' && e.defaultPrevented)));
+  await page.evaluate(() =>
+    addEventListener('keydown', (e) => (window.__claimed = e.key === 'A' && e.defaultPrevented)),
+  );
   for (const k of KONAMI_KEYS) await page.keyboard.press(k);
   const opened = await page.evaluate(() => document.querySelector('dialog.doom').open);
   await page.click('dialog.doom .close');
@@ -115,7 +124,8 @@ async function konamiOpensDoom(page) {
 
 // Console messages from every check, scanned at the end for CSP blocks.
 const cspBlocks = [];
-const isCspBlock = (text) => /Content Security Policy|Refused to (load|execute|frame|connect|compile|evaluate)/i.test(text);
+const isCspBlock = (text) =>
+  /Content Security Policy|Refused to (load|execute|frame|connect|compile|evaluate)/i.test(text);
 
 /** Visits the pages the other checks don't (diagrams, search, DOOM), then reports any CSP block seen. */
 async function noCspBlocks(page) {

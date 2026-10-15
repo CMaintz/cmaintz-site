@@ -1,4 +1,3 @@
-// Contact-form domain: validation, spam checks and delivery via Resend.
 // Every external dependency is optional; see SETUP.md for the env vars.
 
 export interface Inquiry {
@@ -71,8 +70,12 @@ async function verifyTurnstile(form: FormData, secret: string, ip: string | null
   }
 }
 
-export const passesTurnstile = async (form: FormData, secret: string | undefined, ip: string | null, siteKey?: string) =>
-  secret ? verifyTurnstile(form, secret, ip) : verdictWithoutSecret(siteKey);
+export const passesTurnstile = async (
+  form: FormData,
+  secret: string | undefined,
+  ip: string | null,
+  siteKey?: string,
+) => (secret ? verifyTurnstile(form, secret, ip) : verdictWithoutSecret(siteKey));
 
 const optionalLine = (label: string, value: string) => (value ? [`${label}: ${value}`] : []);
 

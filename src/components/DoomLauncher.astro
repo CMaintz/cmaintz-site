@@ -16,7 +16,9 @@
 <script>
   const dlg = document.querySelector<HTMLDialogElement>('dialog.doom')!;
   const screen = dlg.querySelector('.screen')!;
-  const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+  const KONAMI = [
+    'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a',
+  ];
 
   // Touch-only devices can't play it; don't make them download 6.5 MB to find out.
   const keyboardless = () => matchMedia('(pointer: coarse)').matches && !matchMedia('(any-pointer: fine)').matches;
@@ -66,7 +68,9 @@
     return 0;
   }
 
-  const isTyping = (t: EventTarget | null) => t instanceof HTMLElement && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName));
+  const FORM_FIELD = /^(INPUT|TEXTAREA|SELECT)$/;
+  const isTyping = (t: EventTarget | null) =>
+    t instanceof HTMLElement && (t.isContentEditable || FORM_FIELD.test(t.tagName));
 
   function onKey(e: KeyboardEvent) {
     if (MODIFIERS.has(e.key) || isTyping(e.target)) return;
@@ -93,14 +97,24 @@
 
 <style>
   /* Sized by width and height so the whole window fits a laptop screen without scrolling. */
-  .doom { width: min(960px, calc(100vw - 2rem), calc((100dvh - 7.5rem) * 4 / 3)); max-width: none; overflow: hidden; padding: 0; margin: auto; color: var(--fg); }
+  .doom {
+    width: min(960px, calc(100vw - 2rem), calc((100dvh - 7.5rem) * 4 / 3)); max-width: none; overflow: hidden;
+    padding: 0; margin: auto; color: var(--fg);
+  }
   .doom::backdrop { background: rgb(0 0 0 / 0.75); }
-  .close { background: var(--bg-3); border: 0; font: inherit; color: var(--fg); cursor: pointer; text-transform: uppercase; }
+  .close {
+    background: var(--bg-3); border: 0; font: inherit; color: var(--fg); cursor: pointer; text-transform: uppercase;
+  }
   .close:hover { color: var(--accent); }
   .screen { aspect-ratio: 4 / 3; background: #000; outline: none; }
   @media (pointer: coarse) { .hint { display: none; } }
   .screen :global(iframe) { width: 100%; height: 100%; border: 0; display: block; }
-  .screen :global(.nokb) { margin: 0; height: 100%; display: grid; place-items: center; padding: 2rem; text-align: center; font: 1rem var(--font-mono); color: var(--accent); }
-  .hint { font-size: 0.72rem; color: var(--fg-dim); padding: 0.5rem 0.8rem; margin: 0; border-top: 1px solid var(--line); }
+  .screen :global(.nokb) {
+    margin: 0; height: 100%; display: grid; place-items: center; padding: 2rem; text-align: center;
+    font: 1rem var(--font-mono); color: var(--accent);
+  }
+  .hint {
+    font-size: 0.72rem; color: var(--fg-dim); padding: 0.5rem 0.8rem; margin: 0; border-top: 1px solid var(--line);
+  }
   .hint a { color: var(--fg-dim); }
 </style>

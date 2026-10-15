@@ -16,6 +16,7 @@ import PixelField from '../components/PixelField.astro';
 import CommandPalette from '../components/CommandPalette.astro';
 import DoomLauncher from '../components/DoomLauncher.astro';
 import { site } from '../data/site';
+import { DISPLAY_EFFECTS } from '../data/display-effects';
 import { type Lang, localize, unlocalize, useT } from '../i18n/ui';
 import { clipDescription, graph, personLd, websiteLd } from '../lib/seo';
 
@@ -44,12 +45,13 @@ const metaDescription = clipDescription(description);
 ---
 
 <!doctype html>
-<html lang={lang} data-theme="dark" data-crt="on">
+<html lang={lang} data-theme="dark" data-scan="on" data-glow="on" data-motion="on">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={metaDescription} />
+    <meta name="author" content={site.name} />
     <link rel="canonical" href={canonical} />
     {
       alternates && (
@@ -74,15 +76,22 @@ const metaDescription = clipDescription(description);
     {publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
     <meta name="twitter:card" content="summary_large_image" />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(ld)} />
-    <script is:inline>
-      // Apply stored theme/CRT prefs before first paint (no flash).
+    <script is:inline define:vars={{ effects: DISPLAY_EFFECTS }}>
+      // Apply stored theme and display-effect prefs before first paint (no flash).
       (() => {
         const d = document.documentElement;
         d.classList.add('js');
         try {
-          const theme = localStorage.getItem('theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          const prefersLight = matchMedia('(prefers-color-scheme: light)').matches;
+          const theme = localStorage.getItem('theme') ?? (prefersLight ? 'light' : 'dark');
           d.dataset.theme = theme;
-          d.dataset.crt = localStorage.getItem('crt') ?? (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'off' : 'on');
+          // 'crt' is the old single switch for scanlines and glow together.
+          const legacy = localStorage.getItem('crt');
+          const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+          const fallbacks = { 'legacy-crt': legacy ?? 'on', 'reduced-motion': reducedMotion ? 'off' : 'on' };
+          for (const { id, fallback } of effects) {
+            d.dataset[id] = localStorage.getItem(`fx-${id}`) ?? fallbacks[fallback];
+          }
         } catch {}
       })();
     </script>
@@ -91,7 +100,6 @@ const metaDescription = clipDescription(description);
   <body>
     <a class="skip visually-hidden" href="#main">{t('skip')}</a>
     <PixelField />
-    <div class="crt-vignette" aria-hidden="true"></div>
     <div class="crt-scan" aria-hidden="true"></div>
     <Header lang={lang} switchPath={langSwitchPath} />
     <main id="main" data-pagefind-body={type === 'article' ? '' : undefined}>
@@ -115,5 +123,8 @@ const metaDescription = clipDescription(description);
 </html>
 
 <style>
-  .skip:focus { position: fixed !important; top: 0.5rem; left: 0.5rem; width: auto; height: auto; clip: auto; z-index: 100; padding: 0.6rem 1rem; background: var(--accent); color: var(--accent-ink); }
+  .skip:focus {
+    position: fixed !important; top: 0.5rem; left: 0.5rem; width: auto; height: auto; clip: auto; z-index: 100;
+    padding: 0.6rem 1rem; background: var(--accent); color: var(--accent-ink);
+  }
 </style>

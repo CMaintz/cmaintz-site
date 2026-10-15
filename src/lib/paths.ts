@@ -1,4 +1,3 @@
-// getStaticPaths helpers shared by the en/da route wrappers.
 import { getProjects, getPosts, allTags } from './content';
 import { AREA_IDS } from '../data/areas';
 

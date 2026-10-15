@@ -1,4 +1,3 @@
-// English UI strings. Keys must match da.ts (checked by the type in ui.ts).
 export const en = {
   'nav.home': 'home',
   'nav.about': 'about',
@@ -14,7 +13,10 @@ export const en = {
   'cmd.hint': 'Search or jump to…',
   'cmd.open': 'Open command palette',
   'theme.toggle': 'Toggle light/dark',
-  'crt.toggle': 'Toggle CRT effects',
+  'fx.menu': 'Display effects',
+  'fx.scan': 'Scanlines',
+  'fx.glow': 'Glow',
+  'fx.motion': 'Background animation',
   'lang.label': 'Language',
   'home.status': 'open to new roles',
   'home.hello': 'Hi, I’m Christoffer.',
@@ -34,6 +36,9 @@ export const en = {
   'focus.dx.body': 'Fast feedback loops, sane defaults, tooling that removes friction instead of adding ceremony.',
   'focus.devops.title': 'DevOps & CI/CD',
   'focus.devops.body': 'Reusable pipelines, deterministic quality gates, supply-chain and secret scanning.',
+  'focus.backend.title': 'Backend',
+  'focus.backend.body':
+    'APIs and data models built around the domain, with queues and retries where dependencies are slow.',
   'focus.platform.title': 'Platform & Infrastructure',
   'focus.platform.body': 'Paved roads: pinned toolchains, scaffolding, config-as-code and policy-as-code.',
   'focus.ai.title': 'AI enablement',
@@ -49,8 +54,12 @@ export const en = {
   'wid.other': 'Other areas',
   'wid.more': 'Read more',
   'projects.title': 'Projects',
-  'projects.lede': 'Production work, open-source tooling, personal projects and graded exam work. Repo data is synced from GitHub.',
+  'projects.lede':
+    'Production work, open-source tooling, personal projects and graded exam work. Repo data is synced from GitHub.',
   'projects.filter.all': 'all',
+  'projects.filter.tech': 'Built with',
+  'projects.filter.ai': '✦ AI-powered',
+  'projects.filter.frontend': '✦ Frontend',
   'projects.cat.professional': 'professional',
   'projects.cat.open-source': 'open source',
   'projects.cat.personal': 'personal',
@@ -82,6 +91,7 @@ export const en = {
   'blog.rss': 'RSS feed',
   'blog.back': 'All posts',
   'blog.updated': 'Updated',
+  'blog.by': 'by',
   'blog.toc': 'On this page',
   'blog.empty': 'No posts yet.',
   'comments.title': 'Comments',
@@ -98,7 +108,8 @@ export const en = {
   'comments.delete': 'Delete',
   'comments.error': 'Something went wrong. Please try again.',
   'comments.loading': 'Loading comments…',
-  'comments.privacy': 'Only your initials are shown and stored with your comment, never your name or picture. Stored in the EU (Supabase). Delete your comments any time.',
+  'comments.privacy':
+    'Only your initials are shown and stored with your comment, never your name or picture. Stored in the EU (Supabase). Delete your comments any time.',
   'about.title': 'About',
   'about.lede':
     'Developer from Aarhus. Consultant in DevOps, automation and AI-assisted development, with a business-critical AI system behind me and a habit of building the tools I wish I had.',
@@ -115,7 +126,8 @@ export const en = {
   'about.present': 'present',
   'about.funfact': 'Fun fact: I built my first website for my dad’s business when I was 13.',
   'services.title': 'Services',
-  'services.lede': 'Less manual work for Danish businesses, better tooling for dev teams. Fixed-price starters, fixed-scope projects or hourly - remote or on-site in Aarhus.',
+  'services.lede':
+    'Less manual work for Danish businesses, better tooling for dev teams.\nFixed-price starters, fixed-scope projects or hourly - remote or on-site in Aarhus.',
   'services.pricing': 'Pricing',
   'services.pricing.body':
     'Hourly from {rate} DKK ex. VAT. Fixed-price work is quoted after scoping, because the price depends on the complexity. The first 30-minute call is free.',
@@ -143,8 +155,10 @@ export const en = {
   'services.case.solution': 'What I built',
   'services.case.read': 'Full case',
   'services.book': 'Book a 20-min call',
+  'services.faq': 'Common questions',
   'contact.title': 'Contact',
-  'contact.lede': 'Job opportunities, freelance work, consulting, or just a hello. I usually reply within a day or two.',
+  'contact.lede':
+    'Job opportunities, freelance work, consulting, or just a hello.\nI usually reply within a day or two.',
   'contact.name': 'Name',
   'contact.email': 'Email',
   'contact.company': 'Company (optional)',

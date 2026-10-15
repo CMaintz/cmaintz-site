@@ -4,8 +4,12 @@ on:
   push:
     branches: [main]
   pull_request:
+    # edited and labeled only matter to the preview job: retitling a PR to feat:
+    # or adding the preview label should produce a preview without a new push.
+    types: [opened, synchronize, reopened, edited, labeled]
   schedule:
-    - cron: '0 5 * * 1' # Mondays: refresh the GitHub snapshot
+    - cron: '17 * * * *' # hourly: redeploy with fresh GitHub data
+    - cron: '0 5 * * 1' # Mondays: also commit the GitHub snapshot to main
   workflow_dispatch:
 
 permissions:
@@ -13,11 +17,11 @@ permissions:
 
 jobs:
   build:
-    if: github.event_name != 'schedule'
+    if: github.event_name != 'schedule' && github.event.action != 'edited' && github.event.action != 'labeled'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           cache: npm
@@ -32,14 +36,14 @@ jobs:
           PW_CHANNEL: chromium
 
   # Deploys main to Cloudflare once the build, tests and smoke test pass, and
-  # after the weekly GitHub snapshot lands on main. (The snapshot commit is
-  # pushed with GITHUB_TOKEN, which doesn't trigger a new run, so it deploys here.)
+  # every hour, so the GitHub data on the site (repos, READMEs, last pushes) is
+  # never more than an hour old. Each deploy fetches that data itself rather than
+  # committing it, so main doesn't get a bot commit every hour.
   deploy:
-    needs: [build, refresh-github-data]
+    needs: build
     if: >-
-      always() && !failure() && !cancelled() &&
-      ((github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-       needs.refresh-github-data.outputs.sha != '')
+      always() && !failure() && !cancelled() && github.ref == 'refs/heads/main' &&
+      github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     concurrency:
       group: deploy
@@ -50,13 +54,22 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ needs.refresh-github-data.outputs.sha || github.sha }}
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+          # Full history: the sitemap's <lastmod> comes from each page's last commit (src/lib/lastmod.ts).
+          fetch-depth: 0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run build
+      # The script writes the file only once everything is fetched, so a GitHub
+      # outage leaves the committed snapshot in place and the deploy goes ahead.
+      - name: Fetch fresh GitHub data
+        run: node scripts/sync-github.mjs || echo "::warning::GitHub sync failed; deploying the committed snapshot"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # Previews reuse this step through the anchor, so both build the real site config.
+      - &site-build
+        run: npm run build
         env:
           SITE_URL: ${{ vars.SITE_URL }}
           PUBLIC_SUPABASE_URL: ${{ vars.PUBLIC_SUPABASE_URL }}
@@ -64,25 +77,110 @@ jobs:
           PUBLIC_SUPABASE_PROVIDERS: ${{ vars.PUBLIC_SUPABASE_PROVIDERS }}
           PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
           PUBLIC_CF_BEACON_TOKEN: ${{ vars.PUBLIC_CF_BEACON_TOKEN }}
+          PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: ${{ vars.PUBLIC_KEYSTATIC_GITHUB_APP_SLUG }}
       - run: npx wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
 
-  # Weekly: refresh src/data/github.json (repo metadata, READMEs, repo count),
-  # check that the site still builds with it, commit it to main, then deploy.
+  # After a push to main deploys, cross-posts blog posts that opted in with
+  # `crosspost:` in their front matter (scripts/crosspost.mjs). Only pushes, not the
+  # hourly redeploys. dev.to needs the DEVTO_API_KEY secret; without it that part is skipped.
+  crosspost:
+    needs: deploy
+    if: >-
+      always() && needs.deploy.result == 'success' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    concurrency:
+      group: crosspost
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Skips cleanly if this lands before the script does.
+      - if: hashFiles('scripts/crosspost.mjs') != ''
+        run: npm run crosspost
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
+          BEFORE_SHA: ${{ github.event.before }}
+
+  # Uploads a PR as a Worker version that isn't deployed, at its own preview URL,
+  # and comments the link on the PR. Only feat and style PRs, or any PR with the
+  # preview label, get one. Fork PRs get no secrets, so they're skipped. Edits
+  # count only when the title changed, labels only when it's the preview label.
+  preview:
+    needs: build
+    if: >-
+      always() && !failure() && !cancelled() &&
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (startsWith(github.event.pull_request.title, 'feat') ||
+       startsWith(github.event.pull_request.title, 'style') ||
+       contains(github.event.pull_request.labels.*.name, 'preview')) &&
+      (github.event.action != 'edited' || github.event.changes.title.from != null) &&
+      (github.event.action != 'labeled' || github.event.label.name == 'preview')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    concurrency:
+      group: preview-${{ github.event.number }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history: the sitemap's <lastmod> comes from each page's last commit (src/lib/lastmod.ts).
+          fetch-depth: 0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - *site-build
+      - name: Upload the preview version
+        id: upload
+        run: |
+          npx wrangler versions upload --preview-alias "pr-$PR" | tee upload.log
+          url=$(grep -oE 'https://pr-[0-9]+-cmaintz-site\.[a-z0-9-]+\.workers\.dev' upload.log | head -1)
+          test -n "$url"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+        env:
+          PR: ${{ github.event.number }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Comment the preview link
+        run: |
+          gh pr comment "$PR" --edit-last --create-if-none --body "Preview of ${HEAD_SHA::7}: $URL"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          URL: ${{ steps.upload.outputs.url }}
+
+  # Weekly: commit src/data/github.json to main, so local builds and PR previews
+  # don't drift far from the live data. (Deploys fetch their own copy.)
   refresh-github-data:
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: github.event.schedule == '0 5 * * 1' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    outputs:
-      sha: ${{ steps.commit.outputs.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           cache: npm
@@ -92,11 +190,9 @@ jobs:
       - name: Build with the new snapshot
         run: npm ci && npm run build
       - name: Commit the snapshot to main
-        id: commit
         run: |
           git diff --quiet -- src/data/github.json && exit 0
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'chore(data): refresh GitHub snapshot' -- src/data/github.json
           git push origin HEAD:main
-          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"

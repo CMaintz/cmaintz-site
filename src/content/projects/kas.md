@@ -7,6 +7,7 @@ tagline:
 summary:
   en: Conference administration - participants, hotels with room types and add-ons, excursions and bookings - with a pricing engine distributed across a rich domain model.
   da: Konferenceadministration - deltagere, hoteller med værelsestyper og tilkøb, udflugter og bookinger - med en prismotor fordelt på en rig domænemodel.
+areas: [backend]
 category: academic
 order: 22
 role: Developer

@@ -71,7 +71,10 @@ const packageTitles = JSON.stringify(Object.fromEntries(packages.map((p) => [p.i
   }
 
   /** Fallback when sending fails: write to me directly. */
-  const mailtoLink = () => Object.assign(document.createElement('a'), { href: `mailto:${form!.dataset.email}`, textContent: form!.dataset.email! });
+  const mailtoLink = () => {
+    const email = form!.dataset.email!;
+    return Object.assign(document.createElement('a'), { href: `mailto:${email}`, textContent: email });
+  };
 
   function showResult(ok: boolean) {
     status!.dataset.state = ok ? 'ok' : 'err';
@@ -118,7 +121,10 @@ const packageTitles = JSON.stringify(Object.fromEntries(packages.map((p) => [p.i
   .layout { display: grid; grid-template-columns: 1.6fr 1fr; gap: 3rem; align-items: start; }
   .form { display: grid; gap: 1rem; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-  label { display: grid; gap: 0.35rem; font: 500 0.75rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; color: var(--fg-dim); }
+  label {
+    display: grid; gap: 0.35rem; font: 500 0.75rem var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--fg-dim);
+  }
   .hp { position: absolute; left: -9999px; }
   .submit { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
   .status { font-size: 0.85rem; min-height: 1.2em; }

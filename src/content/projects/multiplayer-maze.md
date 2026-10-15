@@ -7,6 +7,7 @@ tagline:
 summary:
   en: A Pac-Man-inspired maze game with a hand-designed text protocol, one server thread per client and a synchronized broadcast relay - played by several people at once on a real LAN.
   da: Et Pac-Man-inspireret labyrintspil med en hjemmelavet tekstprotokol, én servertråd pr. klient og synkroniseret broadcast - spillet af flere samtidig på et rigtigt LAN.
+areas: [backend]
 category: academic
 order: 26
 role: Developer

@@ -39,8 +39,16 @@ export const cases: CaseStudy[] = [
       da: 'Et plugin til webshoppen, der læser produktbillede og data, skriver alle fire sprog på én gang, vurderer sin egen sikkerhed og sender alt usikkert til godkendelse hos et menneske. Plus en "se det på din egen væg"-funktion til kunderne.',
     },
     outcomes: {
-      en: ['3,000+ products enriched', 'Hundreds of hours of manual work saved', 'Business-critical and still in daily use'],
-      da: ['3.000+ produkter beriget', 'Hundredvis af timers manuelt arbejde sparet', 'Forretningskritisk og stadig i daglig brug'],
+      en: [
+        '3,000+ products enriched',
+        'Hundreds of hours of manual work saved',
+        'Business-critical and still in daily use',
+      ],
+      da: [
+        '3.000+ produkter beriget',
+        'Hundredvis af timers manuelt arbejde sparet',
+        'Forretningskritisk og stadig i daglig brug',
+      ],
     },
   },
   {
@@ -62,7 +70,11 @@ export const cases: CaseStudy[] = [
     },
     outcomes: {
       en: ['No more storefront test orders', 'Fewer broken emails in production', 'Faster, safer template releases'],
-      da: ['Ingen testordrer i shoppen', 'Færre fejl i mails i produktion', 'Hurtigere og sikrere udgivelse af skabeloner'],
+      da: [
+        'Ingen testordrer i shoppen',
+        'Færre fejl i mails i produktion',
+        'Hurtigere og sikrere udgivelse af skabeloner',
+      ],
     },
   },
   {
@@ -83,8 +95,16 @@ export const cases: CaseStudy[] = [
       da: 'Ét deterministisk regelsæt - formatering, lint, typer, tests, coverage, sikkerhed - der kører ens, mens agenten redigerer, før push og i CI, med en ratchet, så legacy-kode kan tage det i brug fra dag ét.',
     },
     outcomes: {
-      en: ['Same verdict in editor, pre-push and CI', 'Templates for 6 stacks', 'Gates this site and my open-source repos'],
-      da: ['Samme resultat i editor, pre-push og CI', 'Skabeloner til 6 stacks', 'Håndhæver kvaliteten på dette site og mine open source-repos'],
+      en: [
+        'Same verdict in editor, pre-push and CI',
+        'Templates for 6 stacks',
+        'Gates this site and my open-source repos',
+      ],
+      da: [
+        'Samme resultat i editor, pre-push og CI',
+        'Skabeloner til 6 stacks',
+        'Håndhæver kvaliteten på dette site og mine open source-repos',
+      ],
     },
   },
   {
@@ -105,8 +125,16 @@ export const cases: CaseStudy[] = [
       da: 'Et bookingsystem med login pr. rolle, der kender skolens regler: en syg hest kan ikke bookes, aflysninger sendes til rytterne på mail, og mugningsvagter giver en gratis lektion.',
     },
     outcomes: {
-      en: ['Rules enforced by the system, not by memory', 'Automatic cancellation emails', 'Covered by automated acceptance tests'],
-      da: ['Reglerne håndhæves af systemet, ikke af hukommelsen', 'Automatiske mails ved aflysning', 'Dækket af automatiske accepttests'],
+      en: [
+        'Rules enforced by the system, not by memory',
+        'Automatic cancellation emails',
+        'Covered by automated acceptance tests',
+      ],
+      da: [
+        'Reglerne håndhæves af systemet, ikke af hukommelsen',
+        'Automatiske mails ved aflysning',
+        'Dækket af automatiske accepttests',
+      ],
     },
   },
 ];

@@ -7,6 +7,7 @@ tagline:
 summary:
   en: One Entity Framework business/data core behind an ASP.NET MVC web app, a WPF desktop client and a standalone ASP.NET Web API.
   da: Én Entity Framework-kerne bag en ASP.NET MVC-webapp, en WPF-klient og et selvstændigt ASP.NET Web API.
+areas: [backend]
 category: academic
 order: 27
 role: Developer

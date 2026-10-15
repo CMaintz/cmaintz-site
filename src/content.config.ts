@@ -2,6 +2,8 @@ import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 import { AREA_IDS } from './data/areas';
+import { CROSSPOST_IDS } from './data/crosspost';
+import { TAG_IDS } from './data/tags';
 
 const areas = z.array(z.enum(AREA_IDS)).default([]);
 
@@ -15,13 +17,15 @@ const blog = defineCollection({
       description: z.string(),
       pubDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
-      tags: z.array(z.string()).default([]),
+      tags: z.array(z.enum(TAG_IDS)).default([]),
       /** Which 'What I do' areas the post belongs to. */
       areas,
       lang: z.enum(['en', 'da']).default('en'),
       draft: z.boolean().default(false),
       cover: image().optional(),
       comments: z.boolean().default(true),
+      /** Platforms to cross-post to once published (scripts/crosspost.mjs). */
+      crosspost: z.array(z.enum(CROSSPOST_IDS)).default([]),
     }),
 });
 
@@ -53,6 +57,10 @@ const projects = defineCollection({
     metrics: z.array(z.object({ value: z.string(), label: localized })).default([]),
     glyph: z.string().default('▣'),
     areas,
+    /** Has AI features built in (an LLM or Jev), as opposed to helping others use AI. */
+    aiPowered: z.boolean().default(false),
+    /** Has real UI work: a web frontend or a mobile app. */
+    frontend: z.boolean().default(false),
   }),
 });
 

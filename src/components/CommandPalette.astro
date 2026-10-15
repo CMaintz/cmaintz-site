@@ -1,8 +1,9 @@
 ---
-import { type Lang, localize, unlocalize, useT } from '../i18n/ui';
+import { type Lang, localize, unlocalize, useT, withSlash } from '../i18n/ui';
 import { getProjects, getPosts, github } from '../lib/content';
 import { site } from '../data/site';
 import { AREA_IDS, areas } from '../data/areas';
+import { DISPLAY_EFFECT_IDS } from '../data/display-effects';
 
 interface Props { lang: Lang; switchPath?: string }
 const { lang, switchPath } = Astro.props;
@@ -19,10 +20,10 @@ const pages = (['/', '/about', '/projects', '/blog', '/services', '/contact', '/
 const allProjects = await getProjects();
 const projects = allProjects.map((p) => ({ group: t('nav.projects'), label: p.data.title, hint: p.data.tagline[lang], alias: [p.id, ...p.data.repos].join(' '), href: localize(`/projects/${p.id}`, lang) }));
 const areaItems = AREA_IDS.map((id) => ({ group: t('wid.title'), label: areas[id].label[lang], hint: areas[id].intro[lang], href: localize(`/what-i-do/${id}`, lang) }));
-const posts = (await getPosts()).map((p) => ({ group: t('nav.blog'), label: p.data.title, hint: p.data.description, href: `/blog/${p.id}` }));
+const posts = (await getPosts()).map((p) => ({ group: t('nav.blog'), label: p.data.title, hint: p.data.description, href: withSlash(`/blog/${p.id}`) }));
 const actions = [
   { group: 'run', label: t('theme.toggle'), hint: 'theme', action: 'theme' },
-  { group: 'run', label: t('crt.toggle'), hint: 'crt', action: 'crt' },
+  ...DISPLAY_EFFECT_IDS.map((k) => ({ group: 'run', label: `${t('fx.menu')}: ${t(`fx.${k}`)}`, hint: 'crt', action: `fx:${k}` })),
   { group: 'run', label: `${t('lang.label')}: ${other.toUpperCase()}`, hint: 'lang', href: localize(switchPath ?? here, other) },
   { group: 'run', label: lang === 'da' ? 'Kopiér e-mail' : 'Copy email address', hint: site.email, action: 'copy-email' },
   { group: 'run', label: 'GitHub', hint: site.socials.github, href: site.socials.github },
@@ -65,7 +66,11 @@ const items = [...pages, ...areaItems, ...projects, ...repoItems, ...posts, ...a
     if (it.group === 'secret') return (it.hint ?? '').split(' ').includes(q) ? 1000 : -1;
     const names = [it.label.toLowerCase(), ...(it.alias ?? '').split(' ')];
     if (names.includes(q)) return 1000;
-    return Math.max(matchScore(q, it.label), matchScore(q, it.alias ?? '') - 1, matchScore(q, it.hint ?? '', false) - 5);
+    return Math.max(
+      matchScore(q, it.label),
+      matchScore(q, it.alias ?? '') - 1,
+      matchScore(q, it.hint ?? '', false) - 5,
+    );
   }
 
   function search(q: string): Item[] {
@@ -131,7 +136,7 @@ const items = [...pages, ...areaItems, ...projects, ...repoItems, ...posts, ...a
 
   function runAction(action?: string) {
     if (action === 'theme') document.querySelector<HTMLButtonElement>('[data-theme-toggle]')?.click();
-    if (action === 'crt') document.querySelector<HTMLButtonElement>('[data-crt-toggle]')?.click();
+    if (action?.startsWith('fx:')) document.querySelector<HTMLInputElement>(`[data-fx="${action.slice(3)}"]`)?.click();
     if (action === 'copy-email') navigator.clipboard?.writeText(dlg.dataset.email ?? '');
     if (action === 'doom') dispatchEvent(new CustomEvent('doom:open'));
   }
@@ -216,15 +221,34 @@ const items = [...pages, ...areaItems, ...projects, ...repoItems, ...posts, ...a
   @keyframes pop { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
   .cmdk__body { padding: 0.75rem; }
   @media (hover: none) and (pointer: coarse) { .help { display: none !important; } }
-  .help { margin: 0.6rem 0 0; font-size: 0.7rem; color: var(--fg-faint); display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap; }
-  .prompt { display: flex; gap: 0.6rem; align-items: center; border: 2px solid var(--line); padding: 0.55rem 0.75rem; background: var(--bg); }
-  .prompt input { flex: 1; background: none; border: 0; outline: 0; color: var(--fg); font: 500 1rem var(--font-mono); min-width: 0; }
+  .help {
+    margin: 0.6rem 0 0; font-size: 0.7rem; color: var(--fg-faint); display: flex; gap: 0.35rem; align-items: center;
+    flex-wrap: wrap;
+  }
+  .prompt {
+    display: flex; gap: 0.6rem; align-items: center; border: 2px solid var(--line); padding: 0.55rem 0.75rem;
+    background: var(--bg);
+  }
+  .prompt input {
+    flex: 1; background: none; border: 0; outline: 0; color: var(--fg); font: 500 1rem var(--font-mono); min-width: 0;
+  }
   ul { list-style: none; margin: 0.6rem 0 0; padding: 0; max-height: 50vh; overflow-y: auto; }
-  ul :global(li) { display: grid; grid-template-columns: 5.5rem 1fr; gap: 0 0.8rem; padding: 0.5rem 0.6rem; cursor: pointer; border: 1px solid transparent; }
-  ul :global(li .g) { grid-row: span 2; font: 400 0.65rem var(--font-pixel); text-transform: uppercase; color: var(--fg-faint); padding-top: 0.25rem; }
+  ul :global(li) {
+    display: grid; grid-template-columns: 5.5rem 1fr; gap: 0 0.8rem; padding: 0.5rem 0.6rem; cursor: pointer;
+    border: 1px solid transparent;
+  }
+  ul :global(li .g) {
+    grid-row: span 2; font: 400 0.65rem var(--font-pixel); text-transform: uppercase; color: var(--fg-faint);
+    padding-top: 0.25rem;
+  }
   ul :global(li .l) { font-weight: 600; }
-  ul :global(li .h) { font: 0.78rem var(--font-mono); color: var(--fg-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  ul :global(li .h) {
+    font: 0.78rem var(--font-mono); color: var(--fg-dim); white-space: nowrap; overflow: hidden;
+    text-overflow: ellipsis;
+  }
   @media (max-width: 600px) { ul :global(li) { grid-template-columns: 3.2rem 1fr; padding: 0.4rem 0.5rem; } }
   ul :global(li[aria-selected='true']) { background: var(--accent); color: var(--accent-ink); }
-  ul :global(li[aria-selected='true'] .g), ul :global(li[aria-selected='true'] .h) { color: var(--accent-ink); opacity: 0.8; }
+  ul :global(li[aria-selected='true'] .g), ul :global(li[aria-selected='true'] .h) {
+    color: var(--accent-ink); opacity: 0.8;
+  }
 </style>
