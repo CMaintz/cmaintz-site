@@ -25,8 +25,8 @@ async function markdown(request: Request, env: Env) {
   return new Response(request.method === 'HEAD' ? null : body, { headers });
 }
 
-// Endpoints keep their exact paths; `trailingSlash: 'always'` would break these.
-const EXACT_PATHS = /^\/(api|\.well-known)\//;
+// Endpoints (/api/*, /.well-known/*, /mcp) keep their exact paths; `trailingSlash: 'always'` would break these.
+const EXACT_PATHS = /^\/(?:(?:api|\.well-known)\/|mcp$)/;
 
 /** "/services" -> 301 "/services/", as Cloudflare does for static pages it serves directly. */
 function canonicalRedirect(request: Request) {

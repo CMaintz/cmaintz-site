@@ -17,6 +17,8 @@ function intro(base: URL) {
     `${site.name} is based in ${site.location} and takes freelance and consulting work, remote or on-site. ` +
       `Hourly from ${HOURLY_RATE_DKK} DKK ex. VAT; fixed-price work is quoted after scoping; the first 30-minute call is free. ` +
       `Works in English and Danish. Contact: ${site.email} or ${new URL('/contact/', base)}.`,
+    `AI agents can query the same facts over MCP (read-only, Streamable HTTP): ${new URL('/mcp', base)}. ` +
+      `Docs: ${new URL('/developers/#mcp', base)}.`,
   ].join('\n\n');
 }
 

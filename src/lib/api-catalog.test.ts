@@ -7,11 +7,20 @@ describe('apiCatalog (RFC 9727)', () => {
   it('anchors each API and links its spec, docs and status', () => {
     const [entry] = apiCatalog(base).linkset;
     expect(entry.anchor).toBe('https://maintz.dev/api/contact');
-    expect(entry['service-desc'][0].href).toBe('https://maintz.dev/openapi.json');
+    expect(entry['service-desc']?.[0].href).toBe('https://maintz.dev/openapi.json');
     expect(entry['service-doc'][0].href).toBe('https://maintz.dev/developers/');
-    expect(entry.status[0].href).toBe('https://maintz.dev/api/health');
+    expect(entry.status?.[0].href).toBe('https://maintz.dev/api/health');
   });
+});
 
+describe('apiCatalog: MCP entry', () => {
+  it('lists the MCP server with its docs', () => {
+    const mcp = apiCatalog(base).linkset.find((e) => e.anchor === 'https://maintz.dev/mcp');
+    expect(mcp?.['service-doc'][0].href).toBe('https://maintz.dev/developers/#mcp');
+  });
+});
+
+describe('openApiSpec', () => {
   it('describes every catalogued path in the OpenAPI spec', () => {
     const paths = Object.keys(openApiSpec(base).paths);
     expect(paths).toEqual([API_PATHS.contact, API_PATHS.health]);
