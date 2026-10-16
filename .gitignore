@@ -27,3 +27,6 @@ supabase/.temp/
 
 # Foundry loop telemetry (local observability)
 .foundry/
+
+# Claude Code worktrees: full repo copies, never part of a change
+.claude/worktrees/
