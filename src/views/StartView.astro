@@ -1,0 +1,13 @@
+---
+import SimpleView from './SimpleView.astro';
+import ScopeWizard from '../components/ScopeWizard.astro';
+import { type Lang, useT } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+---
+
+<SimpleView lang={lang} title={t('start.title')} eyebrow="~/start" lede={t('start.lede')}>
+  <ScopeWizard lang={lang} />
+</SimpleView>

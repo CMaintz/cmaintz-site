@@ -1,0 +1,163 @@
+---
+// The /start wizard: one question at a time, then a suggested package, service
+// and case, with a link that opens the contact form holding the answers.
+// Every card is rendered here and only shown or hidden by the script.
+import PackageCard from './PackageCard.astro';
+import ServiceCard from './ServiceCard.astro';
+import CaseCard from './CaseCard.astro';
+import { type Lang, useT } from '../i18n/ui';
+import { steps } from '../data/wizard';
+import { packages } from '../data/packages';
+import { services } from '../data/services';
+import { cases } from '../data/cases';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+---
+
+<div class="wiz" data-wizard data-lang={lang} data-intro={t('start.intro_msg')}>
+  <p class="progress mono" data-progress>
+    {t('start.step')} <span data-step-n>1</span> / {steps.length}
+  </p>
+  {steps.map((s, i) => (
+    <fieldset class="step" data-step={s.id} hidden={i > 0}>
+      <legend tabindex="-1">{s.question[lang]}</legend>
+      <div class="opts">
+        {s.options.map((o) => (
+          <button type="button" class="opt" data-option={o.id} data-audience={o.audience} aria-pressed="false">
+            {o.label[lang]} <span class="arrow" aria-hidden="true">→</span>
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  ))}
+  <button type="button" class="back mono" data-back hidden>{t('start.back')}</button>
+
+  <section class="result" data-result hidden aria-labelledby="result-h">
+    <h2 id="result-h" tabindex="-1">{t('start.result')}</h2>
+    <p class="dim">{t('start.result.lede')}</p>
+    <div class="cols">
+      <div>
+        <h3 class="mono label-h">{t('start.first')}</h3>
+        {packages.map((p) => <div data-pkg={p.id} hidden><PackageCard pkg={p} lang={lang} /></div>)}
+      </div>
+      <div>
+        <h3 class="mono label-h">{t('start.then')}</h3>
+        {services.map((s) => <div data-svc={s.id} hidden><ServiceCard service={s} lang={lang} level={3} /></div>)}
+      </div>
+    </div>
+    <div data-similar hidden>
+      <h3 class="mono label-h">{t('start.similar')}</h3>
+      {cases.map((c) => <div data-case={c.id} hidden><CaseCard study={c} lang={lang} /></div>)}
+    </div>
+    <div class="send">
+      <a class="btn btn--primary" data-send href="#">{t('start.send')} <span class="arrow">→</span></a>
+      <button type="button" class="btn btn--ghost" data-restart>{t('start.restart')}</button>
+      <p class="faint small">{t('start.send.note')}</p>
+    </div>
+  </section>
+  <noscript><p class="dim">{t('start.noscript')}</p></noscript>
+</div>
+
+<script>
+  import { contactHref, recommend, visibleOptions, type Answers } from '../lib/wizard';
+  import { steps } from '../data/wizard';
+  import type { Lang } from '../i18n/ui';
+
+  const root = document.querySelector<HTMLElement>('[data-wizard]')!;
+  const lang = root.dataset.lang as Lang;
+  const $ = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+  const $$ = (sel: string) => [...root.querySelectorAll<HTMLElement>(sel)];
+  let answers: Answers = {};
+  let index = 0;
+
+  /** Show one step, with only the options meant for the visitor's audience. */
+  function showStep(i: number) {
+    index = i;
+    const step = steps[i];
+    const visible = new Set(visibleOptions(step, answers).map((o) => o.id));
+    $$('[data-step]').forEach((el) => (el.hidden = el.dataset.step !== step.id));
+    const fieldset = $(`[data-step="${step.id}"]`);
+    fieldset.querySelectorAll<HTMLButtonElement>('[data-option]').forEach((b) => {
+      b.hidden = !visible.has(b.dataset.option!);
+      b.setAttribute('aria-pressed', String(answers[step.id] === b.dataset.option));
+    });
+    $('[data-step-n]').textContent = String(i + 1);
+    $('[data-progress]').hidden = false;
+    $('[data-back]').hidden = i === 0;
+    $('[data-result]').hidden = true;
+    fieldset.querySelector('legend')!.focus();
+  }
+
+  /** Reveal the one card of a kind that matches `id`, hiding the rest. */
+  function showOnly(attr: string, id: string | undefined) {
+    $$(`[${attr}]`).forEach((el) => (el.hidden = el.getAttribute(attr) !== id));
+  }
+
+  function showResult() {
+    const rec = recommend(answers);
+    index = steps.length;
+    $$('[data-step]').forEach((el) => (el.hidden = true));
+    $('[data-progress]').hidden = true;
+    showOnly('data-pkg', rec.pkg);
+    showOnly('data-svc', rec.service);
+    showOnly('data-case', rec.case);
+    $('[data-similar]').hidden = !rec.case;
+    $<HTMLAnchorElement>('[data-send]').href = contactHref(answers, lang, root.dataset.intro!);
+    $('[data-result]').hidden = false;
+    $('#result-h').focus();
+  }
+
+  function choose(button: HTMLElement) {
+    const step = steps[index];
+    if (step.id === 'who' && answers.who !== button.dataset.option) answers = {};
+    answers[step.id] = button.dataset.option;
+    if (index + 1 < steps.length) showStep(index + 1);
+    else showResult();
+  }
+
+  function restart() {
+    answers = {};
+    showStep(0);
+  }
+
+  root.addEventListener('click', (e) => {
+    const target = (e.target as HTMLElement).closest<HTMLElement>('[data-option], [data-back], [data-restart]');
+    if (!target) return;
+    if (target.dataset.option) choose(target);
+    else if (target.hasAttribute('data-back')) showStep(Math.max(0, index - 1));
+    else restart();
+  });
+</script>
+
+<style>
+  .wiz { display: grid; gap: 1.2rem; }
+  .wiz [hidden] { display: none !important; }
+  .progress { font-size: 0.8rem; color: var(--fg-faint); margin: 0; }
+  .step { border: 0; padding: 0; margin: 0; min-width: 0; }
+  legend { font: 700 clamp(1.4rem, 3vw, 1.9rem) var(--font-sans); letter-spacing: -0.02em; margin-bottom: 1.2rem; }
+  legend:focus { outline: none; }
+  .opts { display: grid; gap: 0.7rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); }
+  .opt {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem; text-align: left;
+    padding: 1rem 1.2rem; font: 500 1rem var(--font-sans); color: var(--fg); background: var(--bg-2);
+    border: 2px solid var(--line-strong); box-shadow: 4px 4px 0 var(--shadow-c); cursor: pointer;
+  }
+  .opt:hover, .opt:focus-visible, .opt[aria-pressed='true'] { border-color: var(--accent); }
+  .opt .arrow { color: var(--accent); }
+  .back {
+    justify-self: start; background: none; border: 0; padding: 0;
+    font-size: 0.85rem; color: var(--fg-dim); cursor: pointer;
+  }
+  .back:hover { color: var(--accent); }
+  .result { display: grid; gap: 1.2rem; }
+  .result h2 { margin: 0; }
+  .result h2:focus { outline: none; }
+  .result > p { margin: 0; }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1.5rem; }
+  /* The package card's own button would drop the answers; "Send" below carries them. */
+  [data-pkg] :global(.btn) { display: none; }
+  .send { display: flex; flex-wrap: wrap; gap: 0.8rem 1rem; align-items: center; }
+  .send p { flex-basis: 100%; margin: 0; }
+</style>
