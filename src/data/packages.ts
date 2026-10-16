@@ -169,7 +169,7 @@ export const packages: Package[] = [
     title: { en: 'Coding-agent setup', da: 'Opsætning af kodeagenter' },
     body: {
       en: 'One repository is set up for Claude Code or Codex, with the project rules, skills, hooks and permissions that keep agent output reviewable, and your team learns how to work with it.',
-      da: 'Ét repo sættes op til Claude Code eller Codex med projektregler, skills, hooks og rettigheder, der holder agenternes output til at reviewe, og teamet lærer at arbejde med det.',
+      da: 'Ét repo sættes op til Claude Code eller Codex med projektregler, skills, hooks og rettigheder, så agenternes output stadig kan reviewes, og teamet lærer at arbejde med det.',
     },
     includes: {
       en: ['Project rules and skills', 'Hooks and permission guardrails', '2-hour session with the team'],
