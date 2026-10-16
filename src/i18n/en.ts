@@ -23,6 +23,7 @@ export const en = {
   'home.hello': 'Hi, I’m Christoffer.',
   'home.lede':
     'I build the machinery that makes software teams faster and safer: developer experience, CI/CD and quality gates, platform tooling, and AI that actually ships to production.',
+  'home.metaTitle': 'Freelance developer in Aarhus: AI and web development',
   'home.cta.work': 'See my work',
   'home.cta.hire': 'Hire me',
   'home.focus': 'What I do',
@@ -129,6 +130,9 @@ export const en = {
   'services.title': 'Services',
   'services.lede':
     'Less manual work for Danish businesses, better tooling for dev teams.\nFixed-price starters, fixed-scope projects or hourly - remote or on-site in Aarhus.',
+  'services.metaTitle': 'Services: AI automation and web development',
+  'services.metaDescription':
+    'Freelance developer in Aarhus, Denmark: AI automation and implementation, web and software development, CI/CD. Fixed-scope or hourly. First 30 minutes free.',
   'services.pricing': 'Pricing',
   'services.pricing.body':
     'Hourly from {rate} DKK ex. VAT. Fixed-price work is quoted after scoping, because the price depends on the complexity. The first 30-minute call is free.',

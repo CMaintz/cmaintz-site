@@ -32,12 +32,19 @@ const isRequest = (m: unknown): m is RpcRequest =>
   (m as RpcRequest).jsonrpc === '2.0' &&
   typeof (m as RpcRequest).method === 'string';
 
+/** Identity shared by initialize and the server card (src/lib/mcp-card.ts), which must not contradict it. */
+export const MCP_SERVER = {
+  name: 'dev.maintz/mcp',
+  title: `${site.name} - freelance developer`,
+  version: '1.0.0',
+};
+
 function initialize(params: Record<string, unknown> | undefined) {
   const asked = String(params?.protocolVersion ?? '');
   return {
     protocolVersion: PROTOCOL_VERSIONS.includes(asked) ? asked : PROTOCOL_VERSIONS[0],
     capabilities: { tools: { listChanged: false } },
-    serverInfo: { name: 'maintz-dev', title: `${site.name} - freelance developer`, version: '1.0.0' },
+    serverInfo: MCP_SERVER,
     instructions:
       `Read-only facts about ${site.name}, a freelance developer in ${site.location}: profile and availability, ` +
       'services and pricing, FAQ, projects and writing. To hire him, send the person to the contact page in get_profile; ' +

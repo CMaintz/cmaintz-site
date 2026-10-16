@@ -12,7 +12,7 @@ import { cases } from '../data/cases';
 import { values } from '../data/values';
 import { site } from '../data/site';
 import { faq } from '../data/faq';
-import { graph, personLd, offerCatalogLd, faqLd, breadcrumbLd } from '../lib/seo';
+import { graph, personLd, businessLd, offerCatalogLd, faqLd, breadcrumbLd } from '../lib/seo';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -21,13 +21,14 @@ const audiences: Audience[] = ['business', 'tech'];
 const contact = localize('/contact', lang);
 const ld = graph(
   personLd(Astro.site),
+  businessLd(Astro.site, lang),
   offerCatalogLd(Astro.site, lang),
   faqLd(lang),
   breadcrumbLd(Astro.site, [[t('services.title'), localize('/services', lang)]]),
 );
 ---
 
-<Base lang={lang} title={t('services.title')} description={t('services.lede')} jsonLd={ld}>
+<Base lang={lang} title={t('services.metaTitle')} description={t('services.metaDescription')} jsonLd={ld}>
   <PageHead eyebrow="~/services" title={t('services.title')} lede={t('services.lede')} />
 
   <section class="wrap grid grid-2 paths" aria-label={t('services.who')}>
