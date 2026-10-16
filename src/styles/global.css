@@ -105,7 +105,7 @@ kbd {
 .stack > * + * { margin-top: var(--stack, 1rem); }
 .section { padding-block: clamp(3rem, 8vw, 6rem); }
 /* Back-to-back sections share one gap instead of stacking two paddings. */
-.section + .section { padding-top: 0; }
+.section + .section, .page-head + .section { padding-top: 0; }
 .grid { display: grid; gap: 1.5rem; }
 .grid-2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
 .grid-3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
