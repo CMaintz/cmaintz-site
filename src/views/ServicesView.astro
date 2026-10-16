@@ -7,13 +7,14 @@ import { type Lang, localize, useT } from '../i18n/ui';
 import { services, workLanguages, process, HOURLY_RATE_DKK } from '../data/services';
 import { values } from '../data/values';
 import { faq } from '../data/faq';
-import { graph, personLd, offerCatalogLd, faqLd, breadcrumbLd } from '../lib/seo';
+import { graph, personLd, businessLd, offerCatalogLd, faqLd, breadcrumbLd } from '../lib/seo';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useT(lang);
 const ld = graph(
   personLd(Astro.site),
+  businessLd(Astro.site, lang),
   offerCatalogLd(Astro.site, lang),
   faqLd(lang),
   breadcrumbLd(Astro.site, [[t('services.title'), localize('/services', lang)]]),
