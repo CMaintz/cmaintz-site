@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import FaqList from '../components/FaqList.astro';
+import { type Lang, localize, useT } from '../i18n/ui';
+import { FAQ_TOPICS, faqTopicLabels } from '../data/faq';
+import { graph, personLd, faqLd, breadcrumbLd } from '../lib/seo';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const contact = localize('/contact', lang);
+const ld = graph(personLd(Astro.site), faqLd(lang), breadcrumbLd(Astro.site, [[t('faq.title'), localize('/faq', lang)]]));
+---
+
+<Base lang={lang} title={t('faq.title')} description={t('faq.lede')} jsonLd={ld}>
+  <PageHead eyebrow="~/faq" title={t('faq.title')} lede={t('faq.lede')} />
+
+  {FAQ_TOPICS.map((topic) => (
+    <section class="wrap section" aria-labelledby={`faq-${topic}`}>
+      <h2 id={`faq-${topic}`} class="mono label-h">{faqTopicLabels[topic][lang]}</h2>
+      <FaqList lang={lang} topics={[topic]} />
+    </section>
+  ))}
+
+  <section class="wrap cta">
+    <a class="btn btn--primary" href={`${contact}?topic=freelance`}>{t('faq.ask')} <span class="arrow">→</span></a>
+  </section>
+</Base>
+
+<style>
+  .cta { display: flex; justify-content: center; margin-top: 1rem; }
+</style>

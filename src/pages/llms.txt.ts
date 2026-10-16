@@ -2,7 +2,7 @@
 import type { APIContext } from 'astro';
 import { site } from '../data/site';
 import { areas, AREA_IDS } from '../data/areas';
-import { faq } from '../data/faq';
+import { faqFor } from '../lib/faq';
 import { services, HOURLY_RATE_DKK } from '../data/services';
 import { getPosts, getProjects } from '../lib/content';
 import { withSlash } from '../i18n/ui';
@@ -31,7 +31,7 @@ function danish(base: URL) {
     link(base, 'Ydelser og priser', '/da/services'),
     link(base, 'Kontakt', '/da/contact'),
     ...services.map((s) => `- **${s.title.da}**: ${s.body.da}`),
-    ...faq.da.map(({ q, a }) => `- **${q}** ${a}`),
+    ...faqFor('da').map(({ q, a }) => `- **${q}** ${a}`),
   ];
 }
 
@@ -45,7 +45,7 @@ async function sections(base: URL) {
     ['Focus areas', AREA_IDS.map((id) => link(base, areas[id].label.en, `/what-i-do/${id}`, areas[id].intro.en))],
     ['Projects', projects.map((p) => link(base, p.data.title, `/projects/${p.id}`, p.data.tagline.en))],
     ['Writing', posts.map((p) => link(base, p.data.title, `/blog/${p.id}`, p.data.description))],
-    ['FAQ', faq.en.map(({ q, a }) => `- **${q}** ${a}`)],
+    ['FAQ', [link(base, 'All questions', '/faq'), ...faqFor('en').map(({ q, a }) => `- **${q}** ${a}`)]],
     ['På dansk', danish(base)],
     [
       'Optional',

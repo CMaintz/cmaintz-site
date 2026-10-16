@@ -1,6 +1,6 @@
 import { site } from '../data/site';
 import { areas } from '../data/areas';
-import { faq } from '../data/faq';
+import { faqFor } from './faq';
 import { HOURLY_RATE_DKK, services, type Service } from '../data/services';
 import { type Lang, locales, localize, withSlash } from '../i18n/ui';
 
@@ -108,7 +108,7 @@ export function offerCatalogLd(base: URL | undefined, lang: Lang) {
 export function faqLd(lang: Lang) {
   return {
     '@type': 'FAQPage',
-    mainEntity: faq[lang].map(({ q, a }) => ({
+    mainEntity: faqFor(lang).map(({ q, a }) => ({
       '@type': 'Question',
       name: q,
       acceptedAnswer: { '@type': 'Answer', text: a },

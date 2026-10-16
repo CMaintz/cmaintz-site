@@ -10,6 +10,7 @@ export const da: Record<keyof typeof en, string> = {
   'nav.now': 'nu',
   'nav.uses': 'værktøjer',
   'nav.cv': 'cv',
+  'nav.faq': 'faq',
   'nav.search': 'søg',
   'nav.start': 'find dit match',
   'nav.menu': 'menu',
@@ -164,6 +165,10 @@ export const da: Record<keyof typeof en, string> = {
   'services.case.read': 'Hele casen',
   'services.book': 'Book et opkald på 20 min',
   'services.faq': 'Ofte stillede spørgsmål',
+  'faq.title': 'Ofte stillede spørgsmål',
+  'faq.lede': 'Det, kunder typisk spørger om, før vi går i gang: AI, hvad jeg laver, priser og samarbejdet.',
+  'faq.ask': 'Stil dit eget spørgsmål',
+  'faq.all': 'Alle spørgsmål',
   'start.title': 'Find det rette sted at starte',
   'start.lede':
     'Fem hurtige spørgsmål, og du får et konkret forslag: hvad I skal starte med, hvad det koster, og lignende opgaver jeg har løst.\nIntet sendes, før du selv vælger det.',

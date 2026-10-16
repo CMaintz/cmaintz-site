@@ -11,8 +11,8 @@ import { packages } from '../data/packages';
 import { cases } from '../data/cases';
 import { values } from '../data/values';
 import { site } from '../data/site';
-import { faq } from '../data/faq';
-import { graph, personLd, businessLd, offerCatalogLd, faqLd, breadcrumbLd } from '../lib/seo';
+import FaqTeaser from '../components/FaqTeaser.astro';
+import { graph, personLd, businessLd, offerCatalogLd, breadcrumbLd } from '../lib/seo';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -23,7 +23,6 @@ const ld = graph(
   personLd(Astro.site),
   businessLd(Astro.site, lang),
   offerCatalogLd(Astro.site, lang),
-  faqLd(lang),
   breadcrumbLd(Astro.site, [[t('services.title'), localize('/services', lang)]]),
 );
 ---
@@ -78,14 +77,7 @@ const ld = graph(
     </div>
   </section>
 
-  <section class="wrap section faq" aria-labelledby="faq-h">
-    <h2 id="faq-h" class="mono label-h">{t('services.faq')}</h2>
-    <dl>
-      {faq[lang].map(({ q, a }) => (
-        <div><dt>{q}</dt><dd class="dim">{a}</dd></div>
-      ))}
-    </dl>
-  </section>
+  <FaqTeaser lang={lang} topics={['pricing', 'working']} class="wrap" />
 
   <section class="wrap values mono" aria-label={t('about.values')}>
     <span class="faint">{t('about.values')}:</span>
@@ -121,10 +113,5 @@ const ld = graph(
   .values { display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem; font-size: 0.82rem; margin-bottom: 2.5rem; }
   .values a { color: var(--accent); text-decoration: none; }
   .cta { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
-  .faq dl {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1.5rem 3rem; margin: 0;
-  }
-  .faq dt { font-weight: 700; margin-bottom: 0.35rem; }
-  .faq dd { margin: 0; }
   @media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
 </style>
