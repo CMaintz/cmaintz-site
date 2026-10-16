@@ -147,6 +147,8 @@ p { margin: 0; text-wrap: pretty; }
   /* The body takes the height left under the bar, so cards stretched to a row's height don't overflow it. */
   display: flex; flex-direction: column;
 }
+/* The display above would otherwise beat the browser's hiding of closed dialogs (command palette, Doom). */
+dialog.win:not([open]) { display: none; }
 :root:not([data-theme='light']) .win { border-color: #4a4a47; box-shadow: var(--shadow-offset) var(--shadow-offset) 0 #000, inset 0 0 0 1px #0000; }
 .win__bar {
   /* Equal side columns keep the title centred on the whole bar, not just the space after the dots. */
