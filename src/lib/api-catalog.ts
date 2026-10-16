@@ -10,6 +10,7 @@ export const API_PATHS = {
   health: '/api/health',
   contact: '/api/contact',
   llms: '/llms.txt',
+  mcp: '/mcp',
 } as const;
 
 export const LINKSET_TYPE = 'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"';
@@ -25,6 +26,8 @@ export function apiCatalog(base: URL) {
         'service-doc': [{ href: abs(API_PATHS.docs), type: 'text/html' }],
         status: [{ href: abs(API_PATHS.health), type: 'application/health+json' }],
       },
+      // Read-only MCP server for AI agents (src/pages/mcp.ts); MCP has no service-desc format.
+      { anchor: abs(API_PATHS.mcp), 'service-doc': [{ href: `${abs(API_PATHS.docs)}#mcp`, type: 'text/html' }] },
     ],
   };
 }

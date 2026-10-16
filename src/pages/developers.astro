@@ -1,9 +1,11 @@
 ---
-// Human docs for the contact API: the `service-doc` target in the API catalog.
-// English only; the fields and responses come from the same OpenAPI object.
+// Human docs for the contact API and the MCP server: the `service-doc` targets in the
+// API catalog. English only; fields, responses and tools come from the same objects
+// the endpoints use.
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import { API_PATHS, openApiSpec } from '../lib/api-catalog';
+import { mcpTools } from '../lib/mcp-tools';
 
 const spec = openApiSpec(Astro.site!);
 const op = spec.paths[API_PATHS.contact].post;
@@ -43,12 +45,22 @@ const example = `curl -X POST ${origin}${API_PATHS.contact} \\
     <h3>Example</h3>
     <pre><code>{example}</code></pre>
 
+    <h2 id="mcp">MCP server for AI agents</h2>
+    <p>
+      <code>{origin}{API_PATHS.mcp}</code> is a read-only <a href="https://modelcontextprotocol.io">Model Context Protocol</a>
+      server (Streamable HTTP, no sign-in). It answers questions about my services, pricing, availability and work.
+      It can't send messages: to get in touch, use the <a href="/contact/">contact page</a>.
+    </p>
+    <ul>{mcpTools.map((t) => <li><code>{t.name}</code>: {t.description}</li>)}</ul>
+    <pre><code>{`claude mcp add --transport http maintz ${origin}${API_PATHS.mcp}`}</code></pre>
+
     <h2>Machine-readable</h2>
     <ul>
       <li><a href={API_PATHS.catalog}><code>{API_PATHS.catalog}</code></a>: API catalog (RFC 9727)</li>
       <li><a href={API_PATHS.spec}><code>{API_PATHS.spec}</code></a>: OpenAPI 3.1 description</li>
       <li><a href={API_PATHS.health}><code>{API_PATHS.health}</code></a>: health check</li>
       <li><a href={API_PATHS.llms}><code>{API_PATHS.llms}</code></a>: site summary for LLMs</li>
+      <li><a href="#mcp"><code>{API_PATHS.mcp}</code></a>: MCP server (POST only)</li>
     </ul>
   </section>
 </Base>
