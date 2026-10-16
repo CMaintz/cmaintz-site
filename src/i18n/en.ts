@@ -49,7 +49,7 @@ export const en = {
   'wid.built': 'What I’ve built',
   'wid.for_you': 'What I can do for you',
   'wid.writing': 'Writing',
-  'wid.show_more': 'Show {n} more',
+  'wid.show_more': 'Show more ({n} left)',
   'wid.seen_in': 'Seen in',
   'wid.hire': 'Talk to me about this',
   'wid.other': 'Other areas',
