@@ -52,7 +52,7 @@ export const da: Record<keyof typeof en, string> = {
   'wid.built': 'Det har jeg bygget',
   'wid.for_you': 'Det kan jeg gøre for dig',
   'wid.writing': 'Indlæg',
-  'wid.no_posts': 'Ingen indlæg om det endnu. Kommer snart.',
+  'wid.show_more': 'Vis {n} flere',
   'wid.seen_in': 'Se det i',
   'wid.hire': 'Tal med mig om det',
   'wid.other': 'Andre områder',
