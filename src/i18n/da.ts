@@ -24,6 +24,7 @@ export const da: Record<keyof typeof en, string> = {
   'home.hello': 'Hej, jeg hedder Christoffer.',
   'home.lede':
     'Jeg bygger maskineriet, der gør softwareteams hurtigere og sikrere: developer experience, CI/CD og kvalitets-gates, platformværktøjer og AI, der rent faktisk kommer i produktion.',
+  'home.metaTitle': 'Freelanceudvikler i Aarhus: AI og webudvikling',
   'home.cta.work': 'Se mit arbejde',
   'home.cta.hire': 'Hyr mig',
   'home.focus': 'Det laver jeg',
@@ -131,6 +132,9 @@ export const da: Record<keyof typeof en, string> = {
   'services.title': 'Ydelser',
   'services.lede':
     'Tilgængelig for freelance- og konsulentopgaver sideløbende med jobsøgningen.\nFast pris eller timebasis, remote eller on-site i Aarhus.',
+  'services.metaTitle': 'Ydelser: AI-automatisering og webudvikling',
+  'services.metaDescription':
+    'Freelanceudvikler i Aarhus: AI-automatisering, AI-implementering, web- og softwareudvikling og CI/CD. Fast pris eller timepris. Første 30 min. er gratis.',
   'services.pricing': 'Priser',
   'services.pricing.body':
     'Timepris fra {rate} kr. ekskl. moms. Opgaver til fast pris får et tilbud efter afgrænsning, fordi prisen afhænger af kompleksiteten. Det første 30-minutters opkald er gratis.',
