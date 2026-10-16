@@ -11,25 +11,41 @@ export const API_PATHS = {
   contact: '/api/contact',
   llms: '/llms.txt',
   mcp: '/mcp',
+  mcpCard: '/mcp/server-card',
+  aiCatalog: '/.well-known/ai-catalog.json',
 } as const;
 
 export const LINKSET_TYPE = 'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"';
 
+export const MCP_CARD_TYPE = 'application/mcp-server-card+json';
+
+type Abs = (path: string) => string;
+type Link = { href: string; type: string };
+interface LinksetEntry {
+  anchor: string;
+  'service-desc'?: Link[];
+  'service-doc': Link[];
+  status?: Link[];
+}
+
+const contactEntry = (abs: Abs): LinksetEntry => ({
+  anchor: abs(API_PATHS.contact),
+  'service-desc': [{ href: abs(API_PATHS.spec), type: 'application/vnd.oai.openapi+json;version=3.1' }],
+  'service-doc': [{ href: abs(API_PATHS.docs), type: 'text/html' }],
+  status: [{ href: abs(API_PATHS.health), type: 'application/health+json' }],
+});
+
+/** Read-only MCP server for AI agents (src/pages/mcp.ts), described by its server card. */
+const mcpEntry = (abs: Abs): LinksetEntry => ({
+  anchor: abs(API_PATHS.mcp),
+  'service-desc': [{ href: abs(API_PATHS.mcpCard), type: MCP_CARD_TYPE }],
+  'service-doc': [{ href: `${abs(API_PATHS.docs)}#mcp`, type: 'text/html' }],
+});
+
 /** RFC 9727 linkset: one entry per API, anchored at its base URL. */
 export function apiCatalog(base: URL) {
   const abs = (path: string) => new URL(path, base).toString();
-  return {
-    linkset: [
-      {
-        anchor: abs(API_PATHS.contact),
-        'service-desc': [{ href: abs(API_PATHS.spec), type: 'application/vnd.oai.openapi+json;version=3.1' }],
-        'service-doc': [{ href: abs(API_PATHS.docs), type: 'text/html' }],
-        status: [{ href: abs(API_PATHS.health), type: 'application/health+json' }],
-      },
-      // Read-only MCP server for AI agents (src/pages/mcp.ts); MCP has no service-desc format.
-      { anchor: abs(API_PATHS.mcp), 'service-doc': [{ href: `${abs(API_PATHS.docs)}#mcp`, type: 'text/html' }] },
-    ],
-  };
+  return { linkset: [contactEntry(abs), mcpEntry(abs)] };
 }
 
 /** Value for the homepage `Link` header: where agents find the machine-readable resources. */
