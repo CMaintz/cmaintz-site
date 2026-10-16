@@ -7,7 +7,7 @@ type L = Record<Lang, string>;
  * The /start scoping wizard: questions, their options, and what each "pain"
  * recommends. Ids are what the result and the contact-form brief are built from.
  */
-export interface WizardOption {
+interface WizardOption {
   id: string;
   label: L;
   /** Only shown to visitors who picked this audience in the first step. */
