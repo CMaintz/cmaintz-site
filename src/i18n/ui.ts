@@ -1,7 +1,7 @@
 import { en } from './en';
 import { da } from './da';
 
-const locales = ['en', 'da'] as const;
+export const locales = ['en', 'da'] as const;
 export type Lang = (typeof locales)[number];
 const defaultLang: Lang = 'en';
 

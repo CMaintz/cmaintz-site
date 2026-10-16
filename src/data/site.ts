@@ -8,7 +8,7 @@ export const site = {
   },
   description: {
     en: 'Christoffer Maintz - developer in Aarhus, Denmark, available for freelance: AI automation and enablement, developer experience, DevOps and platform engineering.',
-    da: 'Christoffer Maintz - udvikler i Aarhus, tilgængelig som freelancer: AI-automatisering og enablement, developer experience, DevOps og platform engineering.',
+    da: 'Christoffer Maintz, freelanceudvikler i Aarhus: AI-automatisering og AI-implementering, web- og softwareudvikling, DevOps og CI/CD i hele Danmark.',
   },
   location: 'Aarhus, Denmark',
   timezone: 'Europe/Copenhagen',

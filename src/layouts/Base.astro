@@ -18,7 +18,7 @@ import DoomLauncher from '../components/DoomLauncher.astro';
 import { site } from '../data/site';
 import { DISPLAY_EFFECTS } from '../data/display-effects';
 import { type Lang, localize, unlocalize, useT } from '../i18n/ui';
-import { clipDescription, graph, personLd, websiteLd } from '../lib/seo';
+import { businessLd, clipDescription, graph, personLd, websiteLd } from '../lib/seo';
 
 interface Props {
   title?: string;
@@ -40,7 +40,7 @@ const fullTitle = title ? `${title} · ${site.name}` : `${site.name} - ${site.ro
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const basePath = unlocalize(Astro.url.pathname);
 const og = new URL(ogImage, Astro.site);
-const ld = jsonLd ?? graph(personLd(Astro.site), websiteLd(Astro.site));
+const ld = jsonLd ?? graph(personLd(Astro.site), businessLd(Astro.site, lang), websiteLd(Astro.site));
 const metaDescription = clipDescription(description);
 ---
 

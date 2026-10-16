@@ -2,7 +2,7 @@ import { site } from '../data/site';
 import { areas } from '../data/areas';
 import { faq } from '../data/faq';
 import { HOURLY_RATE_DKK, services, type Service } from '../data/services';
-import { type Lang, withSlash } from '../i18n/ui';
+import { type Lang, locales, localize, withSlash } from '../i18n/ui';
 
 /** Search results show ~155-160 characters; cut at a word boundary. */
 export function clipDescription(text: string, max = 158) {
@@ -22,20 +22,51 @@ export function ogImageFor(kind: 'projects' | 'blog' | 'areas', id: string) {
   return OG_FILES.has(path) ? path : '/og.png';
 }
 
+const denmark = { '@type': 'Country', name: 'Denmark' };
+
+/** Who to contact, shared by the Person and the business it runs. */
+function contactLd(base: URL | undefined) {
+  return {
+    name: site.name,
+    url: base?.toString(),
+    image: new URL('/img/christoffer.jpg', base).toString(),
+    email: `mailto:${site.email}`,
+    address: { '@type': 'PostalAddress', addressLocality: 'Aarhus', addressCountry: 'DK' },
+    sameAs: [site.socials.github, site.socials.linkedin].filter(Boolean),
+  };
+}
+
+const catalogId = (base: URL | undefined, lang: Lang) => `${new URL(localize('/services', lang), base)}#catalog`;
+
+/** Both languages' catalogs: the Person and business nodes appear on pages of either language. */
+const catalogRefs = (base: URL | undefined) => locales.map((lang) => ({ '@id': catalogId(base, lang) }));
+
 export function personLd(base: URL | undefined) {
   return {
     '@type': 'Person',
     '@id': `${base}#person`,
-    name: site.name,
+    ...contactLd(base),
     jobTitle: site.role.en,
-    email: `mailto:${site.email}`,
-    url: base?.toString(),
-    image: new URL('/img/christoffer.jpg', base).toString(),
-    address: { '@type': 'PostalAddress', addressLocality: 'Aarhus', addressCountry: 'DK' },
-    sameAs: [site.socials.github, site.socials.linkedin].filter(Boolean),
     knowsAbout: ['AI automation', 'LLM integration', ...Object.values(areas).map((a) => a.label.en)],
     knowsLanguage: ['en', 'da'],
-    hasOfferCatalog: { '@id': `${new URL('/services/', base)}#catalog` },
+    hasOfferCatalog: catalogRefs(base),
+  };
+}
+
+/**
+ * The freelance business behind the Person. Organization rather than
+ * ProfessionalService: schema.org deprecated that type, and as a LocalBusiness
+ * it would ask for a street address and opening hours a remote freelancer lacks.
+ */
+export function businessLd(base: URL | undefined, lang: Lang) {
+  return {
+    '@type': 'Organization',
+    '@id': `${base}#business`,
+    ...contactLd(base),
+    description: site.description[lang],
+    areaServed: denmark,
+    founder: { '@id': `${base}#person` },
+    hasOfferCatalog: catalogRefs(base),
   };
 }
 
@@ -56,7 +87,7 @@ function offerLd(base: URL | undefined, s: Service, lang: Lang) {
       name: s.title[lang],
       description: s.body[lang],
       provider: { '@id': `${base}#person` },
-      areaServed: { '@type': 'Country', name: 'Denmark' },
+      areaServed: denmark,
       availableLanguage: ['en', 'da'],
     },
     ...(s.pricing !== 'quote' && { priceSpecification: hourly }),
@@ -65,12 +96,11 @@ function offerLd(base: URL | undefined, s: Service, lang: Lang) {
 
 /** Freelance services from /services, linked from the Person node. */
 export function offerCatalogLd(base: URL | undefined, lang: Lang) {
-  const url = new URL(lang === 'da' ? '/da/services/' : '/services/', base).toString();
   return {
     '@type': 'OfferCatalog',
-    '@id': `${url}#catalog`,
+    '@id': catalogId(base, lang),
     name: lang === 'da' ? 'Freelanceydelser' : 'Freelance services',
-    url,
+    url: new URL(localize('/services', lang), base).toString(),
     itemListElement: services.map((s) => offerLd(base, s, lang)),
   };
 }
@@ -78,7 +108,11 @@ export function offerCatalogLd(base: URL | undefined, lang: Lang) {
 export function faqLd(lang: Lang) {
   return {
     '@type': 'FAQPage',
-    mainEntity: faq[lang].map(({ q, a }) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+    mainEntity: faq[lang].map(({ q, a }) => ({
+      '@type': 'Question',
+      name: q,
+      acceptedAnswer: { '@type': 'Answer', text: a },
+    })),
   };
 }
 
