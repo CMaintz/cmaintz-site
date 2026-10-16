@@ -1,5 +1,7 @@
 import type { Lang } from '../i18n/ui';
 import type { AreaId } from './areas';
+import { businessServices } from './offers/business';
+import { techServices } from './offers/tech';
 
 type L = Record<Lang, string>;
 
@@ -23,154 +25,21 @@ export interface Service {
   deliverables: Record<Lang, string[]>;
   pricing: Pricing;
   areas: AreaId[];
-  audience: Audience;
+  audience: Audience | 'both';
 }
 
 export const services: Service[] = [
-  {
-    id: 'automation',
-    audience: 'business',
-    areas: ['platform', 'ai'],
-    glyph: '⟳',
-    title: { en: 'Workflow automation & integrations', da: 'Automatisering & integrationer' },
-    body: {
-      en: 'The copy-paste between webshop, accounting, spreadsheets and email - done by the systems instead of by people. I find the tasks that eat your week and connect the tools you already have.',
-      da: 'Copy-paste mellem webshop, regnskab, regneark og mail - klaret af systemerne i stedet for af medarbejderne. Jeg finder de opgaver, der æder jeres uge, og forbinder de værktøjer, I allerede har.',
-    },
-    deliverables: {
-      en: [
-        'Map of manual tasks & time spent',
-        'Integrations between your systems',
-        'Error alerts instead of silent failures',
-        'Plain-language hand-over',
-      ],
-      da: [
-        'Overblik over manuelle opgaver og tidsforbrug',
-        'Integrationer mellem jeres systemer',
-        'Fejlbeskeder i stedet for stille fejl',
-        'Overdragelse i almindeligt sprog',
-      ],
-    },
-    pricing: 'either',
-  },
-  {
-    id: 'quality-gate',
-    audience: 'tech',
-    areas: ['devops', 'dx', 'platform'],
-    glyph: '▣',
-    title: { en: 'CI/CD & quality-gate setup', da: 'CI/CD & kvalitets-gates' },
-    body: {
-      en: 'One deterministic rule set - format, lint, types, tests, coverage, security - that runs identically in the editor, before push and in CI. Ratcheted so legacy code can adopt it on day one.',
-      da: 'Ét deterministisk regelsæt - formatering, lint, typer, tests, coverage, sikkerhed - der kører ens i editoren, før push og i CI. Med ratcheting, så legacy-kode kan tage det i brug fra dag ét.',
-    },
-    deliverables: {
-      en: [
-        'GitHub Actions pipelines',
-        'Pinned toolchains via mise',
-        'Secret scanning & SAST',
-        'Baseline + ratchet strategy',
-        'Team hand-over docs',
-      ],
-      da: [
-        'GitHub Actions-pipelines',
-        'Fastlåste toolchains via mise',
-        'Secret-scanning & SAST',
-        'Baseline- og ratchet-strategi',
-        'Overdragelsesdokumentation',
-      ],
-    },
-    pricing: 'quote',
-  },
-  {
-    id: 'ai-integration',
-    audience: 'business',
-    areas: ['ai'],
-    glyph: '◈',
-    title: { en: 'AI automation & integrations', da: 'AI-automatisering & integrationer' },
-    body: {
-      en: 'LLM features that survive production: schema-enforced output, retries and idempotency, confidence scoring, human-in-the-loop review and an audit trail. Any major LLM provider, behind an abstraction you can swap.',
-      da: 'LLM-funktioner, der holder i produktion: skemabundet output, retries og idempotens, confidence-scoring, menneskelig godkendelse og audit trail. Enhver større LLM-udbyder bag en abstraktion, der kan udskiftes.',
-    },
-    deliverables: {
-      en: [
-        'Feasibility spike',
-        'Prompt + model evaluation harness',
-        'Async processing pipeline',
-        'Guardrails & fallbacks',
-        'Cost estimate',
-      ],
-      da: [
-        'Feasibility-spike',
-        'Evaluering af prompts og modeller',
-        'Asynkron pipeline',
-        'Guardrails & fallbacks',
-        'Omkostningsestimat',
-      ],
-    },
-    pricing: 'quote',
-  },
-  {
-    id: 'ai-dev',
-    audience: 'tech',
-    areas: ['ai', 'dx'],
-    glyph: '◎',
-    title: { en: 'AI-assisted development enablement', da: 'AI-assisteret udvikling' },
-    body: {
-      en: 'Get real leverage from coding agents without the chaos: skills, hooks and a gate the agent can’t quietly weaken, plus workflows from ticket to reviewable PR.',
-      da: 'Få reel gevinst af kodeagenter uden kaos: skills, hooks og en gate agenten ikke kan svække i det stille, plus flows fra ticket til PR klar til review.',
-    },
-    deliverables: {
-      en: ['Claude Code / Codex setup', 'Custom skills & hooks', 'AGENTS.md conventions', 'Team workshop'],
-      da: [
-        'Opsætning af Claude Code / Codex',
-        'Skræddersyede skills & hooks',
-        'AGENTS.md-konventioner',
-        'Workshop for teamet',
-      ],
-    },
-    pricing: 'quote',
-  },
-  {
-    id: 'shopware',
-    audience: 'business',
-    areas: ['backend'],
-    glyph: '▤',
-    title: { en: 'Shopware 6 & PHP plugins', da: 'Shopware 6- & PHP-plugins' },
-    body: {
-      en: 'Custom Shopware 6 plugins - admin modules, storefront plugins, DAL entities, migrations, scheduled tasks and Messenger/RabbitMQ workers - built the way I built a business-critical one for WEXO.',
-      da: 'Skræddersyede Shopware 6-plugins - admin-moduler, storefront-plugins, DAL-entiteter, migrationer, scheduled tasks og Messenger/RabbitMQ-workers - bygget som det forretningskritiske plugin, jeg lavede hos WEXO.',
-    },
-    deliverables: {
-      en: ['Plugin architecture', 'Admin (Vue) & storefront (TS)', 'Tests', 'Deployment guide'],
-      da: ['Plugin-arkitektur', 'Admin (Vue) & storefront (TS)', 'Tests', 'Deployment-guide'],
-    },
-    pricing: 'hourly',
-  },
-  {
-    id: 'fullstack',
-    audience: 'business',
-    areas: ['backend'],
-    glyph: '▦',
-    title: { en: 'Full-stack web apps', da: 'Full-stack webapps' },
-    body: {
-      en: 'From MVP to maintainable product: Spring Boot, .NET or Node backends with clean architecture; Angular, React, Vue or Astro frontends; Postgres with full-text and vector search.',
-      da: 'Fra MVP til vedligeholdbart produkt: Spring Boot-, .NET- eller Node-backends med ren arkitektur; Angular-, React-, Vue- eller Astro-frontends; Postgres med fuldtekst- og vektorsøgning.',
-    },
-    deliverables: {
-      en: ['Architecture & data model', 'API + frontend', 'CI/CD from day one', 'Docker-based deploy'],
-      da: ['Arkitektur & datamodel', 'API + frontend', 'CI/CD fra dag ét', 'Docker-baseret deploy'],
-    },
-    pricing: 'either',
-  },
+  ...businessServices,
+  ...techServices,
   {
     id: 'anything',
-    audience: 'tech',
+    audience: 'both',
     areas: [],
     glyph: '▢',
     title: { en: 'Everything else', da: 'Alt det andet' },
     body: {
-      en: 'Mobile (Swift, Kotlin), desktop, integrations, migrations, code review, legacy rescue. If it compiles, I’m interested - ask.',
-      da: 'Mobil (Swift, Kotlin), desktop, integrationer, migreringer, code review, redning af legacy. Hvis det kan kompilere, er jeg interesseret - spørg.',
+      en: 'Desktop apps, data migrations, code review, a second opinion on a plan or a vendor. If it compiles, I’m interested - ask.',
+      da: 'Desktop-apps, datamigreringer, code review, en second opinion på en plan eller en leverandør. Hvis det kan kompilere, er jeg interesseret - spørg.',
     },
     deliverables: { en: [], da: [] },
     pricing: 'hourly',

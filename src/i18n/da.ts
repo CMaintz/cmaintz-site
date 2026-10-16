@@ -151,6 +151,7 @@ export const da: Record<keyof typeof en, string> = {
   'services.for.tech': 'For udviklingsteams',
   'services.for.tech.body': 'Teams, der vil have CI, de kan stole på, en kvalitets-gate AI-agenter ikke kan svække, og kodeagenter der hjælper i stedet for at skabe mere review.',
   'services.for.see': 'Se ydelser',
+  'services.for.both': 'Noget andet?',
   'services.packages': 'Startpakker til fast pris',
   'services.packages.lede': 'Klar afgrænsning og klar pris, så første skridt er nemt. Større opgaver prissættes efter en af disse.',
   'services.free': 'Gratis',
