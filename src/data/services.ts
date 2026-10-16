@@ -30,7 +30,7 @@ export const services: Service[] = [
   {
     id: 'automation',
     audience: 'business',
-    areas: ['platform', 'ai'],
+    areas: ['backend', 'ai'],
     glyph: '⟳',
     title: { en: 'Workflow automation & integrations', da: 'Automatisering & integrationer' },
     body: {
