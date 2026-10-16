@@ -63,6 +63,29 @@ async function demoLoads(page) {
   return Boolean(expected?.startsWith('https://')) && src === expected;
 }
 
+/** Visible cards grouped into rendered rows, as row sizes (read from layout, not from the script's maths). */
+const visibleRows = (page) =>
+  page.$$eval('.built > *', (cs) => {
+    const tops = cs.filter((c) => getComputedStyle(c).display !== 'none').map((c) => c.offsetTop);
+    return [...new Set(tops)].map((top) => tops.filter((t) => t === top).length);
+  });
+
+/** "Show more" starts with one full row, adds one full row per click in place, and goes away once every card shows. */
+async function showMoreAddsRows(page) {
+  await page.goto(`${BASE}/what-i-do/backend`);
+  const total = await page.$$eval('.built > *', (cs) => cs.length);
+  const states = [await visibleRows(page)];
+  while (await page.isVisible('[data-show-more]')) {
+    await page.click('[data-show-more]');
+    states.push(await visibleRows(page));
+  }
+  const last = states.at(-1);
+  const width = states[0][0];
+  const rowByRow = states.every((rows, i) => rows.length === i + 1);
+  const fullRows = last.slice(0, -1).every((n) => n === width);
+  return width > 1 && rowByRow && fullRows && last.reduce((a, b) => a + b) === total;
+}
+
 async function langSwitches(page) {
   await page.goto(`${BASE}/about`);
   await page.click('a.lang');
@@ -148,6 +171,7 @@ const CHECKS = {
   filterHides,
   floppySwaps,
   demoLoads,
+  showMoreAddsRows,
   langSwitches,
   postLangSwitchLandsOnIndex,
   konamiOpensDoom,

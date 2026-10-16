@@ -25,7 +25,7 @@ export interface Service {
 export const services: Service[] = [
   {
     id: 'quality-gate',
-    areas: ['devops', 'dx'],
+    areas: ['devops', 'dx', 'platform'],
     glyph: '▣',
     title: { en: 'CI/CD & quality-gate setup', da: 'CI/CD & kvalitets-gates' },
     body: {
@@ -99,7 +99,7 @@ export const services: Service[] = [
   },
   {
     id: 'shopware',
-    areas: ['platform'],
+    areas: ['backend'],
     glyph: '▤',
     title: { en: 'Shopware 6 & PHP plugins', da: 'Shopware 6- & PHP-plugins' },
     body: {
@@ -114,7 +114,7 @@ export const services: Service[] = [
   },
   {
     id: 'fullstack',
-    areas: ['platform'],
+    areas: ['backend'],
     glyph: '▦',
     title: { en: 'Full-stack web apps', da: 'Full-stack webapps' },
     body: {

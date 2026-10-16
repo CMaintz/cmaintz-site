@@ -1,5 +1,5 @@
 ---
-// One "What I do" area: principles, related projects, matching services and posts.
+// One "What I do" area: matching services, principles, related projects and posts.
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
 import ServiceCard from '../components/ServiceCard.astro';
@@ -21,6 +21,12 @@ const posts = await postsInArea(area);
 const offers = services.filter((s) => s.areas.includes(area));
 const titles = new Map((await getProjects()).map((p) => [p.id, p.data.title]));
 const others = AREA_IDS.filter((id) => id !== area);
+// One grid row up front; each "show more" adds the next row so a long list doesn't bury the page.
+// The script sizes a row from the live column count; ROW is only the first paint's guess.
+const ROW = 3;
+// Numbered from what renders, so a hidden section leaves no gap.
+const sections = [offers.length > 0 && 'offer', 'how', projects.length > 0 && 'built', posts.length > 0 && 'writing'];
+const idx = (id: string) => String(sections.filter(Boolean).indexOf(id) + 1).padStart(2, '0');
 const ld = graph(
   { '@type': 'Service', name: a.label.en, description: a.intro.en, provider: { '@id': `${Astro.site}#person` }, areaServed: 'DK' },
   personLd(Astro.site),
@@ -37,31 +43,9 @@ const ld = graph(
     lede={a.intro[lang]}
   />
 
-  <section class="wrap section" aria-labelledby="how-h">
-    <div class="section-head"><h2 id="how-h"><span class="idx">01</span>{t('wid.how')}</h2></div>
-    <div class="grid grid-2">
-      {a.principles.map((p, i) => (
-        <Window title={`rule_${String(i + 1).padStart(2, '0')}.txt`} class="reveal" as="article">
-          <h3>{p.title[lang]}</h3>
-          <p class="dim body">{p.body[lang]}</p>
-          {p.proof && titles.has(p.proof) && (
-            <p class="proof mono">{t('wid.seen_in')}: <a href={localize(`/projects/${p.proof}`, lang)}>{titles.get(p.proof)} →</a></p>
-          )}
-        </Window>
-      ))}
-    </div>
-  </section>
-
-  {projects.length > 0 && (
-    <section class="wrap section" aria-labelledby="built-h">
-      <div class="section-head"><h2 id="built-h"><span class="idx">02</span>{t('wid.built')}</h2></div>
-      <div class="grid grid-3">{projects.map((p, i) => <ProjectCard project={p} lang={lang} index={i} compact />)}</div>
-    </section>
-  )}
-
   {offers.length > 0 && (
     <section class="wrap section" aria-labelledby="offer-h">
-      <div class="section-head"><h2 id="offer-h"><span class="idx">03</span>{t('wid.for_you')}</h2></div>
+      <div class="section-head"><h2 id="offer-h"><span class="idx">{idx('offer')}</span>{t('wid.for_you')}</h2></div>
       <div class="grid grid-2">
         {offers.map((s) => <ServiceCard service={s} lang={lang} deliverables={false} level={3} />)}
       </div>
@@ -70,10 +54,43 @@ const ld = graph(
     </section>
   )}
 
-  <section class="wrap section" aria-labelledby="writing-h">
-    <div class="section-head"><h2 id="writing-h"><span class="idx">04</span>{t('wid.writing')}</h2></div>
-    {posts.length ? posts.map((p) => <PostItem post={p} lang={lang} />) : <p class="mono faint">{t('wid.no_posts')}</p>}
+  <section class="wrap section" aria-labelledby="how-h">
+    <div class="section-head"><h2 id="how-h"><span class="idx">{idx('how')}</span>{t('wid.how')}</h2></div>
+    <div class="grid grid-2">
+      {a.principles.map((p, i) => (
+        <Window title={`rule_${String(i + 1).padStart(2, '0')}.txt`} class="reveal" as="article">
+          <h3>{p.title[lang]}</h3>
+          <p class="dim body">{p.body[lang]}</p>
+          {!!p.proof?.length && (
+            <p class="proof mono">{t('wid.seen_in')}: {p.proof.map((slug, j) => (
+              <>{j > 0 && ' · '}<a href={localize(`/projects/${slug}`, lang)}>{titles.get(slug)} →</a></>
+            ))}</p>
+          )}
+        </Window>
+      ))}
+    </div>
   </section>
+
+  {projects.length > 0 && (
+    <section class="wrap section" aria-labelledby="built-h">
+      <div class="section-head"><h2 id="built-h"><span class="idx">{idx('built')}</span>{t('wid.built')}</h2></div>
+      <div class="grid grid-3 built">
+        {projects.map((p, i) => <ProjectCard project={p} lang={lang} index={i} compact collapsed={i >= ROW} />)}
+      </div>
+      {projects.length > ROW && (
+        <button type="button" class="more mono" data-show-more data-label={t('wid.show_more')} hidden>
+          {t('wid.show_more').replace('{n}', String(projects.length - ROW))}
+        </button>
+      )}
+    </section>
+  )}
+
+  {posts.length > 0 && (
+    <section class="wrap section" aria-labelledby="writing-h">
+      <div class="section-head"><h2 id="writing-h"><span class="idx">{idx('writing')}</span>{t('wid.writing')}</h2></div>
+      {posts.map((p) => <PostItem post={p} lang={lang} />)}
+    </section>
+  )}
 
   <nav class="wrap others mono" aria-label={t('wid.other')}>
     <span class="faint">{t('wid.other')}:</span>
@@ -81,11 +98,41 @@ const ld = graph(
   </nav>
 </Base>
 
+<script>
+  // Shows whole rows of the grid in place; the button follows the grid, so it ends up under the new row.
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-show-more]')) {
+    const grid = btn.previousElementSibling as HTMLElement;
+    const cards = [...grid.children] as HTMLElement[];
+    // The grid auto-fits, so the column count depends on the viewport; collapsed tracks still count.
+    const cols = () => getComputedStyle(grid).gridTemplateColumns.split(' ').length;
+    const showUpTo = (n: number) => {
+      cards.forEach((card, i) => card.toggleAttribute('data-collapsed', i >= n));
+      const left = Math.max(cards.length - n, 0);
+      btn.hidden = left === 0;
+      btn.textContent = btn.dataset.label!.replace('{n}', String(left));
+    };
+    showUpTo(cols());
+    btn.addEventListener('click', () => {
+      const shown = cards.findIndex((card) => card.hasAttribute('data-collapsed'));
+      const step = cols();
+      showUpTo((Math.floor(shown / step) + 1) * step);
+      cards[shown]?.querySelector('a')?.focus();
+    });
+  }
+</script>
+
 <style>
   h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
   .body { font-size: 0.97rem; }
   .proof { margin-top: 0.9rem; font-size: 0.78rem; color: var(--fg-faint); }
   .proof a { color: var(--accent); text-decoration: none; }
+  /* Without JS every card shows and the button stays hidden. */
+  :global(.js) .built > :global([data-collapsed]) { display: none; }
+  .more {
+    margin-top: 1.5rem; cursor: pointer; font: inherit; font-size: 0.85rem; color: var(--fg-dim); background: none;
+    padding: 0.6rem 0.9rem; border: 1px dashed var(--line);
+  }
+  .more:hover { color: var(--accent); border-color: var(--accent); }
   .cta { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.8rem; }
   .others {
     display: flex; gap: 1.2rem; flex-wrap: wrap; font-size: 0.85rem; padding-top: 1.5rem;

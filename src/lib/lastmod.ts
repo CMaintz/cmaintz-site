@@ -50,7 +50,11 @@ function gitDates(): [string, string | undefined][] {
     (f) => [`/projects/${f.replace(/\.mdx?$/, '')}/`, [`src/content/projects/${f}`]] as const,
   );
   const areas = AREA_IDS.map(
-    (id) => [`/what-i-do/${id}/`, ['src/views/WhatIDoView.astro', 'src/data/areas.ts']] as const,
+    (id) =>
+      [
+        `/what-i-do/${id}/`,
+        ['src/views/WhatIDoView.astro', 'src/data/areas.ts', `src/data/principles/${id}.ts`],
+      ] as const,
   );
   return [...Object.entries(PAGE_SOURCES), ...projects, ...areas].map(([path, files]) => [
     path,
