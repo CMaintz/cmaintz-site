@@ -1,0 +1,22 @@
+---
+import type { FaqTopic } from '../data/faq';
+import { faqFor } from '../lib/faq';
+import type { Lang } from '../i18n/ui';
+
+interface Props { lang: Lang; topics?: readonly FaqTopic[] }
+const { lang, topics } = Astro.props;
+---
+
+<dl class="faq">
+  {faqFor(lang, topics).map(({ q, a }) => (
+    <div><dt>{q}</dt><dd class="dim">{a}</dd></div>
+  ))}
+</dl>
+
+<style>
+  .faq {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 1.5rem 3rem; margin: 0;
+  }
+  dt { font-weight: 700; margin-bottom: 0.35rem; }
+  dd { margin: 0; }
+</style>
