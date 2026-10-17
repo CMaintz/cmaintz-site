@@ -103,7 +103,7 @@ async function ensureLabel() {
 
 function issueBody(meta) {
   return [
-    `**${meta.title}** is live: ${postUrl(SITE, meta.slug)}`,
+    `**${meta.title}** is live: ${postUrl(SITE, meta)}`,
     '',
     'Draft for LinkedIn. Edit it, post it, then close this issue.',
     '',
