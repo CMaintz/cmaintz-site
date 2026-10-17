@@ -53,7 +53,7 @@ const ld = graph(
     <div class="grid grid-2">{cases.map((c) => <CaseCard study={c} lang={lang} />)}</div>
   </section>
 
-  {audiences.map((a) => (
+  {[...audiences, 'both' as const].map((a) => (
     <section class="wrap section" aria-labelledby={`for-${a}`}>
       <div class="section-head"><h2 id={`for-${a}`}>{t(`services.for.${a}`)}</h2></div>
       <div class="grid grid-2">{services.filter((s) => s.audience === a).map((s) => <ServiceCard service={s} lang={lang} level={3} />)}</div>

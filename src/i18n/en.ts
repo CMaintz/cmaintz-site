@@ -149,6 +149,7 @@ export const en = {
   'services.for.tech': 'For dev teams',
   'services.for.tech.body': 'Teams that want CI they trust, a quality gate AI agents can’t weaken, and coding agents that actually help instead of creating review work.',
   'services.for.see': 'See services',
+  'services.for.both': 'Something else?',
   'services.packages': 'Fixed-price starters',
   'services.packages.lede': 'A clear scope and a clear price, so the first step is an easy one. Bigger work is quoted after one of these.',
   'services.free': 'Free',

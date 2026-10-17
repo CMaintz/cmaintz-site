@@ -146,12 +146,12 @@ export const steps: WizardStep[] = [
 
 export const recommendations: Record<string, Recommendation> = {
   'manual-work': { pkg: 'automation-check', service: 'automation', case: 'email-preview' },
-  'ai-content': { pkg: 'ai-sprint', service: 'ai-integration', case: 'illux' },
-  webshop: { pkg: 'mini-audit', service: 'shopware', case: 'illux' },
+  'ai-content': { pkg: 'ai-sprint', service: 'ai-tasks', case: 'illux' },
+  webshop: { pkg: 'mini-audit', service: 'webshop', case: 'illux' },
   'new-system': { pkg: 'mini-audit', service: 'fullstack', case: 'stablehand' },
   unsure: { pkg: 'mini-audit', service: 'automation' },
   ci: { pkg: 'gate-starter', service: 'quality-gate', case: 'foundry' },
-  legacy: { pkg: 'gate-starter', service: 'quality-gate', case: 'foundry' },
+  legacy: { pkg: 'gate-starter', service: 'modernisation', case: 'foundry' },
   'ai-agents': { pkg: 'mini-audit', service: 'ai-dev', case: 'foundry' },
   'ai-feature': { pkg: 'ai-sprint', service: 'ai-integration', case: 'illux' },
   build: { pkg: 'mini-audit', service: 'fullstack' },
