@@ -43,16 +43,16 @@ const ld = graph(
   <p class="wrap guide"><a class="btn" href={localize('/start', lang)}>{t('start.link')} <span class="arrow">→</span></a></p>
 
   <section class="wrap section" aria-labelledby="packages-h">
-    <div class="section-head"><h2 id="packages-h">{t('services.packages')}</h2><p class="dim lede">{t('services.packages.lede')}</p></div>
+    <div class="section-head stack"><h2 id="packages-h">{t('services.packages')}</h2><p class="dim lede">{t('services.packages.lede')}</p></div>
     <div class="grid grid-2">{packages.map((p) => <PackageCard pkg={p} lang={lang} />)}</div>
   </section>
 
   <section class="wrap section" aria-labelledby="cases-h">
-    <div class="section-head"><h2 id="cases-h">{t('services.cases')}</h2><p class="dim lede">{t('services.cases.lede')}</p></div>
+    <div class="section-head stack"><h2 id="cases-h">{t('services.cases')}</h2><p class="dim lede">{t('services.cases.lede')}</p></div>
     <div class="grid grid-2">{cases.map((c) => <CaseCard study={c} lang={lang} />)}</div>
   </section>
 
-  {audiences.map((a) => (
+  {[...audiences, 'both' as const].map((a) => (
     <section class="wrap section" aria-labelledby={`for-${a}`}>
       <div class="section-head"><h2 id={`for-${a}`}>{t(`services.for.${a}`)}</h2></div>
       <div class="grid grid-2">{services.filter((s) => s.audience === a).map((s) => <ServiceCard service={s} lang={lang} level={3} />)}</div>
@@ -102,6 +102,8 @@ const ld = graph(
   .path .label-h { margin: 0; color: var(--accent); }
   .path__body { font-size: 1.05rem; }
   .arrow-link { font-size: 0.8rem; color: var(--fg-dim); }
+  /* A lede belongs under its heading, not beside it as .section-head lays out a button. */
+  .stack { flex-direction: column; align-items: start; gap: 0.5rem; }
   .lede { max-width: 38rem; margin: 0; }
   .two { display: grid; grid-template-columns: 1fr 1.2fr; gap: 3rem; align-items: start; }
   .price { font: 800 3.5rem var(--font-sans); color: var(--accent); letter-spacing: -0.04em; margin-block: 0.4rem; }

@@ -29,6 +29,7 @@ export const da: Record<keyof typeof en, string> = {
   'home.metaTitle': 'Freelanceudvikler i Aarhus: AI og webudvikling',
   'home.cta.work': 'Se mit arbejde',
   'home.cta.hire': 'Hyr mig',
+  'home.cta.services': 'Freelanceydelser',
   'home.focus': 'Det laver jeg',
   'home.featured': 'Udvalgte projekter',
   'home.all_projects': 'Alle projekter',
@@ -36,7 +37,7 @@ export const da: Record<keyof typeof en, string> = {
   'home.all_posts': 'Alle indlæg',
   'home.stack': 'Værktøjskassen',
   'home.cta.title': 'Har du noget, der skal bygges?',
-  'home.cta.body': 'Jeg søger fuldtidsstilling og tager gerne freelance- og konsulentopgaver i mellemtiden.',
+  'home.cta.body': 'Freelanceprojekter og konsulentopgaver til fast pris eller timepris. De første 30 minutter er gratis.',
   'focus.dx.title': 'Developer Experience',
   'focus.dx.body':
     'Hurtige feedback-loops, fornuftige standarder og værktøjer, der fjerner friktion i stedet for at tilføje ceremoni.',
@@ -152,6 +153,7 @@ export const da: Record<keyof typeof en, string> = {
   'services.for.tech': 'For udviklingsteams',
   'services.for.tech.body': 'Teams, der vil have CI, de kan stole på, en kvalitets-gate AI-agenter ikke kan svække, og kodeagenter der hjælper i stedet for at skabe mere review.',
   'services.for.see': 'Se ydelser',
+  'services.for.both': 'Noget andet?',
   'services.packages': 'Startpakker til fast pris',
   'services.packages.lede': 'Klar afgrænsning og klar pris, så første skridt er nemt. Større opgaver prissættes efter en af disse.',
   'services.free': 'Gratis',
@@ -187,7 +189,7 @@ export const da: Record<keyof typeof en, string> = {
   'start.noscript': 'Guiden kræver JavaScript. Du kan altid bare skrive til mig på kontaktsiden.',
   'contact.title': 'Kontakt',
   'contact.lede':
-    'Jobmuligheder, freelance, konsulentopgaver eller bare et hej.\nJeg svarer typisk inden for en dag eller to.',
+    'Freelance, konsulentopgaver, jobmuligheder eller bare et hej.\nJeg svarer typisk inden for en dag eller to.',
   'contact.name': 'Navn',
   'contact.email': 'E-mail',
   'contact.company': 'Virksomhed (valgfrit)',
