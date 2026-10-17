@@ -93,12 +93,12 @@ async function langSwitches(page) {
   return (await page.getAttribute('html', 'lang')) === 'da';
 }
 
-/** Posts are English-only, so the switch must land on the Danish blog index, not a 404. */
-async function postLangSwitchLandsOnIndex(page) {
+/** A post's language switch opens its translation, not the other blog index or a 404. */
+async function postLangSwitchLandsOnTranslation(page) {
   await page.goto(`${BASE}/blog/hello-world`);
   await page.click('a.lang');
-  await page.waitForURL('**/da/blog**');
-  return (await page.title()).startsWith('Blog');
+  await page.waitForURL('**/da/blog/hej-verden**');
+  return (await page.getAttribute('html', 'lang')) === 'da';
 }
 
 /** Arrow keys move the highlight, Tab completes, Enter runs. */
@@ -173,7 +173,7 @@ const CHECKS = {
   demoLoads,
   showMoreAddsRows,
   langSwitches,
-  postLangSwitchLandsOnIndex,
+  postLangSwitchLandsOnTranslation,
   konamiOpensDoom,
   noCspBlocks,
 };
