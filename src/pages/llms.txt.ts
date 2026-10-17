@@ -4,7 +4,7 @@ import { site } from '../data/site';
 import { areas, AREA_IDS } from '../data/areas';
 import { faq } from '../data/faq';
 import { services, HOURLY_RATE_DKK } from '../data/services';
-import { getPosts, getProjects } from '../lib/content';
+import { type Post, getPosts, getProjects, postPath } from '../lib/content';
 import { withSlash } from '../i18n/ui';
 
 const link = (base: URL, title: string, path: string, note?: string) =>
@@ -23,7 +23,7 @@ function intro(base: URL) {
 }
 
 /** Danish summary, so Danish questions have quotable Danish text to land on. */
-function danish(base: URL) {
+function danish(base: URL, posts: Post[]) {
   return [
     site.description.da,
     `Freelance- og konsulentopgaver, remote eller on-site i Aarhus. Timepris fra ${HOURLY_RATE_DKK} kr. ekskl. moms; ` +
@@ -31,12 +31,13 @@ function danish(base: URL) {
     link(base, 'Ydelser og priser', '/da/services'),
     link(base, 'Kontakt', '/da/contact'),
     ...services.map((s) => `- **${s.title.da}**: ${s.body.da}`),
+    ...posts.map((p) => link(base, p.data.title, postPath(p), p.data.description)),
     ...faq.da.map(({ q, a }) => `- **${q}** ${a}`),
   ];
 }
 
 async function sections(base: URL) {
-  const [projects, posts] = await Promise.all([getProjects(), getPosts()]);
+  const [projects, posts, daPosts] = await Promise.all([getProjects(), getPosts('en'), getPosts('da')]);
   return [
     [
       'Services',
@@ -44,9 +45,9 @@ async function sections(base: URL) {
     ],
     ['Focus areas', AREA_IDS.map((id) => link(base, areas[id].label.en, `/what-i-do/${id}`, areas[id].intro.en))],
     ['Projects', projects.map((p) => link(base, p.data.title, `/projects/${p.id}`, p.data.tagline.en))],
-    ['Writing', posts.map((p) => link(base, p.data.title, `/blog/${p.id}`, p.data.description))],
+    ['Writing', posts.map((p) => link(base, p.data.title, postPath(p), p.data.description))],
     ['FAQ', faq.en.map(({ q, a }) => `- **${q}** ${a}`)],
-    ['På dansk', danish(base)],
+    ['På dansk', danish(base, daPosts)],
     [
       'Optional',
       [link(base, 'About', '/about'), link(base, 'CV (PDF)', '/cv.pdf'), link(base, 'CV på dansk (PDF)', '/cv-da.pdf')],

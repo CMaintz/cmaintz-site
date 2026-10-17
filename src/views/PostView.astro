@@ -9,13 +9,13 @@ import AreaChips from '../components/AreaChips.astro';
 import Callout from '../components/Callout.astro';
 import MathBlock from '../components/Math.astro';
 import InlineMath from '../components/InlineMath.astro';
-import { type Lang, localize, useT, formatDate, withSlash } from '../i18n/ui';
-import { type Post, readingTime } from '../lib/content';
+import { type Lang, localize, useT, formatDate } from '../i18n/ui';
+import { type Post, postBase, postPath, readingTime } from '../lib/content';
 import { site } from '../data/site';
 import { graph, breadcrumbLd, personLd, ogImageFor } from '../lib/seo';
 
-interface Props { post: Post; lang: Lang; prev?: Post; next?: Post }
-const { post, lang, prev, next } = Astro.props;
+interface Props { post: Post; lang: Lang; prev?: Post; next?: Post; translation?: Post }
+const { post, lang, prev, next, translation } = Astro.props;
 const t = useT(lang);
 const { Content, headings } = await render(post);
 const toc = headings.filter((h) => h.depth === 2);
@@ -31,10 +31,12 @@ const posting = {
   author: { '@type': 'Person', '@id': `${Astro.site}#person`, name: site.name, url: new URL(localize('/about', 'en'), Astro.site).toString() },
   inLanguage: post.data.lang,
 };
-const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog', '/blog'], [post.data.title, `/blog/${post.id}`]]));
+const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog', localize('/blog', lang)], [post.data.title, postPath(post)]]));
+const alternates =
+  translation && ({ [lang]: postBase(post), [translation.data.lang]: postBase(translation) } as Record<Lang, string>);
 ---
 
-<Base lang={post.data.lang} title={post.data.title} description={post.data.description} type="article" alternates={false} langSwitchPath="/blog" publishedTime={post.data.pubDate} jsonLd={ld} ogImage={ogImageFor('blog', post.id)}>
+<Base lang={lang} title={post.data.title} description={post.data.description} type="article" alternates={alternates ?? false} langSwitchPath={translation ? postBase(translation) : '/blog'}publishedTime={post.data.pubDate} jsonLd={ld} ogImage={ogImageFor('blog', post.id)}>
   <div class="progress" aria-hidden="true"></div>
   <article>
     <PageHead as="header" back={{ href: localize('/blog', lang), label: t('blog.back') }} title={post.data.title} lede={post.data.description} glow>
@@ -65,8 +67,8 @@ const ld = graph(posting, personLd(Astro.site), breadcrumbLd(Astro.site, [['Blog
 
     <Pager
       label="Posts"
-      prev={prev && { href: withSlash(`/blog/${prev.id}`), label: prev.data.title }}
-      next={next && { href: withSlash(`/blog/${next.id}`), label: next.data.title }}
+      prev={prev && { href: postPath(prev), label: prev.data.title }}
+      next={next && { href: postPath(next), label: next.data.title }}
     />
   </article>
 </Base>

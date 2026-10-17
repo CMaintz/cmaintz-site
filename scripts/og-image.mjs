@@ -10,6 +10,7 @@ const DIST = 'dist/client';
 const KINDS = [
   { dir: 'projects', out: 'projects', label: 'PROJECT' },
   { dir: 'blog', out: 'blog', label: 'BLOG', skip: ['tags'] },
+  { dir: 'da/blog', out: 'blog', label: 'BLOG', skip: ['tags'] },
   { dir: 'what-i-do', out: 'areas', label: 'WHAT I DO' },
 ];
 

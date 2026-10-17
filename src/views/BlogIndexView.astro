@@ -8,7 +8,7 @@ import { type Post, getPosts, allTags } from '../lib/content';
 interface Props { lang: Lang; tag?: string; posts?: Post[] }
 const { lang, tag } = Astro.props;
 const t = useT(lang);
-const all = await getPosts();
+const all = await getPosts(lang);
 const posts = Astro.props.posts ?? all;
 const tags = allTags(all);
 const title = tag ? `${t('blog.tagged')} #${tag}` : t('blog.title');
@@ -19,7 +19,6 @@ const title = tag ? `${t('blog.tagged')} #${tag}` : t('blog.title');
     <p class="links mono">
       <a href="/rss.xml">◉ {t('blog.rss')}</a>
       <a href={localize('/search', lang)}>⌕ {t('nav.search')}</a>
-      {lang === 'da' && <span class="faint">{t('blog.en_only')}</span>}
     </p>
   </PageHead>
   <section class="wrap layout">

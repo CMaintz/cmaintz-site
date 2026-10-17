@@ -17,7 +17,7 @@ const { lang, area } = Astro.props;
 const t = useT(lang);
 const a = areas[area];
 const projects = await projectsInArea(area);
-const posts = await postsInArea(area);
+const posts = await postsInArea(area, lang);
 const offers = services.filter((s) => s.areas.includes(area));
 const titles = new Map((await getProjects()).map((p) => [p.id, p.data.title]));
 const others = AREA_IDS.filter((id) => id !== area);

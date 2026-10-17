@@ -21,7 +21,7 @@ export interface McpCatalog {
     stack: string[];
     featured: boolean;
   }[];
-  posts: { id: string; title: string; description: string; pubDate: Date; tags: string[] }[];
+  posts: { id: string; title: string; description: string; pubDate: Date; tags: string[]; lang: Lang }[];
 }
 
 const langSchema = { type: 'string', enum: ['en', 'da'], default: 'en', description: 'Answer language' };
@@ -93,7 +93,8 @@ const postList = (_: Record<string, unknown>, { base, posts }: McpCatalog) => ({
     description: p.description,
     published: p.pubDate.toISOString().slice(0, 10),
     tags: p.tags,
-    url: new URL(withSlash(`/blog/${p.id}`), base).toString(),
+    lang: p.lang,
+    url: new URL(withSlash(localize(`/blog/${p.id}`, p.lang)), base).toString(),
   })),
 });
 

@@ -90,7 +90,6 @@ export const en = {
   'blog.read': 'min read',
   'blog.tags': 'Tags',
   'blog.tagged': 'Posts tagged',
-  'blog.en_only': 'Posts are in English or Danish.',
   'blog.rss': 'RSS feed',
   'blog.back': 'All posts',
   'blog.updated': 'Updated',
