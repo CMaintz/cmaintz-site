@@ -24,8 +24,11 @@ interface Props {
   title?: string;
   description?: string;
   lang: Lang;
-  /** Set false for pages that only exist in one locale (e.g. blog posts). */
-  alternates?: boolean;
+  /**
+   * Unlocalized path of this page in each language, for pages whose path differs
+   * between languages (a translated post). False for a page in one language only.
+   */
+  alternates?: boolean | Record<Lang, string>;
   ogImage?: string;
   type?: 'website' | 'article';
   publishedTime?: Date;
@@ -39,6 +42,7 @@ const t = useT(lang);
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name} - ${site.role[lang]}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const basePath = unlocalize(Astro.url.pathname);
+const alt = alternates === true ? { en: basePath, da: basePath } : alternates || undefined;
 const og = new URL(ogImage, Astro.site);
 const ld = jsonLd ?? graph(personLd(Astro.site), businessLd(Astro.site, lang), websiteLd(Astro.site));
 const metaDescription = clipDescription(description);
@@ -54,11 +58,11 @@ const metaDescription = clipDescription(description);
     <meta name="author" content={site.name} />
     <link rel="canonical" href={canonical} />
     {
-      alternates && (
+      alt && (
         <>
-          <link rel="alternate" hreflang="en" href={new URL(localize(basePath, 'en'), Astro.site)} />
-          <link rel="alternate" hreflang="da" href={new URL(localize(basePath, 'da'), Astro.site)} />
-          <link rel="alternate" hreflang="x-default" href={new URL(localize(basePath, 'en'), Astro.site)} />
+          <link rel="alternate" hreflang="en" href={new URL(localize(alt.en, 'en'), Astro.site)} />
+          <link rel="alternate" hreflang="da" href={new URL(localize(alt.da, 'da'), Astro.site)} />
+          <link rel="alternate" hreflang="x-default" href={new URL(localize(alt.en, 'en'), Astro.site)} />
         </>
       )
     }

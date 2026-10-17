@@ -13,7 +13,7 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useT(lang);
 const featured = await getFeaturedProjects(9);
-const posts = (await getPosts()).slice(0, 3);
+const posts = (await getPosts(lang)).slice(0, 3);
 const focus = AREA_IDS.map((k, i) => ({
   id: k,
   n: String(i + 1).padStart(2, '0'),

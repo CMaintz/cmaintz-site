@@ -1,6 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import snapshot from '../data/github.json';
 import type { TagId } from '../data/tags';
+import { type Lang, localize, withSlash } from '../i18n/ui';
 
 export type Repo = (typeof snapshot.repos)[number];
 export type Project = CollectionEntry<'projects'>;
@@ -38,10 +39,20 @@ export async function getFeaturedProjects(limit = 6) {
   return (await getProjects()).filter((p) => p.data.featured).slice(0, limit);
 }
 
-export async function getPosts() {
-  const posts = await getCollection('blog', (p) => import.meta.env.DEV || !p.data.draft);
+/** Published posts, newest first; only those written in `lang` when it is given. */
+export async function getPosts(lang?: Lang) {
+  const posts = await getCollection(
+    'blog',
+    (p) => (import.meta.env.DEV || !p.data.draft) && (!lang || p.data.lang === lang),
+  );
   return posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 }
+
+/** Unlocalized path of a post; pass it through localize() with the post's language. */
+export const postBase = (post: Post) => `/blog/${post.id}`;
+
+/** A post lives under its own language: /blog/<id> or /da/blog/<id>. */
+export const postPath = (post: Post) => withSlash(localize(postBase(post), post.data.lang));
 
 /** Prose only: code fences and HTML tags don't count as reading. */
 const proseOf = (body: string) => body.replace(/```[\s\S]*?```/g, ' ').replace(/<[^>]+>/g, ' ');
@@ -84,6 +95,6 @@ export async function projectsInArea(area: string) {
   return (await getProjects()).filter((p) => (p.data.areas as string[]).includes(area));
 }
 
-export async function postsInArea(area: string) {
-  return (await getPosts()).filter((p) => (p.data.areas as string[]).includes(area));
+export async function postsInArea(area: string, lang: Lang) {
+  return (await getPosts(lang)).filter((p) => (p.data.areas as string[]).includes(area));
 }
