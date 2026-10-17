@@ -1,0 +1,54 @@
+---
+title: En kvalitets-gate til en kodebase, ingen tør røre - en plan på én uge
+description: Sådan får du linting, tests og sikkerhedsscanning ind i et legacy-repo uden et oprydningssprint, et rødt build på dag ét eller et oprør.
+pubDate: 2026-10-11
+lang: da
+translation: quality-gate-for-a-legacy-codebase
+areas: [devops, dx]
+tags: [devops, ci, testing, developer-experience]
+---
+
+Alle teams har ét: repoet uden linter, med en håndfuld tests, der måske kører og måske ikke gør, og et deploy, der virker, fordi ingen rører ved det. Alle er enige om, at det trænger til en kvalitets-gate. Ingen vil være den, der gør buildet rødt i en måned.
+
+Det behøver du heller ikke. Her er planen, jeg bruger, dag for dag. Idéerne bag står i [Ét regelsæt, tre placeringer](/da/blog/et-regelsaet-tre-placeringer); det her er den praktiske udgave.
+
+## Dag 1: få det til at bygge ens overalt
+
+Før du indfører nogen regler, så lås toolchainen fast. Hvis én udvikler kører Node 20, og CI kører Node 22, er alle senere checks bare støj. Et værktøj som [mise](https://mise.jdx.dev) låser sprog- og værktøjsversioner fast i én fil, som både laptoppen og CI læser.
+
+Sørg derefter for, at én kommando kan bygge og teste projektet fra et rent checkout. Fejler det allerede der, er det dit første fund - og det mest værdifulde.
+
+## Dag 2: tilføj formatteren, og kun formatteren
+
+En formatter er det ene check, der er helt mekanisk: kør den én gang, commit resultatet i ét samlet "formatér alt"-commit, og tilføj det commit til `.git-blame-ignore-revs`, så historikken stadig kan læses. Fra nu af bliver formatering aldrig diskuteret i et review igen.
+
+## Dag 3: lint med en baseline, ikke en oprydning
+
+Slår du linteren til, melder den hundredvis af problemer. Lad være med at rette dem. **Gem dem som en baseline**, og lad kun buildet fejle på *nye* overtrædelser. Når nogen retter en gammel, forsvinder den fra baselinen for altid.
+
+<Callout type="note" title="Skralden">
+Reglen er enkel: antallet af kendte overtrædelser må gå ned, aldrig op. Ingen bliver blokeret af gammel kode, og kodebasen bliver bedre én pull request ad gangen.
+</Callout>
+
+## Dag 4: tests og et coverage-gulv, der kun stiger
+
+Samme trick til tests. Mål dagens coverage, og gør den til gulvet - også selvom den er 12 %. Gaten fejler, hvis coverage falder; når den stiger, stiger gulvet med. Bed om tests på den kode, der ændres, ikke på hele kodebasen.
+
+## Dag 5: sikkerhedsscanning og CI-pipelinen
+
+Tilføj secret scanning (lækkede nøgler er den billigste katastrofe at forhindre) og en audit af afhængighederne. Kobl det hele på CI, så den kører præcis de samme kommandoer som laptoppen og pre-push-hooken. Samme regler alle steder betyder intet "virker lokalt, fejler i CI".
+
+Til sidst skal du beskytte selve reglerne. Hvis en pull request lemper en lint-regel *og* ændrer produktionskode, så kræv, at et menneske godkender den - især hvis AI-kodeagenter arbejder i repoet, for at svække reglen er den billigste måde at få et check til at gå igennem.
+
+## Det har du efter en uge
+
+- Et build, der kan reproduceres på enhver maskine
+- Ingen diskussioner om formatering i review
+- En gate, der blokerer nye problemer uden at kræve et oprydningssprint
+- En kodebase, der målbart bliver bedre for hvert merge
+
+Intet af det kræver, at I stopper arbejdet på nye features. Det er hele pointen.
+
+---
+
+Jeg tilbyder præcis det her som en [startpakke med CI-kvalitets-gate](/da/services/#packages-h) til fast pris: ét repo, tre dage og en overdragelse til teamet. Vil du hellere have en second opinion først, så bed om en [gratis mini-audit](/da/contact/?topic=audit) - giv mig adgang til repoet, så får du et sundhedstjek på én side.

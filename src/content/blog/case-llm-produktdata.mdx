@@ -1,0 +1,78 @@
+---
+title: 'Case: automatisk produktdata til over 3.000 produkter med en LLM'
+description: Hvordan et Shopware 6-plugin gjorde produktbilleder til tekster, SEO og kategorier på flere sprog for Illux - og de sikkerhedsnet, der gjorde det trygt at lade det køre uden opsyn.
+pubDate: 2026-10-06
+lang: da
+translation: llm-product-enrichment-case-study
+areas: [ai, backend, platform]
+tags: [ai, ai-automation, case-study, llm, ecommerce, php, shopware]
+---
+
+Illux sælger kunst online. Hvert produkt skulle have en beskrivelse, SEO-metadata, kategorier, tags og oversættelser til dansk, engelsk, norsk og svensk - og intet af det fandtes i nogen datakilde. Det blev skrevet i hånden, produkt for produkt, og omkostningen voksede med kataloget.
+
+Jeg byggede automatiseringen som eneste udvikler under min praktik hos WEXO, fra afgrænsning af problemet til produktion. Det her indlæg handler om, hvad der fik det til at virke i drift, ikke i en demo. Hele projektbeskrivelsen ligger på siden om [Illux Product AI](/da/projects/illux-product-ai).
+
+## Resultatet først
+
+| Mål | Resultat |
+| --- | --- |
+| Berigede produkter | **3.000+** |
+| Manuel berigelse tilbage | **ingen for størstedelen af kataloget** |
+| Sparet tid | **hundredvis af timer** |
+| Sprog i output | **konfigurerbart** (4 ved lancering, alle fra ét AI-kald) |
+| Status | forretningskritisk, stadig i daglig brug |
+
+## Hvad automatiseringen gør
+
+Produktbilleder går sammen med navn, producent og attributter til en generativ AI-model. Tilbage kommer **JSON, der følger et fast skema**: SEO-metadata, en beskrivelse til kunderne og tildeling af kategorier, tags og egenskaber fra en whitelist, på alle konfigurerede sprog i ét kald. Sproglisten er en indstilling: Illux startede med dansk, engelsk, norsk og svensk, og at tilføje tysk eller fransk er en ændring i konfigurationen, ikke i koden.
+
+Tre beslutninger bærer det meste af vægten:
+
+- **Output i et fast skema, ikke fri tekst.** Modellen udfylder en typet struktur, så der er ingen skrøbelig tekstparsing. Egenskaber vælges fra en whitelist over shoppens eksisterende muligheder; når intet passer, kan modellen foreslå en ny, men den venter i en kø i admin, til nogen godkender den.
+- **En abstraktion, der ikke er bundet til én udbyder.** Domænelogikken taler med et interface, ikke med en bestemt leverandør. Skifter man LLM-udbyder, rører det ikke forretningskoden.
+- **Konfiguration frem for kode.** Sprog i output, længdegrænser, antal søgeord og scoringsreglerne er alle indstillinger, så shoppen kan finjustere systemet uden en udvikler.
+
+## Hvad der gjorde det trygt at køre uden opsyn
+
+At få en model til at skrive en pæn produktbeskrivelse er den nemme del. At lade den skrive til et live katalog hver dag er det egentlige projekt.
+
+<Callout type="note" title="Tommelfingerreglen">
+Automatisér de sikre tilfælde, send de usikre videre til et menneske, og registrér det hele.
+</Callout>
+
+**En confidence-score bygget af konfigurerbare heuristikker.** Modellens egen vurdering af, hvor sikker den er, kan man ikke bare tage for gode varer, så hvert resultat tjekkes også mod enkle, deterministiske regler. Scoren tager udgangspunkt i modellens confidence pr. felt, vægtet efter hvor meget hvert felt betyder (metatitel, metabeskrivelse, søgeord, beskrivelse, egenskaber). Hver heuristik, der slår ud, trækker derefter et strafpoint fra:
+
+| Heuristik | Hvad den fanger |
+| --- | --- |
+| Længderegler | Titler, metabeskrivelser og beskrivelser, der er for korte eller over de konfigurerede grænser |
+| Søgeordsregler | For få SEO-søgeord, eller for lange tilsammen |
+| Generisk indhold | Standardfraser ("perfekt til enhver", "fantastisk tilføjelse"), lorem ipsum og uudfyldte `[placeholders]`, fundet med konfigurerbare mønstre |
+| Forbeholdsord | Usikre formuleringer ("muligvis", "måske", "kunne være") fra en ordliste, kunden selv vedligeholder |
+| Dubleret indhold | Den samme tekst returneret på forskellige sprog |
+| Fornuftstjek af egenskaber | Ingen egenskaber fundet, for mange mulige kandidater (et tegn på usikkerhed) eller lav matchrate mod shoppens rigtige egenskaber |
+| Fuldstændighed | Et svar, der kom delvist tomt tilbage |
+
+Alle vægte, strafpoint, grænseværdier og ordlister er indstillinger, kunden styrer, og den samlede straf har et loft, så én regel ikke kan vælte et godt resultat. Hvert strafpoint efterlader også en advarsel i almindeligt sprog, så den, der gennemgår resultatet, kan se *hvorfor* et produkt blev markeret ("metatitel for kort", "forbeholdsord i beskrivelsen"), ikke bare et tal.
+
+**Gennemgang med et menneske i loopet.** Resultater over grænsen bliver anvendt automatisk; resten venter i en transaktionssikker kø til gennemgang. Kunden kan flytte grænsen, slå gennemgang fra (fuld automatisk anvendelse) eller sende alt til gennemgang. Et dashboard viser den sparede tid.
+
+**Et komplet audit trail.** For hver analyse: den præcise prompt, model og version, confidence, hvem der gennemgik det, godkendelseshistorik, og hvilket batch det kom fra. Når nogen spørger "hvorfor står der det her på produktet?", er der et svar.
+
+**Robust batchkørsel.** Op til 500 produkter pr. kørsel, seks pr. API-kald, behandlet asynkront gennem Symfony Messenger over RabbitMQ, så intet blokerer en webrequest. Genforsøg med eksponentiel backoff, idempotens, rate limiting og caching beskytter mod en AI-udbyder, der er ustabil eller langsom.
+
+**Et evalueringssetup.** Modeller og prompt-strategier sammenlignes på gennemsnitlig confidence, hvilket også fanger kvalitetsdrift, når en model eller prompt ændres. Uden det er "den nye model virker bedre" en fornemmelse, ikke en måling.
+
+## Den anden halvdel: se kunsten på din egen væg
+
+Vægkunst er svær at sælge online, fordi folk ikke kan forestille sig den derhjemme. Det samme plugin lader kunderne vælge ramme, størrelse og materiale og derefter se værket sat ind i udvalgte rumscener - eller i **et billede af deres eget rum**. Hvert billede streames ind over server-sent events, efterhånden som det er klar. Et admin-modul genererer nye fotorealistiske interiører ud fra strukturerede fotografiske parametre, og de venter på godkendelse, før de går live.
+
+## Hvad jeg ville sige til et team, der overvejer det her
+
+1. **Start med de data, I ikke har.** Gevinsten her var ikke "AI"; det var, at metadataene ikke fandtes nogen steder og var dyre at lave i hånden.
+2. **Gør output typet og afgrænset.** Hvis modellen vælger fra jeres egne muligheder og skal spørge, før den tilføjer en ny, kan den ikke i det stille opfinde nye.
+3. **Tag ikke modellens ord for, hvor sikker den er.** Billige, deterministiske tjek (længde, søgeord, placeholder-tekst, forbehold, dubletter) fanger de fleste dårlige resultater, og de forklarer sig selv.
+4. **Fastlæg confidence-politikken sammen med forretningen, ikke på dens vegne.** Grænsen er en forretningsbeslutning; systemet skal gøre den justerbar.
+5. **Log prompt og model med hvert resultat.** I vil blive spurgt, og I får brug for at sammenligne, når I skifter model.
+6. **Mål før og efter et modelskift.** Et evalueringssetup er billigt sammenlignet med at opdage kvalitetsdrift i produktion.
+
+Har jeres team et manuelt, gentaget datajob som det her - produktdata, dokumenter, mails, tickets - [så er det den slags opgaver, jeg tager mig af](/da/services). Det første opkald på 30 minutter er gratis.
