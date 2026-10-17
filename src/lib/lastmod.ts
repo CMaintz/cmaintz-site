@@ -14,6 +14,7 @@ const PAGE_SOURCES: Record<string, string[]> = {
   '/about/': ['src/views/AboutView.astro', 'src/data/resume.ts', 'src/data/values.ts'],
   '/services/': ['src/views/ServicesView.astro', 'src/data/services.ts', 'src/data/faq.ts'],
   '/cv/': ['src/views/CvView.astro', 'src/data/resume.ts'],
+  '/what-i-do/': ['src/views/WhatIDoIndexView.astro', 'src/data/areas.ts', 'src/data/principles'],
   '/now/': ['src/views/NowView.astro'],
   '/uses/': ['src/views/UsesView.astro'],
   '/contact/': ['src/views/ContactView.astro'],

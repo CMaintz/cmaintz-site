@@ -11,7 +11,7 @@ const t = useT(lang);
 const other: Lang = lang === 'en' ? 'da' : 'en';
 const here = unlocalize(Astro.url.pathname);
 
-const pages = (['/', '/about', '/projects', '/blog', '/services', '/start', '/faq', '/contact', '/now', '/uses', '/cv', '/search'] as const).map((p) => ({
+const pages = (['/', '/about', '/what-i-do', '/projects', '/blog', '/services', '/start', '/faq', '/contact', '/now', '/uses', '/cv', '/search'] as const).map((p) => ({
   group: 'go',
   label: p === '/' ? t('nav.home') : t(`nav.${p.slice(1)}` as Parameters<typeof t>[0]),
   hint: localize(p, lang),
