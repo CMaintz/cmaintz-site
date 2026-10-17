@@ -1,0 +1,20 @@
+---
+// Availability badge linking to /contact, shown on the home hero and on About.
+import { type Lang, localize, useT } from '../i18n/ui';
+import { site } from '../data/site';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+---
+
+<a class="status mono" href={localize('/contact', lang)}><span class="status-dot" aria-hidden="true"></span> {t('home.status')} · {site.location}</a>
+
+<style>
+  .status {
+    display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--fg-dim); border: 1px solid var(--line); padding: 0.3rem 0.7rem;
+    background: var(--bg-2); text-decoration: none; justify-self: start;
+  }
+  .status:hover { color: var(--accent); border-color: var(--accent); }
+</style>
