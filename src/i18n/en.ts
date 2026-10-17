@@ -121,7 +121,7 @@ export const en = {
   'about.skills': 'Skills',
   'about.languages': 'Spoken languages',
   'about.download': 'Download CV (PDF)',
-  'about.print': 'Printable CV',
+  'about.cv': 'My CV',
   'about.highlights': 'Highlights',
   'about.earlier': 'Earlier: retail leadership',
   'about.courses': 'Courses',

@@ -124,7 +124,7 @@ export const da: Record<keyof typeof en, string> = {
   'about.skills': 'Kompetencer',
   'about.languages': 'Talte sprog',
   'about.download': 'Download CV (PDF)',
-  'about.print': 'Printvenligt CV',
+  'about.cv': 'Mit CV',
   'about.highlights': 'Højdepunkter',
   'about.earlier': 'Tidligere: ledelse i detailhandlen',
   'about.courses': 'Kurser',
