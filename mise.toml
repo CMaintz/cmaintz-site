@@ -2,7 +2,7 @@
 # Copy to a repo's mise.toml and adjust the tool versions. See CONTRACT.md.
 
 [tools]
-node = "22.15.0"
+node = "22.15.1"
 gitleaks = "8.30.1"  # pre-push secret scan (.githooks/pre-push)
 # deno = "2.9.7"  # uncomment if the repo has Deno code (see FOUNDRY_DENO_PATHS below)
 
