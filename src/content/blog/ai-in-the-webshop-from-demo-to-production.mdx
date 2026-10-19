@@ -1,0 +1,52 @@
+---
+title: "AI in the webshop: from a slick demo to something that holds up in production"
+description: What it takes before AI-generated product copy can run in a real webshop - lessons from a solution that has enriched more than 3,000 products.
+pubDate: 2026-10-15
+areas: [ai, platform]
+tags: [ai, ecommerce, ai-automation, llm, shopware]
+translation: ai-i-webshoppen-fra-demo-til-drift
+---
+
+It takes an afternoon to get an AI model to write a good-looking product description. It takes considerably longer to get it to write thousands of them, in four languages, without someone having to read every one.
+
+The gap between those two is what decides whether AI saves time or just moves it somewhere else. Here's what I learned building [Illux Product AI](/projects/illux-product-ai) - a solution that is now a business-critical part of Illux's webshop and has enriched more than 3,000 products.
+
+## 1. Ask for data, not text
+
+An AI that answers in free text has to be picked apart afterwards - and that breaks on product number 800. Instead, the model should answer in a fixed structure: title, description, SEO fields, categories and tags, each in its own field and for each language.
+
+Categories and tags should also be chosen from a list you control. That way the AI can't invent a new category nobody asked for.
+
+## 2. Let it grade itself - and let a human take the rest
+
+Not every answer is equally good. The solution scores each result against rules the business can tune itself: text length, number of keywords, words you don't want to see. Anything above the threshold can be approved automatically; anything below goes into a queue for a human.
+
+<Callout type="note" title="This is where the time is saved">
+The goal isn't for the AI never to be wrong. The goal is for people to only look at the cases where it might be.
+</Callout>
+
+The threshold can be turned up and down. At the start you can approve everything by hand, then loosen it as trust grows.
+
+## 3. Run it in the background
+
+Thousands of products can't be processed while someone waits for a page to load. The work has to go into a queue and run in the background, with retries when the AI service is overloaded, and without the same product being processed - and paid for - twice.
+
+## 4. Record who, what and why
+
+For every result, you store which model and prompt produced it, what score it got, and who approved it. It sounds bureaucratic, but it's what lets you answer "why does it say this?" six months later - and switch models without guessing.
+
+## 5. Measure before you trust it
+
+Before you switch models or change your instructions, you need to be able to see whether the result got better or worse. A small test set of products that is rerun on every change catches it before your customers do.
+
+## Is this for you?
+
+AI for product data makes the most sense when:
+
+- you have **a lot of products** or add new ones continuously,
+- you sell in **several languages**,
+- and the copy follows a **recognisable pattern**.
+
+If you have 40 products that rarely change, it's probably quicker to write them yourself.
+
+If you're unsure, that's exactly what my [AI feasibility sprint](/services/#packages-h) is for: three days in which I build a prototype on your own data and measure how well it actually works - and you get an honest go / no-go including running costs. Or start with a [free mini-audit](/contact/?topic=audit).

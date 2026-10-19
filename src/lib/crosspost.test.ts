@@ -67,7 +67,6 @@ describe('markdown for other platforms', () => {
       '[a](https://maintz.dev/projects/x) ![i](https://maintz.dev/img/a.png) [b](https://x.dev/p) <img src="https://maintz.dev/og.png">',
     );
   });
-
 });
 
 const fence = '```';
@@ -108,6 +107,14 @@ describe('dev.to article', () => {
     expect(article.body_markdown).toContain('> **The exit code is the evidence**');
     expect(article.body_markdown).toContain('(https://maintz.dev/projects/foundry)');
     expect(article.body_markdown).toContain('Originally published at [maintz.dev](https://maintz.dev/blog/one-rule-set)');
+  });
+});
+
+describe('post URL', () => {
+  it('points a Danish post at its /da/ address', () => {
+    const meta = toMeta('fem-opgaver', { title: 'T', pubDate: '2026-10-13', lang: 'da' });
+    const { article } = devtoArticle({ meta, body: 'Body' }, SITE, `${SITE}/og.png`);
+    expect(article.canonical_url).toBe('https://maintz.dev/da/blog/fem-opgaver');
   });
 });
 

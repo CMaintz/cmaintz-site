@@ -1,10 +1,10 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
-import { getPosts } from '../lib/content';
+import { getPosts, postPath } from '../lib/content';
 import { site } from '../data/site';
 
 export async function GET(context: APIContext) {
-  const posts = await getPosts();
+  const posts = await getPosts('en');
   return rss({
     title: `${site.name} - blog`,
     description: site.description.en,
@@ -14,7 +14,7 @@ export async function GET(context: APIContext) {
       description: p.data.description,
       pubDate: p.data.pubDate,
       categories: p.data.tags,
-      link: `/blog/${p.id}/`,
+      link: postPath(p),
     })),
     customData: '<language>en</language>',
   });

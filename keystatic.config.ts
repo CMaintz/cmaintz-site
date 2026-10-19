@@ -65,6 +65,11 @@ const postSchema = {
     ],
     defaultValue: 'en',
   }),
+  translation: fields.relationship({
+    label: 'Translation',
+    description: 'The same post in the other language. Set it on both posts.',
+    collection: 'blog',
+  }),
   draft: fields.checkbox({ label: 'Draft (hidden on the site)', defaultValue: false }),
   cover: fields.image({ label: 'Cover image', directory: 'src/assets/blog', publicPath: '../../assets/blog/' }),
   comments: fields.checkbox({ label: 'Comments', defaultValue: true }),

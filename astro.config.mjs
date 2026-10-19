@@ -88,6 +88,9 @@ export default defineConfig({
   redirects: {
     // Friendlier address for the blog editor; Keystatic itself always lives at /keystatic.
     '/editor': '/keystatic',
+    // Old addresses of Danish posts, which live under /da/blog/.
+    '/blog/fem-opgaver-du-kan-automatisere': '/da/blog/fem-opgaver-du-kan-automatisere',
+    '/blog/ai-i-webshoppen-fra-demo-til-drift': '/da/blog/ai-i-webshoppen-fra-demo-til-drift',
     '/projects/reel-scout': '/projects/movie-explorer',
     '/da/projects/reel-scout': '/da/projects/movie-explorer',
     '/projects/movie-db': '/projects/movie-explorer',

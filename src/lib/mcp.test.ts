@@ -25,7 +25,10 @@ const catalog: McpCatalog = {
       featured: true,
     },
   ],
-  posts: [{ id: 'hello-world', title: 'Hello', description: 'D', pubDate: new Date('2026-09-27'), tags: ['meta'] }],
+  posts: [
+    { id: 'hello-world', title: 'Hello', description: 'D', pubDate: new Date('2026-09-27'), tags: ['meta'], lang: 'en' },
+    { id: 'fem-opgaver', title: 'Fem', description: 'D', pubDate: new Date('2026-09-20'), tags: [], lang: 'da' },
+  ],
 };
 
 const rpc = (method: string, params?: Record<string, unknown>, id: number | undefined = 1) =>
@@ -89,6 +92,7 @@ describe('MCP content tools', () => {
   it('list_posts gives dates and canonical URLs', async () => {
     const { posts } = (await callTool('list_posts')).structuredContent;
     expect(posts[0]).toMatchObject({ published: '2026-09-27', url: 'https://maintz.dev/blog/hello-world/' });
+    expect(posts[1]).toMatchObject({ lang: 'da', url: 'https://maintz.dev/da/blog/fem-opgaver/' });
   });
 });
 
