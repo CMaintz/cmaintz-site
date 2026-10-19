@@ -30,13 +30,13 @@ const idx = (id: string) => String(sections.filter(Boolean).indexOf(id) + 1).pad
 const ld = graph(
   { '@type': 'Service', name: a.label.en, description: a.intro.en, provider: { '@id': `${Astro.site}#person` }, areaServed: 'DK' },
   personLd(Astro.site),
-  breadcrumbLd(Astro.site, [['What I do', '/#focus-h'], [a.label.en, `/what-i-do/${area}`]]),
+  breadcrumbLd(Astro.site, [['What I do', '/what-i-do'], [a.label.en, `/what-i-do/${area}`]]),
 );
 ---
 
 <Base lang={lang} title={a.label[lang]} description={a.intro[lang]} jsonLd={ld} ogImage={ogImageFor('areas', area)}>
   <PageHead
-    back={{ href: localize('/#focus-h', lang), label: t('wid.title') }}
+    back={{ href: localize('/what-i-do', lang), label: t('wid.title') }}
     eyebrow={`~/what-i-do/${area}`}
     glyph={a.glyph}
     title={a.label[lang]}

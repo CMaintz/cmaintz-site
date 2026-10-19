@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHead from '../components/PageHead.astro';
+import StatusBadge from '../components/StatusBadge.astro';
 import StatGrid from '../components/StatGrid.astro';
 import TimelineEntry from '../components/TimelineEntry.astro';
 import Window from '../components/Window.astro';
@@ -43,6 +44,7 @@ const highlights = [
 
 <Base lang={lang} title={t('about.title')} description={t('about.lede')} jsonLd={ld}>
   <PageHead eyebrow="~/about" title={t('about.title')} lede={t('about.lede')}>
+    <StatusBadge slot="before" lang={lang} />
     <div class="actions">
       <a class="btn btn--primary" href={localize('/cv', lang)}>{t('about.cv')} →</a>
       <a class="btn btn--ghost" href={localize('/contact', lang)}>{t('nav.contact')} →</a>
