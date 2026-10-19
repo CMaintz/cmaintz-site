@@ -26,7 +26,14 @@ const catalog: McpCatalog = {
     },
   ],
   posts: [
-    { id: 'hello-world', title: 'Hello', description: 'D', pubDate: new Date('2026-09-27'), tags: ['meta'], lang: 'en' },
+    {
+      id: 'hello-world',
+      title: 'Hello',
+      description: 'D',
+      pubDate: new Date('2026-09-27'),
+      tags: ['meta'],
+      lang: 'en',
+    },
     { id: 'fem-opgaver', title: 'Fem', description: 'D', pubDate: new Date('2026-09-20'), tags: [], lang: 'da' },
   ],
 };

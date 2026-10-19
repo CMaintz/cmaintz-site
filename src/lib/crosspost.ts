@@ -55,7 +55,10 @@ export const stripEsm = (md: string) => md.replace(/^(import|export)\s.*$\n?/gm,
 export function calloutsToQuotes(md: string) {
   return md.replace(/<Callout\b([^>]*)>([\s\S]*?)<\/Callout>/g, (_, attrs: string, inner: string) => {
     const title = attrs.match(/title="([^"]*)"/)?.[1];
-    const lines = inner.trim().split('\n').map((l) => (l ? `> ${l}` : '>'));
+    const lines = inner
+      .trim()
+      .split('\n')
+      .map((l) => (l ? `> ${l}` : '>'));
     return [title ? `> **${title}**\n>` : '', ...lines].filter(Boolean).join('\n');
   });
 }
@@ -74,7 +77,10 @@ const katex = (tex: string) => decodeAttr(tex).replace(/\{(?=\{)/g, '{ ');
 function mathToKatex(prose: string) {
   return prose
     .replace(/<Math\s+expr="([^"]*)"\s*\/>/g, (_, tex: string) => `{% katex %}\n${katex(tex)}\n{% endkatex %}`)
-    .replace(/<InlineMath\s+expr="([^"]*)"\s*\/>/g, (_, tex: string) => `{% katex inline %}${katex(tex)}{% endkatex %}`);
+    .replace(
+      /<InlineMath\s+expr="([^"]*)"\s*\/>/g,
+      (_, tex: string) => `{% katex inline %}${katex(tex)}{% endkatex %}`,
+    );
 }
 
 /**
@@ -83,7 +89,8 @@ function mathToKatex(prose: string) {
  */
 function devtoFence(ticks: string, info: string, code: string) {
   const lang = info.trim().split(/\s+/)[0];
-  if (lang === 'mermaid') return `![Diagram](https://mermaid.ink/img/${Buffer.from(code.trim()).toString('base64url')})`;
+  if (lang === 'mermaid')
+    return `![Diagram](https://mermaid.ink/img/${Buffer.from(code.trim()).toString('base64url')})`;
   return `${ticks}${lang}\n${code}${ticks}`;
 }
 
@@ -148,7 +155,9 @@ export function planDevto(posts: Post[], existing: Map<string, number>, changed:
  * dev.to mapping, since both want short, followed tags.
  */
 export function linkedinDraft(meta: PostMeta, site: string) {
-  const hashtags = devtoTags(meta.tags).map((t) => `#${t}`).join(' ');
+  const hashtags = devtoTags(meta.tags)
+    .map((t) => `#${t}`)
+    .join(' ');
   return [meta.title, '', meta.description, '', `Full post: ${postUrl(site, meta)}`, '', hashtags].join('\n').trim();
 }
 

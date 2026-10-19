@@ -38,7 +38,8 @@ export const da: Record<keyof typeof en, string> = {
   'home.all_posts': 'Alle indlæg',
   'home.stack': 'Værktøjskassen',
   'home.cta.title': 'Har du noget, der skal bygges?',
-  'home.cta.body': 'Freelanceprojekter og konsulentopgaver til fast pris eller timepris. De første 30 minutter er gratis.',
+  'home.cta.body':
+    'Freelanceprojekter og konsulentopgaver til fast pris eller timepris. De første 30 minutter er gratis.',
   'focus.dx.title': 'Developer Experience',
   'focus.dx.body':
     'Hurtige feedback-loops, fornuftige standarder og værktøjer, der fjerner friktion i stedet for at tilføje ceremoni.',
@@ -52,7 +53,8 @@ export const da: Record<keyof typeof en, string> = {
   'focus.ai.title': 'AI-enablement',
   'focus.ai.body': 'LLM-funktioner i produktion, agentiske udviklingsflows og guardrails, der fejler sikkert.',
   'wid.title': 'Det laver jeg',
-  'wid.lede': 'Områderne, jeg arbejder i, og de regler, jeg arbejder efter i hvert af dem. Hver regel bygger på erfaring fra rigtige projekter, og de fleste linker til projektet, hvor jeg brugte den.',
+  'wid.lede':
+    'Områderne, jeg arbejder i, og de regler, jeg arbejder efter i hvert af dem. Hver regel bygger på erfaring fra rigtige projekter, og de fleste linker til projektet, hvor jeg brugte den.',
   'wid.all': 'Alle områder',
   'wid.rules': 'regler',
   'wid.how': 'Sådan arbejder jeg',
@@ -152,19 +154,23 @@ export const da: Record<keyof typeof en, string> = {
   'services.ask': 'Start en samtale',
   'services.who': 'Hvem jeg arbejder med',
   'services.for.business': 'For virksomheder',
-  'services.for.business.body': 'Små og mellemstore danske virksomheder, der mister timer på manuelt arbejde mellem webshop, regnskab, regneark og mail - eller vil have AI til at overtage en opgave ordentligt. Ingen teknisk baggrund nødvendig.',
+  'services.for.business.body':
+    'Små og mellemstore danske virksomheder, der mister timer på manuelt arbejde mellem webshop, regnskab, regneark og mail - eller vil have AI til at overtage en opgave ordentligt. Ingen teknisk baggrund nødvendig.',
   'services.for.tech': 'For udviklingsteams',
-  'services.for.tech.body': 'Teams, der vil have CI, de kan stole på, en kvalitets-gate AI-agenter ikke kan svække, og kodeagenter der hjælper i stedet for at skabe mere review.',
+  'services.for.tech.body':
+    'Teams, der vil have CI, de kan stole på, en kvalitets-gate AI-agenter ikke kan svække, og kodeagenter der hjælper i stedet for at skabe mere review.',
   'services.for.see': 'Se ydelser',
   'services.for.both': 'Noget andet?',
   'services.packages': 'Startpakker til fast pris',
-  'services.packages.lede': 'Klar afgrænsning og klar pris, så første skridt er nemt. Større opgaver prissættes efter en af disse.',
+  'services.packages.lede':
+    'Klar afgrænsning og klar pris, så første skridt er nemt. Større opgaver prissættes efter en af disse.',
   'services.free': 'Gratis',
   'services.vat': 'ekskl. moms',
   'services.package.cta': 'Spørg om denne',
   'services.package.claim': 'Få en gratis mini-audit',
   'services.cases': 'Resultater',
-  'services.cases.lede': 'Hvad der blev anderledes for dem, der bruger løsningen. Den fulde tekniske gennemgang er ét klik væk.',
+  'services.cases.lede':
+    'Hvad der blev anderledes for dem, der bruger løsningen. Den fulde tekniske gennemgang er ét klik væk.',
   'services.case.problem': 'Problemet',
   'services.case.solution': 'Det byggede jeg',
   'services.case.read': 'Hele casen',
