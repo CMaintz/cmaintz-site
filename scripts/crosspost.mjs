@@ -42,7 +42,12 @@ function changedSlugs() {
   if (!before || /^0+$/.test(before)) return new Set();
   try {
     const out = execFileSync('git', ['diff', '--name-only', before, 'HEAD', '--', DIR], { encoding: 'utf8' });
-    return new Set(out.split('\n').filter(Boolean).map((f) => basename(f, extname(f))));
+    return new Set(
+      out
+        .split('\n')
+        .filter(Boolean)
+        .map((f) => basename(f, extname(f))),
+    );
   } catch {
     return new Set();
   }
@@ -92,7 +97,11 @@ async function runDevto(posts) {
 const gh = (path, init = {}) =>
   call(`https://api.github.com/repos/${process.env.GITHUB_REPOSITORY}${path}`, {
     ...init,
-    headers: { authorization: `Bearer ${process.env.GITHUB_TOKEN}`, accept: 'application/vnd.github+json', ...init.headers },
+    headers: {
+      authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      accept: 'application/vnd.github+json',
+      ...init.headers,
+    },
   });
 
 async function ensureLabel() {
@@ -116,7 +125,8 @@ function issueBody(meta) {
 }
 
 async function runLinkedin(posts) {
-  if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPOSITORY) return console.log('LinkedIn: no GitHub token, skipping');
+  if (!process.env.GITHUB_TOKEN || !process.env.GITHUB_REPOSITORY)
+    return console.log('LinkedIn: no GitHub token, skipping');
   const due = posts.filter((p) => wants(p.meta, 'linkedin') && isLive(p.meta, NOW));
   if (!due.length) return console.log('LinkedIn: nothing to do');
   const issues = await gh('/issues?state=all&labels=crosspost&per_page=100');
@@ -126,7 +136,10 @@ async function runLinkedin(posts) {
     if (DRY) continue;
     await ensureLabel();
     const title = `LinkedIn post ready: ${meta.title}`;
-    await gh('/issues', { method: 'POST', body: JSON.stringify({ title, body: issueBody(meta), labels: ['crosspost'] }) });
+    await gh('/issues', {
+      method: 'POST',
+      body: JSON.stringify({ title, body: issueBody(meta), labels: ['crosspost'] }),
+    });
   }
 }
 

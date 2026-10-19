@@ -49,7 +49,8 @@ export const en = {
   'focus.ai.title': 'AI enablement',
   'focus.ai.body': 'LLM features in production, agentic dev workflows, and guardrails that fail safe.',
   'wid.title': 'What I do',
-  'wid.lede': 'The areas I work in, and the rules I work by in each. Every rule comes from real projects, and most link to the one where I applied it.',
+  'wid.lede':
+    'The areas I work in, and the rules I work by in each. Every rule comes from real projects, and most link to the one where I applied it.',
   'wid.all': 'All areas',
   'wid.rules': 'rules',
   'wid.how': 'How I work',
@@ -149,13 +150,16 @@ export const en = {
   'services.ask': 'Start a conversation',
   'services.who': 'Who I work with',
   'services.for.business': 'For businesses',
-  'services.for.business.body': 'Small and mid-sized Danish companies that lose hours to manual work between webshop, accounting, spreadsheets and email - or want AI to take over a task properly. No technical background needed.',
+  'services.for.business.body':
+    'Small and mid-sized Danish companies that lose hours to manual work between webshop, accounting, spreadsheets and email - or want AI to take over a task properly. No technical background needed.',
   'services.for.tech': 'For dev teams',
-  'services.for.tech.body': 'Teams that want CI they trust, a quality gate AI agents can’t weaken, and coding agents that actually help instead of creating review work.',
+  'services.for.tech.body':
+    'Teams that want CI they trust, a quality gate AI agents can’t weaken, and coding agents that actually help instead of creating review work.',
   'services.for.see': 'See services',
   'services.for.both': 'Something else?',
   'services.packages': 'Fixed-price starters',
-  'services.packages.lede': 'A clear scope and a clear price, so the first step is an easy one. Bigger work is quoted after one of these.',
+  'services.packages.lede':
+    'A clear scope and a clear price, so the first step is an easy one. Bigger work is quoted after one of these.',
   'services.free': 'Free',
   'services.vat': 'ex. VAT',
   'services.package.cta': 'Ask about this',
