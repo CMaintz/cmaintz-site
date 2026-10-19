@@ -1,0 +1,20 @@
+---
+import FaqList from './FaqList.astro';
+import type { FaqTopic } from '../data/faq';
+import { type Lang, localize, useT } from '../i18n/ui';
+
+interface Props { lang: Lang; topics: readonly FaqTopic[]; class?: string }
+const { lang, topics, class: cls } = Astro.props;
+const t = useT(lang);
+---
+
+<section class:list={['section', cls]} aria-labelledby="faq-h">
+  <h2 id="faq-h" class="mono label-h">{t('services.faq')}</h2>
+  <FaqList lang={lang} topics={topics} />
+  <p><a class="mono" href={localize('/faq', lang)}>{t('faq.all')} →</a></p>
+</section>
+
+<style>
+  p { margin: 1.5rem 0 0; }
+  a { font-size: 0.8rem; color: var(--fg-dim); }
+</style>

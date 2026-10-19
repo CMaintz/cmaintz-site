@@ -8,6 +8,7 @@ export const en = {
   'nav.now': 'now',
   'nav.uses': 'uses',
   'nav.cv': 'cv',
+  'nav.faq': 'faq',
   'nav.search': 'search',
   'nav.start': 'find your fit',
   'nav.menu': 'menu',
@@ -163,6 +164,10 @@ export const en = {
   'services.case.read': 'Full case',
   'services.book': 'Book a 20-min call',
   'services.faq': 'Common questions',
+  'faq.title': 'Frequently asked questions',
+  'faq.lede': 'What clients usually ask before we start: AI, what I do, prices and how we work together.',
+  'faq.ask': 'Ask your own question',
+  'faq.all': 'All questions',
   'start.title': 'Find your starting point',
   'start.lede':
     'Five quick questions, and you get a concrete suggestion: what to start with, what it costs and similar work I’ve done.\nNothing is sent until you choose to.',
