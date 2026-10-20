@@ -6,6 +6,7 @@ import { TAGS } from '../data/tags.ts';
 
 export interface PostMeta {
   slug: string;
+  lang: 'en' | 'da';
   title: string;
   description: string;
   pubDate: Date;
@@ -32,6 +33,7 @@ export function splitPost(source: string, parseYaml: (s: string) => unknown) {
 export function toMeta(slug: string, data: Record<string, unknown>): PostMeta {
   return {
     slug,
+    lang: data.lang === 'da' ? 'da' : 'en',
     title: String(data.title ?? slug),
     description: String(data.description ?? ''),
     pubDate: new Date(String(data.pubDate)),
@@ -42,7 +44,8 @@ export function toMeta(slug: string, data: Record<string, unknown>): PostMeta {
 }
 
 export const isLive = (m: PostMeta, now: Date) => !m.draft && m.pubDate.valueOf() <= now.valueOf();
-export const postUrl = (site: string, slug: string) => `${site.replace(/\/$/, '')}/blog/${slug}`;
+export const postUrl = (site: string, m: PostMeta) =>
+  `${site.replace(/\/$/, '')}${m.lang === 'da' ? '/da' : ''}/blog/${m.slug}`;
 export const wants = (m: PostMeta, target: CrosspostTarget) => m.crosspost.includes(target);
 
 /** Drops MDX import/export lines; components are supplied by the site, not the post. */
@@ -52,7 +55,10 @@ export const stripEsm = (md: string) => md.replace(/^(import|export)\s.*$\n?/gm,
 export function calloutsToQuotes(md: string) {
   return md.replace(/<Callout\b([^>]*)>([\s\S]*?)<\/Callout>/g, (_, attrs: string, inner: string) => {
     const title = attrs.match(/title="([^"]*)"/)?.[1];
-    const lines = inner.trim().split('\n').map((l) => (l ? `> ${l}` : '>'));
+    const lines = inner
+      .trim()
+      .split('\n')
+      .map((l) => (l ? `> ${l}` : '>'));
     return [title ? `> **${title}**\n>` : '', ...lines].filter(Boolean).join('\n');
   });
 }
@@ -71,7 +77,10 @@ const katex = (tex: string) => decodeAttr(tex).replace(/\{(?=\{)/g, '{ ');
 function mathToKatex(prose: string) {
   return prose
     .replace(/<Math\s+expr="([^"]*)"\s*\/>/g, (_, tex: string) => `{% katex %}\n${katex(tex)}\n{% endkatex %}`)
-    .replace(/<InlineMath\s+expr="([^"]*)"\s*\/>/g, (_, tex: string) => `{% katex inline %}${katex(tex)}{% endkatex %}`);
+    .replace(
+      /<InlineMath\s+expr="([^"]*)"\s*\/>/g,
+      (_, tex: string) => `{% katex inline %}${katex(tex)}{% endkatex %}`,
+    );
 }
 
 /**
@@ -80,7 +89,8 @@ function mathToKatex(prose: string) {
  */
 function devtoFence(ticks: string, info: string, code: string) {
   const lang = info.trim().split(/\s+/)[0];
-  if (lang === 'mermaid') return `![Diagram](https://mermaid.ink/img/${Buffer.from(code.trim()).toString('base64url')})`;
+  if (lang === 'mermaid')
+    return `![Diagram](https://mermaid.ink/img/${Buffer.from(code.trim()).toString('base64url')})`;
   return `${ticks}${lang}\n${code}${ticks}`;
 }
 
@@ -99,7 +109,7 @@ export function devtoMarkdown(md: string) {
 
 function devtoBody(post: Post, site: string) {
   const md = absolutize(devtoMarkdown(calloutsToQuotes(stripEsm(post.body))), site).trim();
-  return `${md}\n\n---\n\n*Originally published at [maintz.dev](${postUrl(site, post.meta.slug)}).*\n`;
+  return `${md}\n\n---\n\n*Originally published at [maintz.dev](${postUrl(site, post.meta)}).*\n`;
 }
 
 const DEVTO_TAG = new Map<string, string>(TAGS.flatMap((t) => ('devto' in t ? [[t.id, t.devto]] : [])));
@@ -117,7 +127,7 @@ export function devtoArticle(post: Post, site: string, mainImage?: string) {
       title: post.meta.title,
       body_markdown: devtoBody(post, site),
       published: true,
-      canonical_url: postUrl(site, post.meta.slug),
+      canonical_url: postUrl(site, post.meta),
       description: post.meta.description,
       tags: devtoTags(post.meta.tags),
       ...(mainImage ? { main_image: mainImage } : {}),
@@ -133,7 +143,7 @@ export function planDevto(posts: Post[], existing: Map<string, number>, changed:
   const actions: DevtoAction[] = [];
   for (const post of posts) {
     if (!wants(post.meta, 'devto') || !isLive(post.meta, now)) continue;
-    const id = existing.get(postUrl(site, post.meta.slug));
+    const id = existing.get(postUrl(site, post.meta));
     if (id === undefined) actions.push({ kind: 'create', post });
     else if (changed.has(post.meta.slug)) actions.push({ kind: 'update', post, id });
   }
@@ -145,8 +155,10 @@ export function planDevto(posts: Post[], existing: Map<string, number>, changed:
  * dev.to mapping, since both want short, followed tags.
  */
 export function linkedinDraft(meta: PostMeta, site: string) {
-  const hashtags = devtoTags(meta.tags).map((t) => `#${t}`).join(' ');
-  return [meta.title, '', meta.description, '', `Full post: ${postUrl(site, meta.slug)}`, '', hashtags].join('\n').trim();
+  const hashtags = devtoTags(meta.tags)
+    .map((t) => `#${t}`)
+    .join(' ');
+  return [meta.title, '', meta.description, '', `Full post: ${postUrl(site, meta)}`, '', hashtags].join('\n').trim();
 }
 
 export const linkedinMarker = (slug: string) => `<!-- crosspost:linkedin:${slug} -->`;

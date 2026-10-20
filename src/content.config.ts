@@ -21,6 +21,8 @@ const blog = defineCollection({
       /** Which 'What I do' areas the post belongs to. */
       areas,
       lang: z.enum(['en', 'da']).default('en'),
+      /** Id of the same post in the other language; both posts point at each other. */
+      translation: z.string().optional(),
       draft: z.boolean().default(false),
       cover: image().optional(),
       comments: z.boolean().default(true),

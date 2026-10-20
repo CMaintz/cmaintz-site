@@ -1,0 +1,81 @@
+---
+title: 'Case: en billig, typet model foran den dyre'
+description: Tre open source-værktøjer - en guardrail til agenter, en GitHub Action til issue-triage og en masseklassifikator - bygget på ét mønster for AI-automatisering, der er billigt nok til at køre på alt.
+pubDate: 2026-10-09
+lang: da
+translation: confidence-gated-ai-automation
+areas: [ai, devops, platform]
+tags: [ai, ai-automation, case-study, llm, github-actions]
+---
+
+De fleste idéer til AI-automatisering dør på ét af to tal: hvad det koster at køre en LLM på *hvert eneste* element, eller hvor lang tid det tager. Triage af hvert issue, tjek af hvert tool call fra en agent, klassificering af en million rækker - enten LLM-regningen eller ventetiden gør det umuligt, og du skal stadig pille svaret ud af den prosa, modellen leverer.
+
+[jev-tools](/da/projects/jev-tools) er mit svar: tre open source-værktøjer i TypeScript, der deler ét mønster.
+
+<Callout type="note" title="Mønstret">
+Kør en billig, typet model på alt. Forgren på det typede svar i koden. Send kun de usikre tilfælde videre til et menneske eller en rigtig LLM.
+</Callout>
+
+## Den billige model
+
+Værktøjerne er bygget på Jev fra TypeSafe AI: tekst ind, **typede svar** ud - `choice`, `score` eller `noul` (en ja-sandsynlighed) - med en sandsynlighed eller confidence i stedet for prosa. TypeSafe oplyser 70-500 ms fra ende til ende, $0,042 pr. million input-tokens og gratis output-tokens. Det ændrer, hvad der kan betale sig: du kan stille et snævert spørgsmål om hvert eneste element, og fordi svaret er typet, kan helt almindelig kode handle på det.
+
+Den er ikke et orakel, og det står der også i repoet. På TypeSafes egne evals er Jev enig med referencelabels fra frontier-modeller i 67,8 % af tilfældene. Den forstår kun tekst, giver ingen begrundelse og kan hverken tælle eller regne med datoer, så routingtabeller, grænser og datoer bliver i koden. Netop det tal er grunden til, at alle værktøjerne her **gater på confidence** i stedet for at stole blindt på svaret.
+
+De tre værktøjer deler én kernepakke uden afhængigheder, der står for TypeSafe- og Cloudflare Workers AI-providerne, genforsøg med backoff, timeouts og validering af svar. Et ugyldigt svar eller et svar uden for intervallet bliver smidt væk, så kalderen ser "intet svar" og kan fejle sikkert. Kernen erstattede tre identiske kopier af den kode, da jeg samlede værktøjerne i ét repo, med deres historik.
+
+## Værktøj 1: en guardrail til AI-agenters tool calls
+
+`jev-guard` tjekker hvert tool call, en agent foreslår. Du beskriver risikospørgsmålene i en policy - blast radius, hvor destruktivt kaldet er, risiko for dataudslip - og ét request besvarer dem alle. En lille beslutningsfunktion oversætter det typede svar til **allow**, **block** eller **hold** (spørg et menneske).
+
+Den vigtige egenskab er, at den **fejler sikkert**: et svar under confidence-gulvet, et manglende eller ugyldigt svar eller en fejl hos provideren bliver aldrig til `allow`. Ved `hold` kan en `onHold`-handler spørge en person.
+
+- **Presets** til shell, filsystem, SQL og betalinger, som du spreader ind og tilpasser
+- **`perTool`**-beslutninger til billige, ufarlige værktøjer, der helt springer Jev-kaldet over
+- **Et `audit`-hook** på hver afgørelse, fordi Jev returnerer tal, ikke begrundelser
+- **En cache af afgørelser** til identiske kald (fejl hos provideren bliver aldrig cachet)
+- **Adaptere** til LangChain JS (middleware) og Vercel AI SDK, med strukturelle typer, så ingen af de to frameworks bliver en afhængighed
+
+Den er udtrykkeligt ikke en sikkerhedsgrænse: behold sandboxing og credentials med mindst mulige rettigheder, og se den her som en billig semantisk second opinion ovenpå.
+
+## Værktøj 2: issue-triage for brøkdele af en cent
+
+`jev-triage` er en GitHub Action, der sender titel og brødtekst fra hvert nyt issue til Jev i **ét request** sammen med de spørgsmål, du har konfigureret, typisk type, prioritet, område og "er det her en sikkerhedssårbarhed?". Sikre svar bliver til labels, en prioritet og et mention af det rette team. Svar med lav confidence bliver aldrig anvendt: de får `triage:needs-human` eller bliver stillet igen til en vilkårlig OpenAI-kompatibel LLM, hvis svar valideres mod de samme spørgsmål, og som efterlader en begrundelse på én linje.
+
+Et par beslutninger, der betyder noget i et rigtigt repo:
+
+- **Routing bliver i koden.** Jev svarer på "hvilket område?"; et almindeligt map afgør, hvilket team der bliver nævnt.
+- **Intet bliver lukket automatisk.** Dubletfinderen foreslår en kandidat; en person beslutter.
+- **Nogle spørgsmål slår også alarm.** Et sandsynligt sikkerhedsproblem får sin `security`-label *og* udløser en workflow-advarsel, så det ikke bare er endnu en label.
+- **Hver kørsel rapporterer sin pris**: labels, eskaleringer, dubletter, input-tokens og en anslået pris i job-summary'en.
+- **En backlog-sweep** efter en tidsplan triagerer også eksisterende åbne issues, og **dry-run**-tilstand skriver de foreslåede labels som en kommentar i stedet for at sætte dem.
+
+Den ligger på [GitHub Marketplace](https://github.com/marketplace/actions/jev-triage).
+
+## Værktøj 3: jq til vurderinger
+
+`jev-sort` streamer JSONL- eller CSV-rækker gennem Jev og tilføjer typede kolonner plus en confidence:
+
+```sh title="classify a support export"
+jev-sort -q 'team:choice(billing,tech,sales)' -q 'urgent:noul' \
+  --escalate 'conf<0.6' --review-out review.jsonl --reject-out rejects.jsonl \
+  < tickets.jsonl > labeled.jsonl
+```
+
+Rækker under confidence-grænsen havner i review-filen, og rækker, Jev ikke kunne besvare, havner i reject-filen, så intet forsvinder i stilhed. Exit codes (2 for flagede rækker, 3 for afviste) gør det sikkert at sætte den ind i en pipeline. Den har også concurrency- og rate limits, `--dedupe` til identiske rækker og `--eval` til at måle enigheden på et håndlabelet udsnit, *før* en stor kørsel.
+
+Den betaler sig ved tusindvis af rækker og opefter, hvor en LLM pr. række *er* den dyre del. Til et par hundrede rækker er et engangsscript med en LLM enklere, og er reglen skarp, slår almindelig kode dem begge.
+
+## Hvor grænsen ligger
+
+"Send de usikre videre" virker kun, hvis du ved, hvor *usikker* begynder. Et søsterprojekt, [jev-eval](/da/projects/jev-eval), måler det i stedet for at gætte. Det kører Jev på *dine* labelede data og rapporterer nøjagtighed pr. spørgsmål, om confidence overhovedet er til at stole på (kalibreringsfejl og en reliability-tabel) og en risk-coverage-tabel. Derefter anbefaler det et skæringspunkt for en ønsket nøjagtighed, for eksempel "gate ved 0,82: håndtér 59 % automatisk med 95 % nøjagtighed, eskalér resten". Samme idé går igen i [jev-rerank](/da/projects/jev-rerank) til RAG i Python og i [Leash](/da/projects/leash), der holder en kodeagent til et projekts regler.
+
+## Hvornår mønstret passer til jeres forretning
+
+Det passer, når I har **mange små, gentagne beslutninger** - routing af tickets, tagging af dokumenter, screening af henvendelser, tjek af handlinger - hvor:
+
+1. de fleste elementer er nemme, og nogle få er reelt svære,
+2. et forkert automatisk svar er dyrt, så de svære skal forbi et menneske eller en større model,
+3. mængden gør "bare kald GPT på det hele" for langsomt eller for dyrt.
+
+Lyder det som en kø hos jer, så [lad os tage en snak](/da/contact?topic=freelance). Jeg bygger den slags AI-automatisering som freelancer, og det første opkald på 30 minutter er gratis.

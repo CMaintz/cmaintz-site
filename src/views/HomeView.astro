@@ -4,16 +4,16 @@ import Window from '../components/Window.astro';
 import WhoamiTerminal from '../components/WhoamiTerminal.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import PostItem from '../components/PostItem.astro';
+import StatusBadge from '../components/StatusBadge.astro';
 import { type Lang, localize, useT } from '../i18n/ui';
 import { getFeaturedProjects, getPosts } from '../lib/content';
-import { site } from '../data/site';
 import { AREA_IDS, areas } from '../data/areas';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useT(lang);
 const featured = await getFeaturedProjects(9);
-const posts = (await getPosts()).slice(0, 3);
+const posts = (await getPosts(lang)).slice(0, 3);
 const focus = AREA_IDS.map((k, i) => ({
   id: k,
   n: String(i + 1).padStart(2, '0'),
@@ -27,12 +27,12 @@ const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', '
 <Base lang={lang} title={t('home.metaTitle')}>
   <section class="hero wrap">
     <div class="hero__text">
-      <a class="status mono" href={localize('/contact', lang)}><span class="status-dot" aria-hidden="true"></span> {t('home.status')} · {site.location}</a>
+      <StatusBadge lang={lang} />
       <h1 class="glow">{t('home.hello').replace('.', '')}<span class="cursor" aria-hidden="true"></span></h1>
       <p class="lede">{t('home.lede')}</p>
       <div class="ctas">
         <a class="btn btn--primary" href={localize('/projects', lang)}>{t('home.cta.work')} <span class="arrow">→</span></a>
-        <a class="btn" href={localize('/contact', lang)}>{t('home.cta.hire')}</a>
+        <a class="btn" href={localize('/services', lang)}>{t('home.cta.services')}</a>
         <button class="btn btn--ghost kb mono" type="button" data-cmdk-open><kbd data-mod>Ctrl</kbd>+<kbd>K</kbd></button>
       </div>
     </div>
@@ -43,6 +43,7 @@ const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', '
   <section class="section wrap" aria-labelledby="focus-h">
     <div class="section-head">
       <h2 id="focus-h"><span class="idx">01</span>{t('home.focus')}</h2>
+      <a class="btn btn--sm" href={localize('/what-i-do', lang)}>{t('wid.all')} <span class="arrow">→</span></a>
     </div>
     <div class="grid focus">
       {focus.map((f) => (
@@ -102,12 +103,7 @@ const stack = ['TypeScript', 'Java', 'C#', 'PHP', 'Kotlin', 'Swift', 'Python', '
     display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(2rem, 5vw, 4rem); align-items: center;
     padding-block: clamp(1.5rem, 4vw, 3rem) clamp(2rem, 5vw, 4rem);
   }
-  .status {
-    display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.8rem; text-transform: uppercase;
-    letter-spacing: 0.06em; color: var(--fg-dim); border: 1px solid var(--line); padding: 0.3rem 0.7rem;
-    background: var(--bg-2); margin-bottom: 1.5rem; text-decoration: none;
-  }
-  .status:hover { color: var(--accent); border-color: var(--accent); }
+  .hero__text :global(.status) { margin-bottom: 1.5rem; }
   /* The hero's bottom padding is the gap before the first section. */
   .hero + .section { padding-top: 0; }
   h1 { margin-bottom: 1.4rem; }

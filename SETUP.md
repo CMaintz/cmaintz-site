@@ -117,13 +117,13 @@ To write locally, run `npm run editor` and open `http://localhost:4321/editor` (
 
 ## Day-to-day
 
-| Task                                                  | Command                                                                                                        |
-| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Task                                                  | Command                                                                                                                                  |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | New blog post                                         | write it at `/editor` (Phase 8, or `npm run editor` locally), or add `src/content/blog/<slug>.mdx`; `draft: true` hides it in production |
-| Refresh GitHub data + READMEs                         | `npm run sync` (deploys fetch it hourly; CI commits it every Monday)                                           |
-| Regenerate CV PDFs after editing `src/data/resume.ts` | `npm run build && npm run cv:pdf`                                                                              |
-| Regenerate share images (after a new post or project) | `npm run build && npm run og && npm run build`                                                                 |
-| Add a looping clip to a project                       | `npm run clip -- <recording.mp4> <name> [start] [end]`, then `video: /media/<name>` in the project frontmatter |
-| Redeploy the www redirect (rarely needed)             | `npx wrangler deploy --config redirect-www/wrangler.jsonc`                                                     |
-| Visual / interaction smoke tests                      | `npm run build && npm run shots && npm run smoke`                                                              |
-| Change pricing                                        | `HOURLY_RATE_DKK` in `src/data/services.ts` (services show a pricing type, not amounts)                        |
+| Refresh GitHub data + READMEs                         | `npm run sync` (deploys fetch it hourly; CI commits it every Monday)                                                                     |
+| Regenerate CV PDFs after editing `src/data/resume.ts` | `npm run build && npm run cv:pdf`                                                                                                        |
+| Regenerate share images (after a new post or project) | `npm run build && npm run og && npm run build`                                                                                           |
+| Add a looping clip to a project                       | `npm run clip -- <recording.mp4> <name> [start] [end]`, then `video: /media/<name>` in the project frontmatter                           |
+| Redeploy the www redirect (rarely needed)             | `npx wrangler deploy --config redirect-www/wrangler.jsonc`                                                                               |
+| Visual / interaction smoke tests                      | `npm run build && npm run shots && npm run smoke`                                                                                        |
+| Change pricing                                        | `HOURLY_RATE_DKK` in `src/data/services.ts` (services show a pricing type, not amounts)                                                  |

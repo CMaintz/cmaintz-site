@@ -1,6 +1,7 @@
 import { site } from '../data/site';
 import { areas } from '../data/areas';
-import { faq } from '../data/faq';
+import { faqFor } from './faq';
+import { packages, type Package } from '../data/packages';
 import { HOURLY_RATE_DKK, services, type Service } from '../data/services';
 import { type Lang, locales, localize, withSlash } from '../i18n/ui';
 
@@ -94,21 +95,41 @@ function offerLd(base: URL | undefined, s: Service, lang: Lang) {
   };
 }
 
-/** Freelance services from /services, linked from the Person node. */
+/** A starter package as an Offer. `price` alone can't say ex. VAT; the spec carries that. */
+function packageOfferLd(base: URL | undefined, p: Package, lang: Lang) {
+  const price = { price: p.priceDkk, priceCurrency: 'DKK' };
+  return {
+    '@type': 'Offer',
+    ...price,
+    priceSpecification: { '@type': 'PriceSpecification', ...price, valueAddedTaxIncluded: false },
+    itemOffered: {
+      '@type': 'Service',
+      name: p.title[lang],
+      description: p.body[lang],
+      provider: { '@id': `${base}#person` },
+      areaServed: denmark,
+    },
+  };
+}
+
+/** Freelance services and starter packages from /services, linked from the Person node. */
 export function offerCatalogLd(base: URL | undefined, lang: Lang) {
   return {
     '@type': 'OfferCatalog',
     '@id': catalogId(base, lang),
     name: lang === 'da' ? 'Freelanceydelser' : 'Freelance services',
     url: new URL(localize('/services', lang), base).toString(),
-    itemListElement: services.map((s) => offerLd(base, s, lang)),
+    itemListElement: [
+      ...services.map((s) => offerLd(base, s, lang)),
+      ...packages.map((p) => packageOfferLd(base, p, lang)),
+    ],
   };
 }
 
 export function faqLd(lang: Lang) {
   return {
     '@type': 'FAQPage',
-    mainEntity: faq[lang].map(({ q, a }) => ({
+    mainEntity: faqFor(lang).map(({ q, a }) => ({
       '@type': 'Question',
       name: q,
       acceptedAnswer: { '@type': 'Answer', text: a },

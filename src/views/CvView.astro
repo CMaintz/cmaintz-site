@@ -19,8 +19,7 @@ const L = {
 
 <Base lang={lang} title="CV" description={basics.summary[lang]}>
   <div class="wrap bar no-print">
-    <button class="btn btn--primary" type="button" onclick="window.print()">{t('about.print')} ⎙</button>
-    <a class="btn" href={lang === 'da' ? '/cv-da.pdf' : '/cv.pdf'} download>{t('about.download')} ↓</a>
+    <a class="btn btn--primary" href={lang === 'da' ? '/cv-da.pdf' : '/cv.pdf'} download>{t('about.download')} ↓</a>
   </div>
   <article class="paper">
     <header>

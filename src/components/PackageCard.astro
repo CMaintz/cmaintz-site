@@ -22,15 +22,16 @@ const href = `${localize('/contact', lang)}?topic=${p.topic}&package=${p.id}`;
 </Window>
 
 <style>
-  .pkg :global(.win__body) {
-    display: grid; gap: 0.7rem; height: 100%; grid-template-rows: auto auto auto 1fr auto auto;
+  /* .pkg is set on the Window element, which carries Window's scope, not this one. */
+  :global(.pkg .win__body) {
+    display: grid; gap: 0.7rem; grid-template-rows: auto auto auto auto 1fr auto;
   }
-  .pkg--free { outline: 2px solid var(--accent); outline-offset: -2px; }
+  :global(.pkg--free) { outline: 2px solid var(--accent); outline-offset: -2px; }
   .title { font-size: 1.2rem; margin: 0; }
   .dur { font-size: 0.75rem; color: var(--fg-faint); margin: 0; }
   .price { font: 800 1.9rem var(--font-sans); color: var(--accent); letter-spacing: -0.03em; margin: 0; }
   .price span { font-size: 0.75rem; font-weight: 500; color: var(--fg-dim); letter-spacing: 0; }
-  .inc { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.3rem; font-size: 0.8rem; }
+  .inc { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.3rem; font-size: 0.8rem; align-content: start; }
   .inc li::before { content: '[x] '; color: var(--accent-2); }
-  .btn { justify-self: start; }
+  .btn { justify-self: start; margin-top: 0.8rem; }
 </style>

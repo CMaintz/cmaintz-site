@@ -3,7 +3,7 @@
 import type { McpTool } from './mcp';
 import { site } from '../data/site';
 import { services, process, workLanguages, HOURLY_RATE_DKK } from '../data/services';
-import { faq } from '../data/faq';
+import { faqFor } from './faq';
 import { areas, AREA_IDS } from '../data/areas';
 import { type Lang, localize, withSlash } from '../i18n/ui';
 
@@ -21,7 +21,7 @@ export interface McpCatalog {
     stack: string[];
     featured: boolean;
   }[];
-  posts: { id: string; title: string; description: string; pubDate: Date; tags: string[] }[];
+  posts: { id: string; title: string; description: string; pubDate: Date; tags: string[]; lang: Lang }[];
 }
 
 const langSchema = { type: 'string', enum: ['en', 'da'], default: 'en', description: 'Answer language' };
@@ -66,7 +66,7 @@ function serviceList(args: Record<string, unknown>, { base }: McpCatalog) {
 
 const faqList = (args: Record<string, unknown>, { base }: McpCatalog) => {
   const lang = langOf(args);
-  return { faq: faq[lang].map(({ q, a }) => ({ question: q, answer: a })), page: url(base, '/services', lang) };
+  return { faq: faqFor(lang).map(({ q, a }) => ({ question: q, answer: a })), page: url(base, '/faq', lang) };
 };
 
 function projectList(args: Record<string, unknown>, { base, projects }: McpCatalog) {
@@ -93,7 +93,8 @@ const postList = (_: Record<string, unknown>, { base, posts }: McpCatalog) => ({
     description: p.description,
     published: p.pubDate.toISOString().slice(0, 10),
     tags: p.tags,
-    url: new URL(withSlash(`/blog/${p.id}`), base).toString(),
+    lang: p.lang,
+    url: new URL(withSlash(localize(`/blog/${p.id}`, p.lang)), base).toString(),
   })),
 });
 

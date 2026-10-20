@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { packages } from '../data/packages';
 import { locales } from '../i18n/ui';
 import { businessLd, offerCatalogLd, personLd } from './seo';
 
@@ -30,5 +31,15 @@ describe('services structured data', () => {
     const nodes = [personLd(base), ...locales.map((lang) => businessLd(base, lang)), ...catalogs];
     const ids = new Set(nodes.map((n) => n['@id']));
     for (const ref of refs(nodes)) expect(ids).toContain(ref);
+  });
+});
+
+describe('starter package offers', () => {
+  it.each(locales)('lists every %s starter package at its fixed price, ex. VAT', (lang) => {
+    const offers = offerCatalogLd(base, lang).itemListElement.filter((o) => 'price' in o);
+    expect(offers.map((o) => [o.itemOffered.name, o.price, o.priceCurrency])).toEqual(
+      packages.map((p) => [p.title[lang], p.priceDkk, 'DKK']),
+    );
+    for (const o of offers) expect(o.priceSpecification).toMatchObject({ valueAddedTaxIncluded: false });
   });
 });
