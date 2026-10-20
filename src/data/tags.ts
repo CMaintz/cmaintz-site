@@ -42,3 +42,10 @@ export const TAGS = [
 
 export type TagId = (typeof TAGS)[number]['id'];
 export const TAG_IDS = TAGS.map((t) => t.id) as [TagId, ...TagId[]];
+
+/**
+ * A tag page is indexed once it lists this many posts in its language. Thinner ones
+ * carry `noindex, follow` and stay out of the sitemap (src/lib/thin-tags.ts).
+ */
+export const MIN_TAG_POSTS = 3;
+export const isThinTag = (postCount: number) => postCount < MIN_TAG_POSTS;

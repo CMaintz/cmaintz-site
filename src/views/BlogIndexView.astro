@@ -4,6 +4,7 @@ import PageHead from '../components/PageHead.astro';
 import PostItem from '../components/PostItem.astro';
 import { type Lang, localize, useT } from '../i18n/ui';
 import { type Post, getPosts, allTags } from '../lib/content';
+import { isThinTag } from '../data/tags';
 
 interface Props { lang: Lang; tag?: string; posts?: Post[] }
 const { lang, tag } = Astro.props;
@@ -14,7 +15,7 @@ const tags = allTags(all);
 const title = tag ? `${t('blog.tagged')} #${tag}` : t('blog.title');
 ---
 
-<Base lang={lang} title={title} description={t('blog.lede')}>
+<Base lang={lang} title={title} description={t('blog.lede')} noindex={Boolean(tag) && isThinTag(posts.length)}>
   <PageHead eyebrow={`~/blog${tag ? `/tags/${tag}` : ''}`} title={title} lede={t('blog.lede')}>
     <p class="links mono">
       <a href="/rss.xml">◉ {t('blog.rss')}</a>
