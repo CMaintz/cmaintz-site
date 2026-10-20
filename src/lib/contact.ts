@@ -42,6 +42,13 @@ export function validationError(q: Inquiry): string | null {
   return null;
 }
 
+/**
+ * Generated junk that gets past the honeypot: a name with a run of digits
+ * ("NARTYTRYUT275017NERTYTRY") or a message that is one unbroken token. Real
+ * names have no 4-digit runs and real messages have spaces, in any language.
+ */
+export const looksLikeSpam = (q: Inquiry) => /\d{4,}/.test(q.name) || !/\s/.test(q.message);
+
 /** Bots fill the hidden "website" field; humans never see it. */
 export const isHoneypotHit = (form: FormData) => String(form.get('website') ?? '') !== '';
 
