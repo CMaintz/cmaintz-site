@@ -35,9 +35,11 @@ interface Props {
   jsonLd?: Record<string, unknown>;
   /** Unlocalized path the language switch targets; defaults to the current page. */
   langSwitchPath?: string;
+  /** Keep the page out of search results while still following its links. */
+  noindex?: boolean;
 }
 
-const { title, description = site.description[Astro.props.lang], lang, alternates = true, ogImage = '/og.png', type = 'website', publishedTime, jsonLd, langSwitchPath } = Astro.props;
+const { title, description = site.description[Astro.props.lang], lang, alternates = true, ogImage = '/og.png', type = 'website', publishedTime, jsonLd, langSwitchPath, noindex = false } = Astro.props;
 const t = useT(lang);
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name} - ${site.role[lang]}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -56,6 +58,7 @@ const metaDescription = clipDescription(description);
     <title>{fullTitle}</title>
     <meta name="description" content={metaDescription} />
     <meta name="author" content={site.name} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
     {
       alt && (

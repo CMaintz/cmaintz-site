@@ -16,6 +16,7 @@ import { linkHeadersBlock } from './src/lib/api-catalog.ts';
 import { writeMarkdownPages } from './src/lib/markdown-pages.ts';
 import { pageDates, lastmodFor } from './src/lib/lastmod.ts';
 import { rehypeCanonicalLinks } from './src/lib/rehype-canonical-links.ts';
+import { thinTagPaths } from './src/lib/thin-tags.ts';
 import { fileURLToPath } from 'node:url';
 
 // Build-time: canonical URLs, RSS, sitemap and OG tags. Read from the shell/CI env
@@ -25,6 +26,8 @@ const fileEnv = loadEnv(process.env.NODE_ENV ?? 'production', process.cwd(), '')
 const SITE = process.env.SITE_URL || fileEnv.SITE_URL || 'https://maintz.dev';
 // When each page last changed (git + post front matter): sitemap <lastmod> and JSON-LD dateModified.
 const PAGE_DATES = pageDates();
+// Tag pages with too few posts are noindexed (BlogIndexView), so the sitemap leaves them out too.
+const THIN_TAGS = thinTagPaths('src/content/blog');
 
 /**
  * Appends the site-wide security headers, and the homepage's discovery Link header,
@@ -129,6 +132,7 @@ export default defineConfig({
     keystatic(),
     sitemap({
       i18n: { defaultLocale: 'en', locales: { en: 'en', da: 'da' } },
+      filter: (page) => !THIN_TAGS.has(new URL(page).pathname),
       serialize: (item) => ({ ...item, lastmod: lastmodFor(PAGE_DATES, item.url) }),
     }),
   ],
