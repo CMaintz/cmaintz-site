@@ -1,0 +1,62 @@
+---
+// Buddy, the site assistant (sheets and timings in src/data/buddy.ts). The
+// animation follows data-state on the nearest [data-state] ancestor: idle,
+// thinking or talking; a hovered launcher makes him hop.
+import { BUDDY_ANIMATIONS, BUDDY_FRAME } from '../data/buddy';
+
+interface Props {
+  /** Whole-number zoom, so the pixels stay square. */
+  scale?: 1 | 2 | 3;
+  class?: string;
+}
+const { scale = 1, class: cls } = Astro.props;
+
+const vars = Object.entries(BUDDY_ANIMATIONS)
+  .flatMap(([name, a]) => [
+    `--${name}-sheet: url(${a.sheet})`,
+    `--${name}-frames: ${a.frames}`,
+    `--${name}-ms: ${a.ms}ms`,
+  ])
+  .join('; ');
+const style = `${vars}; --w: ${BUDDY_FRAME.width}px; --h: ${BUDDY_FRAME.height}px; --scale: ${scale}`;
+---
+
+<span class:list={['buddy', cls]} style={style} aria-hidden="true"></span>
+
+<style>
+  .buddy {
+    --sheet: var(--idle-sheet);
+    --frames: var(--idle-frames);
+    --ms: var(--idle-ms);
+    display: block;
+    width: calc(var(--w) * var(--scale));
+    height: calc(var(--h) * var(--scale));
+    background: var(--sheet) 0 0 / calc(var(--w) * var(--frames) * var(--scale)) 100% no-repeat;
+    image-rendering: pixelated;
+    animation: buddy-play var(--ms) steps(var(--frames)) infinite;
+  }
+  :global([data-state='thinking']) .buddy {
+    --sheet: var(--thinking-sheet);
+    --frames: var(--thinking-frames);
+    --ms: var(--thinking-ms);
+  }
+  :global([data-state='talking']) .buddy {
+    --sheet: var(--talking-sheet);
+    --frames: var(--talking-frames);
+    --ms: var(--talking-ms);
+  }
+  :global(.buddy-hop:hover) .buddy {
+    --sheet: var(--hop-sheet);
+    --frames: var(--hop-frames);
+    --ms: var(--hop-ms);
+  }
+
+  /* steps() with its default jump-end shows frames 0 to n-1 and never the empty spot past the sheet. */
+  @keyframes buddy-play {
+    to { background-position-x: calc(var(--w) * var(--frames) * var(--scale) * -1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .buddy { animation: none; }
+  }
+</style>

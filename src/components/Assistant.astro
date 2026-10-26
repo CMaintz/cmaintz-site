@@ -1,0 +1,155 @@
+---
+// The site assistant: Buddy in the corner, opening a chat window. Hidden
+// until its script runs, so visitors without JS never see a dead button.
+// Logic in src/lib/assistant-client.ts; the server side in src/pages/api/assistant.ts.
+import { PUBLIC_TURNSTILE_SITE_KEY } from 'astro:env/client';
+import Buddy from './Buddy.astro';
+import { en } from '../i18n/en';
+import { type Lang, useT, type UIKey } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = useT(lang);
+const keys = Object.keys(en).filter((k): k is UIKey => k.startsWith('assistant.'));
+const strings = JSON.stringify(Object.fromEntries(keys.map((k) => [k, t(k)])));
+const suggestions = (['assistant.suggest.1', 'assistant.suggest.2', 'assistant.suggest.3'] as const).map(t);
+---
+
+<aside
+  class="buddy-chat"
+  data-buddy
+  data-state="idle"
+  data-lang={lang}
+  data-strings={strings}
+  data-sitekey={PUBLIC_TURNSTILE_SITE_KEY ?? ''}
+  hidden
+>
+  <section class="panel win" id="buddy-panel" role="dialog" aria-label="Buddy">
+    <div class="win__bar">
+      <span class="win__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="win__title">{t('assistant.title')}</span>
+      <span class="actions">
+        <button type="button" class="tool pixel" data-buddy-reset>{t('assistant.reset')}</button>
+        <button type="button" class="tool pixel" data-buddy-close aria-label={t('assistant.close')}>✕</button>
+      </span>
+    </div>
+    <div class="head">
+      <Buddy />
+      <p class="disclaimer">{t('assistant.disclaimer')}</p>
+    </div>
+    <div class="log" data-buddy-log aria-live="polite"></div>
+    <div class="suggest">
+      {suggestions.map((s) => <button type="button" class="chip mono" data-buddy-suggest>{s}</button>)}
+    </div>
+    <p class="status mono" data-buddy-status aria-live="polite"></p>
+    <form class="ask" data-buddy-form>
+      <textarea
+        data-buddy-input
+        rows="2"
+        maxlength="2000"
+        placeholder={t('assistant.placeholder')}
+        aria-label={t('assistant.placeholder')}></textarea>
+      <button type="submit" class="btn btn--primary">{t('assistant.send')}</button>
+    </form>
+  </section>
+  <button type="button" class="launch buddy-hop" data-buddy-launch aria-expanded="false" aria-controls="buddy-panel">
+    <Buddy scale={2} />
+    <span class="launch__label pixel">{t('assistant.open')}</span>
+  </button>
+</aside>
+
+<script>
+  import { mountAssistant } from '../lib/assistant-client';
+
+  const root = document.querySelector<HTMLElement>('[data-buddy]');
+  if (root) mountAssistant(root);
+</script>
+
+<style>
+  .buddy-chat {
+    position: fixed; right: clamp(0.75rem, 2vw, 1.5rem); bottom: clamp(0.75rem, 2vw, 1.5rem); z-index: 70;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;
+  }
+  .buddy-chat[hidden] { display: none; }
+
+  .launch {
+    display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.8rem 0.3rem 0.3rem;
+    background: var(--bg-2); color: var(--fg); cursor: pointer;
+    border: 2px solid var(--line-strong); box-shadow: 4px 4px 0 var(--shadow-c);
+    transition: transform 120ms steps(2);
+  }
+  :root:not([data-theme='light']) .launch { border-color: #4a4a47; }
+  .launch:hover { transform: translateY(-3px); }
+  .launch__label { font-size: 0.8rem; text-transform: uppercase; }
+  .buddy-chat[data-open] .launch__label { display: none; }
+
+  .panel {
+    display: none; width: min(25rem, calc(100vw - 1.5rem)); height: min(38rem, calc(100dvh - 8rem));
+  }
+  .buddy-chat[data-open] .panel { display: flex; }
+  .actions {
+    grid-column: 3; justify-self: end; display: flex; gap: 0.3rem; background: var(--bg-3); padding-left: 0.4rem;
+  }
+  .tool {
+    background: none; border: 0; color: var(--fg-dim); cursor: pointer; font-size: 0.75rem; text-transform: uppercase;
+  }
+  .tool:hover { color: var(--accent); }
+
+  .head {
+    display: flex; gap: 0.7rem; align-items: center; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line);
+  }
+  .disclaimer { margin: 0; font-size: 0.72rem; color: var(--fg-dim); line-height: 1.35; }
+
+  .log { flex: 1; overflow-y: auto; padding: 0.8rem; display: flex; flex-direction: column; gap: 0.6rem; }
+  .log :global(.msg) {
+    max-width: 88%; padding: 0.55rem 0.75rem; font-size: 0.9rem; line-height: 1.45; overflow-wrap: anywhere;
+  }
+  .log :global(.msg p), .log :global(.msg ul), .log :global(.msg ol) { margin: 0 0 0.45rem; }
+  .log :global(.msg > :last-child) { margin-bottom: 0; }
+  .log :global(.msg ul), .log :global(.msg ol) { padding-left: 1.2rem; }
+  .log :global(.msg--assistant) {
+    align-self: flex-start; background: var(--bg-3); border-left: 3px solid var(--accent-2);
+  }
+  .log :global(.msg--user) {
+    align-self: flex-end; background: var(--accent); color: var(--accent-ink); white-space: pre-wrap;
+  }
+  .log :global(.msg a) { color: var(--accent); }
+
+  .log :global(.lead) {
+    display: grid; gap: 0.5rem; padding: 0.75rem; border: 2px dashed var(--accent-2); font-size: 0.85rem;
+  }
+  .log :global(.lead__title) { margin: 0; font-weight: 700; }
+  .log :global(.lead__hint) { margin: 0; color: var(--fg-dim); font-size: 0.78rem; }
+  .log :global(.lead label) { display: grid; gap: 0.2rem; font-size: 0.78rem; color: var(--fg-dim); }
+  .log :global(.lead input), .log :global(.lead textarea) {
+    font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); padding: 0.35rem 0.5rem;
+  }
+
+  .suggest { display: flex; flex-wrap: wrap; gap: 0.35rem; padding: 0 0.8rem 0.4rem; }
+  .buddy-chat[data-busy] .suggest, .log:has(.msg--user) + .suggest { display: none; }
+  .chip {
+    font-size: 0.72rem; padding: 0.25rem 0.5rem; cursor: pointer;
+    background: var(--bg); color: var(--fg); border: 1px solid var(--line);
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+
+  .status { min-height: 1.1rem; margin: 0; padding: 0 0.8rem; font-size: 0.72rem; color: var(--accent-2); }
+
+  .ask { display: flex; gap: 0.5rem; padding: 0.6rem 0.8rem 0.8rem; border-top: 1px solid var(--line); }
+  .ask textarea {
+    flex: 1; resize: none; font: 0.9rem var(--font-sans); color: var(--fg);
+    background: var(--bg); border: 1px solid var(--line); padding: 0.45rem 0.55rem;
+  }
+  .ask textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .buddy-chat[data-busy] .ask button { opacity: 0.5; pointer-events: none; }
+
+  @media (max-width: 40rem) {
+    /* !important: Buddy sets --scale inline. */
+    .launch :global(.buddy) { --scale: 1 !important; }
+    .buddy-chat[data-open] { left: 0.75rem; }
+    .panel { width: 100%; height: calc(100dvh - 7.5rem); }
+  }
+  @media print { .buddy-chat { display: none; } }
+</style>

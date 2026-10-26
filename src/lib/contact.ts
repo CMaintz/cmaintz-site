@@ -7,9 +7,11 @@ export interface Inquiry {
   topic: string;
   budget: string;
   message: string;
+  /** Set when the site assistant drafted the message and the visitor sent it. */
+  source?: 'assistant';
 }
 
-const TOPICS = ['job', 'freelance', 'audit', 'consulting', 'other'];
+export const TOPICS = ['job', 'freelance', 'audit', 'consulting', 'other'];
 const TOPIC_LABELS: Record<string, string> = {
   job: 'job opportunity',
   freelance: 'freelance project',
@@ -32,6 +34,7 @@ export function parseInquiry(form: FormData): Inquiry {
     topic: TOPICS.includes(field(form, 'topic', 20)) ? field(form, 'topic', 20) : 'other',
     budget: field(form, 'budget', 80),
     message: field(form, 'message', 5000),
+    ...(field(form, 'source', 20) === 'assistant' ? { source: 'assistant' as const } : {}),
   };
 }
 
@@ -81,7 +84,9 @@ const optionalLine = (label: string, value: string) => (value ? [`${label}: ${va
 
 function formatInquiry(q: Inquiry) {
   const header = [
-    'Sent from the contact form on https://maintz.dev',
+    q.source === 'assistant'
+      ? 'Drafted with Buddy, the site assistant on https://maintz.dev, and sent by the visitor'
+      : 'Sent from the contact form on https://maintz.dev',
     '',
     `Name: ${q.name}`,
     `Email: ${q.email}`,
