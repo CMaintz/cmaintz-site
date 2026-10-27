@@ -36,7 +36,7 @@ import DisplayMenu from './DisplayMenu.astro';
 
     <div class="tools">
       <button class="tool cmdk" type="button" data-cmdk-open aria-label={t('cmd.open')}>
-        <span class="mono keys"><span data-mod>Ctrl</span> K</span><span class="icon" aria-hidden="true">⌕</span>
+        <span class="mono keys"><kbd data-mod>Ctrl</kbd>+<kbd>K</kbd></span><span class="icon" aria-hidden="true">⌕</span>
       </button>
       <a class="tool lang mono" href={localize(switchPath ?? here, other)} hreflang={other} lang={other} aria-label={`${t('lang.label')}: ${other.toUpperCase()}`}>
         <span class:list={{ on: lang === 'en' }}>EN</span><span class="sep">/</span><span class:list={{ on: lang === 'da' }}>DA</span>
@@ -114,8 +114,12 @@ import DisplayMenu from './DisplayMenu.astro';
     border: 1px solid transparent;
   }
   .nav a:hover { color: var(--fg); border-color: var(--line); }
-  .nav a[aria-current='page'] { color: var(--accent-ink); background: var(--accent); }
-  .nav a[aria-current='page']::before { content: '>'; margin-right: 0.3em; }
+  /* The marker comes out of the padding so the active link is no wider and its neighbours stay put. */
+  .nav a[aria-current='page'] {
+    color: var(--accent-ink); background: var(--accent);
+    padding-inline: calc(0.6rem - (1ch + 0.2em) / 2);
+  }
+  .nav a[aria-current='page']::before { content: '>'; margin-right: 0.2em; }
 
   .tools { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
   /* Global so DisplayMenu's summary gets the same look; two classes keep the old specificity,
@@ -141,13 +145,14 @@ import DisplayMenu from './DisplayMenu.astro';
   .menu__panel a { display: block; padding: 0.5rem 0.7rem; font: 500 0.95rem var(--font-mono); text-decoration: none; }
   .menu__panel a[aria-current='page'] { background: var(--accent); color: var(--accent-ink); }
 
-  /* Six links plus the tools need about 1040px in either language; below that the menu takes over. */
+  /* Six links plus the tools need about 1055px in either language; below that the menu takes over. */
   @media (max-width: 1060px) {
     .nav { display: none; }
     .tools { margin-left: auto; }
     .menu { display: block; }
   }
   @media (max-width: 860px) { .name { display: none; } }
+  .cmdk .keys { display: inline-flex; align-items: center; gap: 0.3rem; }
   .cmdk .icon { display: none; font-size: 1rem; }
   @media (hover: none) and (pointer: coarse) {
     .cmdk .keys { display: none; }
