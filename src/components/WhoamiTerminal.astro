@@ -39,26 +39,28 @@ const link = (path: string) => localize(path, lang);
     <button type="button" role="tab" id="tab-log" aria-controls="panel-log" aria-selected="false" tabindex="-1">git log</button>
   </div>
 
-  <div class="term__body mono" role="tabpanel" id="panel-whoami" aria-labelledby="tab-whoami">
-    <p><span class="accent">$</span> <span class="cmd">whoami</span></p>
-    <p class="out"><a href={link('/about')}>christoffer maintz - developer, aarhus dk</a></p>
-    <p><span class="accent">$</span> <span class="cmd">cat focus.txt</span></p>
-    <p class="out">{areas.map((a, i) => <>{i > 0 && ' · '}<a href={link(`/what-i-do/${a.id}`)}>{a.label}</a></>)}</p>
-    <p><span class="accent">$</span> <span class="cmd">ls ~/shipped</span></p>
-    <p class="out hl">{shipped.map((s) => <><a href={link(`/projects/${s}`)}>{s}</a>{'  '}</>)}</p>
-    <p><span class="accent">$</span> <span class="cmd">gh repo list --public | wc -l</span></p>
-    <p class="out"><a href={github.profile.url}>{github.repos.length}</a></p>
-    <p class="prompt"><span class="accent">$</span> <input type="text" aria-label="Terminal input" spellcheck="false" autocomplete="off" data-shell /></p>
-    <p class="out reply" aria-live="polite" data-reply></p>
-  </div>
+  <div class="term__panels">
+    <div class="term__body mono" role="tabpanel" id="panel-whoami" aria-labelledby="tab-whoami">
+      <p><span class="accent">$</span> <span class="cmd">whoami</span></p>
+      <p class="out"><a href={link('/about')}>christoffer maintz - developer, aarhus dk</a></p>
+      <p><span class="accent">$</span> <span class="cmd">cat focus.txt</span></p>
+      <p class="out">{areas.map((a, i) => <>{i > 0 && ' · '}<a href={link(`/what-i-do/${a.id}`)}>{a.label}</a></>)}</p>
+      <p><span class="accent">$</span> <span class="cmd">ls ~/shipped</span></p>
+      <p class="out hl">{shipped.map((s) => <><a href={link(`/projects/${s}`)}>{s}</a>{'  '}</>)}</p>
+      <p><span class="accent">$</span> <span class="cmd">gh repo list --public | wc -l</span></p>
+      <p class="out"><a href={github.profile.url}>{github.repos.length}</a></p>
+      <p class="prompt"><span class="accent">$</span> <input type="text" aria-label="Terminal input" spellcheck="false" autocomplete="off" data-shell /></p>
+      <p class="out reply" aria-live="polite" data-reply></p>
+    </div>
 
-  <div class="term__body mono" role="tabpanel" id="panel-log" aria-labelledby="tab-log" hidden>
-    <p><span class="accent">$</span> <span class="cmd">git log --all-repos --latest</span></p>
-    <ul class="log">
-      {pushes.map((p) => <li><span class="ago">{p.ago}</span><a class="hl" href={p.href}>{p.name}</a><span class="lang">{p.lang}</span></li>)}
-    </ul>
-    <p class="note">synced {formatDate(new Date(github.syncedAt), lang)} · time since last push</p>
-    <p><span class="accent">$</span> <span class="cursor"></span></p>
+    <div class="term__body mono" role="tabpanel" id="panel-log" aria-labelledby="tab-log" hidden>
+      <p><span class="accent">$</span> <span class="cmd">git log --all-repos --latest</span></p>
+      <ul class="log">
+        {pushes.map((p) => <li><span class="ago">{p.ago}</span><a class="hl" href={p.href}>{p.name}</a><span class="lang">{p.lang}</span></li>)}
+      </ul>
+      <p class="note">synced {formatDate(new Date(github.syncedAt), lang)} · time since last push</p>
+      <p><span class="accent">$</span> <span class="cursor"></span></p>
+    </div>
   </div>
 </Window>
 
@@ -181,6 +183,12 @@ const link = (path: string) => localize(path, lang);
     background: var(--bg); color: var(--fg); box-shadow: inset 0 -2px 0 var(--accent);
   }
   .tabs button:hover { color: var(--accent); }
+  /* Both panels share one grid cell, so the window always fits the taller one and
+     doesn't jump when switching tabs. The inactive panel is only made invisible:
+     `display: none` would drop it out of the sizing. */
+  .term__panels { display: grid; }
+  .term__panels > .term__body { grid-area: 1 / 1; }
+  .term__panels > .term__body[hidden] { display: block; visibility: hidden; }
   .term__body { font-size: 0.85rem; line-height: 1.75; min-height: 15.5rem; }
   .term__body p { white-space: pre-wrap; word-break: break-word; }
   .term__body .out { color: var(--fg-dim); margin-bottom: 0.35rem; }
