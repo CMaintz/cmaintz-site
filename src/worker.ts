@@ -1,23 +1,26 @@
 // Worker entry: Astro's Cloudflare handler, plus two things pages need now that
 // they run worker-first: a redirect to the canonical trailing-slash URL, and
-// Markdown content negotiation. A request with `Accept: text/markdown` gets the
-// page's prebuilt index.md (src/lib/markdown-pages.ts); the rest goes to Astro.
+// Markdown. A request for "<page>.md", or for a page with `Accept: text/markdown`,
+// gets the page's prebuilt index.md (src/lib/markdown-pages.ts); the rest goes to Astro.
 import astro from '@astrojs/cloudflare/entrypoints/server';
 import { SECURITY_HEADERS } from './lib/security-headers';
 import { withSlash } from './i18n/ui';
+import { markdownAsset, twinPath } from './lib/markdown-urls';
 
 interface Env {
   ASSETS: { fetch(input: URL | Request): Promise<Response> };
 }
 
-const wantsMarkdown = (req: Request) =>
-  (req.method === 'GET' || req.method === 'HEAD') && /\btext\/markdown\b/.test(req.headers.get('accept') ?? '');
+/** The twin to answer with, if the request asks for Markdown. */
+function markdownPath(req: Request) {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return null;
+  const { pathname } = new URL(req.url);
+  const wanted = /\btext\/markdown\b/.test(req.headers.get('accept') ?? '');
+  return markdownAsset(pathname) ?? (wanted ? twinPath(pathname) : null);
+}
 
-const markdownPath = (pathname: string) => `${pathname.endsWith('/') ? pathname : `${pathname}/`}index.md`;
-
-async function markdown(request: Request, env: Env) {
-  const url = new URL(request.url);
-  const res = await env.ASSETS.fetch(new URL(markdownPath(url.pathname), url));
+async function markdown(request: Request, env: Env, path: string) {
+  const res = await env.ASSETS.fetch(new URL(path, request.url));
   if (!res.ok) return null;
   const body = await res.text();
   const headers = new Headers({ ...SECURITY_HEADERS, 'Content-Type': 'text/markdown; charset=utf-8', Vary: 'Accept' });
@@ -49,7 +52,8 @@ export default {
   async fetch(request: Request, env: Env, ctx: Parameters<typeof astro.fetch>[2]) {
     const redirect = canonicalRedirect(request);
     if (redirect) return redirect;
-    const md = wantsMarkdown(request) ? await markdown(request, env) : null;
+    const path = markdownPath(request);
+    const md = path ? await markdown(request, env, path) : null;
     return md ?? varyOnAccept(await astro.fetch(request, env, ctx));
   },
 };
