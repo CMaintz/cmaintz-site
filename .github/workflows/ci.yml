@@ -21,9 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      # Every job reuses this step through the anchor. check-latest: the runner's
+      # cached Node 22 can trail the newest patch, and Astro sets a patch-level minimum.
+      - &setup-node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
+          check-latest: true
           cache: npm
       - run: npm ci
       - run: npm run check
@@ -56,10 +60,7 @@ jobs:
         with:
           # Full history: the sitemap's <lastmod> comes from each page's last commit (src/lib/lastmod.ts).
           fetch-depth: 0
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 22
-          cache: npm
+      - *setup-node
       - run: npm ci
       # The script writes the file only once everything is fetched, so a GitHub
       # outage leaves the committed snapshot in place and the deploy goes ahead.
@@ -102,10 +103,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 22
-          cache: npm
+      - *setup-node
       - run: npm ci
       # Skips cleanly if this lands before the script does.
       - if: hashFiles('scripts/crosspost.mjs') != ''
@@ -143,10 +141,7 @@ jobs:
         with:
           # Full history: the sitemap's <lastmod> comes from each page's last commit (src/lib/lastmod.ts).
           fetch-depth: 0
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 22
-          cache: npm
+      - *setup-node
       - run: npm ci
       - *site-build
       - name: Upload the preview version
@@ -181,10 +176,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: main
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: 22
-          cache: npm
+      - *setup-node
       - run: node scripts/sync-github.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
