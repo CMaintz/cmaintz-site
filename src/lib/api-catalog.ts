@@ -9,6 +9,7 @@ export const API_PATHS = {
   docs: '/developers/',
   health: '/api/health',
   contact: '/api/contact',
+  assistant: '/api/assistant',
   llms: '/llms.txt',
   mcp: '/mcp',
   mcpCard: '/mcp/server-card',

@@ -1,6 +1,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import snapshot from '../data/github.json';
 import type { TagId } from '../data/tags';
+import type { McpCatalog } from './mcp-tools';
 import { type Lang, localize, withSlash } from '../i18n/ui';
 
 export type Repo = (typeof snapshot.repos)[number];
@@ -46,6 +47,16 @@ export async function getPosts(lang?: Lang) {
     (p) => (import.meta.env.DEV || !p.data.draft) && (!lang || p.data.lang === lang),
   );
   return posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+}
+
+/** Projects and posts as the /mcp tools and the site assistant read them. */
+export async function loadCatalog(base: URL): Promise<McpCatalog> {
+  const [projects, posts] = await Promise.all([getProjects(), getPosts()]);
+  return {
+    base,
+    projects: projects.map((p) => ({ id: p.id, ...p.data })),
+    posts: posts.map((p) => ({ id: p.id, ...p.data })),
+  };
 }
 
 /** Unlocalized path of a post; pass it through localize() with the post's language. */

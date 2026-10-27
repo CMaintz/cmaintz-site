@@ -113,6 +113,22 @@ The editor lives at `https://maintz.dev/keystatic`. It signs in with GitHub and 
 
 To write locally, run `npm run editor` and open `http://localhost:4321/editor` (it redirects to `/keystatic`). It runs the site with the Node adapter, because Keystatic's local mode edits files on disk and needs Node's `fs`, which the Cloudflare dev server (`npm run dev`) doesn't provide. Commit the changed `.mdx` files as usual. Use `npm run dev` for everything else: there, `/keystatic` loads but can't read posts.
 
+## Phase 9 - Site assistant (Buddy)
+
+Buddy floats in the corner, says hello once per visit, and opens a chat that answers questions about services, experience and prices, and drafts a message for the contact form. The Worker runs it (`src/pages/api/assistant.ts`) through the AI SDK, so the model provider is configuration. It stays hidden until you switch it on.
+
+1. **Default, nothing to set up:** Workers AI through the Worker's `AI` binding (`wrangler.jsonc`), model `@cf/openai/gpt-oss-120b`. No API key. The free plan includes 10,000 neurons a day, roughly 25 questions; after that Buddy says he's resting until tomorrow. On Workers Paid the overage is billed instead (well under a cent a question).
+2. **You:** GitHub -> Settings -> Secrets and variables -> Actions -> Variables: `PUBLIC_ASSISTANT` = `on`, then re-run the latest `main` deploy (needs the CI change in #133).
+3. **Optional, another provider:** set `ASSISTANT_PROVIDER` (`anthropic` or `openai-compatible`) and `ASSISTANT_MODEL` as Worker variables, and the key with `npx wrangler secret put ASSISTANT_API_KEY --name cmaintz-site`. `openai-compatible` covers OpenRouter, Groq, OpenAI and similar, and also needs `ASSISTANT_BASE_URL`. To put a spend cap in front of a paid provider, create a Cloudflare AI Gateway with a spend limit and use its endpoint as `ASSISTANT_BASE_URL`. Provider defaults live in `ASSISTANT_PROVIDERS` in `src/data/assistant.ts`.
+
+Limits: 8 requests a minute per IP and 40 a minute site-wide (`ratelimits` in `wrangler.jsonc`), 12 visitor messages per chat, and short replies (`src/data/assistant.ts`). Drafted messages go through the normal contact endpoint, so Turnstile and its rate limit apply. Price estimates come from the hour ranges in `estimateRubric` in `src/data/assistant.ts`: tune them as you learn what jobs really take.
+
+Check answer quality with the golden questions: `npm run eval:assistant -- http://127.0.0.1:4399` against a running dev server (`PUBLIC_ASSISTANT=on npm run dev -- --port 4399`; logged in to wrangler, the binding uses your account). It checks for overclaiming, price caveats and Danish answers. Run it after changing the prompt, the model or the provider. Answers vary between runs, so one failure is a reason to read the answer, not necessarily a regression.
+
+Under `npm run dev` the assistant can't read pages (the Markdown versions are made by `npm run build`), so test page reading with `npm run preview`.
+
+Buddy's animations are the brand sprites (`brand/buddy-sprites`, `python generate.py`). After regenerating, copy `out/manifest.json` to `src/data/buddy-sprites.json` and each `out/front-<name>-sheet.png` to `public/img/buddy/<name>.png`.
+
 ---
 
 ## Day-to-day

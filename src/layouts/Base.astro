@@ -9,12 +9,13 @@ import '@fontsource/jetbrains-mono/600.css';
 import '@fontsource/silkscreen/400.css';
 import '../styles/global.css';
 import '../styles/prose.css';
-import { PUBLIC_CF_BEACON_TOKEN } from 'astro:env/client';
+import { PUBLIC_ASSISTANT, PUBLIC_CF_BEACON_TOKEN } from 'astro:env/client';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PixelField from '../components/PixelField.astro';
 import CommandPalette from '../components/CommandPalette.astro';
 import DoomLauncher from '../components/DoomLauncher.astro';
+import Assistant from '../components/Assistant.astro';
 import { site } from '../data/site';
 import { DISPLAY_EFFECTS } from '../data/display-effects';
 import { type Lang, localize, unlocalize, useT } from '../i18n/ui';
@@ -115,6 +116,7 @@ const metaDescription = clipDescription(description);
     <Footer lang={lang} />
     <CommandPalette lang={lang} switchPath={langSwitchPath} />
     <DoomLauncher />
+    {PUBLIC_ASSISTANT === 'on' && <Assistant lang={lang} />}
     <script is:inline>
       // Shortcut hints say Ctrl by default; Apple keyboards use Command.
       if (/Mac|iPhone|iPad/.test(navigator.userAgentData?.platform ?? navigator.platform)) {

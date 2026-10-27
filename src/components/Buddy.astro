@@ -1,0 +1,36 @@
+---
+// Buddy, the site assistant (clips in src/data/buddy.ts). It renders his
+// neutral pose; src/lib/buddy-sprite.ts animates it by moving --frame and
+// swapping --sheet.
+import { BUDDY_CLIPS, BUDDY_FRAME } from '../data/buddy';
+
+interface Props {
+  /** Whole-number zoom, so the pixels stay square. */
+  scale?: 1 | 2 | 3;
+  class?: string;
+}
+const { scale = 1, class: cls } = Astro.props;
+
+const idle = BUDDY_CLIPS.idle;
+const style = [
+  `--w: ${BUDDY_FRAME.width}px`,
+  `--h: ${BUDDY_FRAME.height}px`,
+  `--scale: ${scale}`,
+  `--sheet: url(${idle.sheet})`,
+  `--frames: ${idle.durations.length}`,
+  '--frame: 0',
+].join('; ');
+---
+
+<span class:list={['buddy', cls]} style={style} data-buddy-sprite aria-hidden="true"></span>
+
+<style>
+  .buddy {
+    display: block;
+    width: calc(var(--w) * var(--scale));
+    height: calc(var(--h) * var(--scale));
+    background: var(--sheet) calc(var(--w) * var(--frame) * var(--scale) * -1) 0 /
+      calc(var(--w) * var(--frames) * var(--scale)) 100% no-repeat;
+    image-rendering: pixelated;
+  }
+</style>

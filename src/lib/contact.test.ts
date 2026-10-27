@@ -173,6 +173,15 @@ describe('sendInquiry email body', () => {
   });
 });
 
+describe('sendInquiry source line', () => {
+  it('says when the site assistant drafted the message, and ignores any other source value', async () => {
+    const drafted = parseInquiry(formOf({ name: 'Ada', email: 'ada@example.com', message: 'hi', source: 'assistant' }));
+    await expect(sentText(drafted)).resolves.toMatch(/^Drafted with Buddy/);
+    const forged = parseInquiry(formOf({ name: 'Ada', email: 'ada@example.com', message: 'hi', source: 'admin' }));
+    await expect(sentText(forged)).resolves.toMatch(/^Sent from the contact form/);
+  });
+});
+
 describe('sendInquiry', () => {
   it('posts the inquiry to Resend with reply-to set to the sender', async () => {
     const fetch = mockFetch(() => jsonResponse({ id: '1' }));

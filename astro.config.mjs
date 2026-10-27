@@ -84,7 +84,12 @@ const viteModulesBeforeWorker = {
 
 export default defineConfig({
   site: SITE,
-  adapter: cloudflare({ imageService: 'passthrough' }),
+  adapter: cloudflare({
+    imageService: 'passthrough',
+    // Prerendering never calls the AI binding, and its remote connection needs a
+    // Cloudflare login that CI builds don't have. Dev keeps it, to test the assistant.
+    remoteBindings: !process.argv.includes('build'),
+  }),
   trailingSlash: 'ignore',
   // No server sessions needed; avoids provisioning a KV namespace on Cloudflare.
   session: false,
@@ -172,6 +177,16 @@ export default defineConfig({
       KEYSTATIC_GITHUB_CLIENT_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
       KEYSTATIC_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
       PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: envField.string({ context: 'client', access: 'public', optional: true }),
+      // Site assistant (Buddy) - see SETUP.md. The widget only renders when PUBLIC_ASSISTANT is "on".
+      // Which model answers (src/data/assistant.ts): workers-ai (default, no key), anthropic or openai-compatible.
+      // "secret" only so they are read at runtime: a Worker variable can switch models without a rebuild.
+      ASSISTANT_PROVIDER: envField.string({ context: 'server', access: 'secret', optional: true }),
+      ASSISTANT_MODEL: envField.string({ context: 'server', access: 'secret', optional: true }),
+      ASSISTANT_API_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
+      // The provider's API, or a Cloudflare AI Gateway endpoint in front of it for a spend limit.
+      ASSISTANT_BASE_URL: envField.string({ context: 'server', access: 'secret', optional: true }),
+      // A string, not an enum: an unset GitHub variable reaches the build as "", which an enum rejects.
+      PUBLIC_ASSISTANT: envField.string({ context: 'client', access: 'public', optional: true }),
       // Cloudflare Web Analytics beacon token - omitted when unset.
       PUBLIC_CF_BEACON_TOKEN: envField.string({ context: 'client', access: 'public', optional: true }),
     },

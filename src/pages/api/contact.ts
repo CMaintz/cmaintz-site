@@ -10,6 +10,7 @@ import {
   sendInquiry,
   type Inquiry,
 } from '../../lib/contact';
+import { overLimit, type RateLimiter } from '../../lib/rate-limit';
 
 export const prerender = false;
 
@@ -25,16 +26,8 @@ function reply(req: Request, status: number, error?: string) {
 
 type Outcome = { status: number; error?: string };
 
-interface RateLimiter {
-  limit(options: { key: string }): Promise<{ success: boolean }>;
-}
-
-/** True once an IP has sent too many messages; without the binding (local dev) nothing is limited. */
-async function rateLimited(ip: string | null) {
-  const limiter = (env as { CONTACT_LIMITER?: RateLimiter }).CONTACT_LIMITER;
-  if (!limiter || !ip) return false;
-  return !(await limiter.limit({ key: ip })).success;
-}
+/** True once an IP has sent too many messages. */
+const rateLimited = (ip: string | null) => overLimit((env as { CONTACT_LIMITER?: RateLimiter }).CONTACT_LIMITER, ip);
 
 /** Bots get a silent 200 (honeypot) or a 403 (captcha); humans get null. */
 async function botOutcome(form: FormData, ip: string | null): Promise<Outcome | null> {
