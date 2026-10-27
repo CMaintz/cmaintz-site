@@ -49,8 +49,8 @@ const link = (path: string) => localize(path, lang);
       <p class="out hl">{shipped.map((s) => <><a href={link(`/projects/${s}`)}>{s}</a>{'  '}</>)}</p>
       <p><span class="accent">$</span> <span class="cmd">gh repo list --public | wc -l</span></p>
       <p class="out"><a href={github.profile.url}>{github.repos.length}</a></p>
+      <div aria-live="polite" data-history></div>
       <p class="prompt"><span class="accent">$</span> <input type="text" aria-label="Terminal input" spellcheck="false" autocomplete="off" data-shell /></p>
-      <p class="out reply" aria-live="polite" data-reply></p>
     </div>
 
     <div class="term__body mono" role="tabpanel" id="panel-log" aria-labelledby="tab-log" hidden>
@@ -102,7 +102,7 @@ const link = (path: string) => localize(path, lang);
 
   // ── The tiny shell on the last prompt. Mostly here for one secret command. ──
   const replies: Record<string, string> = {
-    help: 'commands: whoami, ls, contact, help ... and maybe something from 1993',
+    help: 'commands: whoami, ls, contact, clear, help ... and maybe something from 1993',
     whoami: 'christoffer maintz',
     ls: 'illux-product-ai  foundry  jev-tools  leash  jobbuddy  tech-atlas',
     contact: 'christoffer@maintz.dev',
@@ -117,13 +117,51 @@ const link = (path: string) => localize(path, lang);
   const openDoom = () => setTimeout(() => dispatchEvent(new CustomEvent('doom:open')));
 
   const shell = document.querySelector<HTMLInputElement>('[data-shell]');
-  const reply = document.querySelector<HTMLElement>('[data-reply]');
+  const history = document.querySelector<HTMLElement>('[data-history]')!;
+  const shellPanel = document.getElementById('panel-whoami')!;
+
+  /** Built from text nodes only, so typed input can never become markup. */
+  function el(tag: 'p' | 'span', className: string, ...children: (Node | string)[]) {
+    const node = document.createElement(tag);
+    node.className = className;
+    node.append(...children);
+    return node;
+  }
+
+  /** Echoes the command above the prompt, then its reply, like a real terminal's scrollback. */
+  function echo(raw: string, out: string) {
+    history.append(el('p', '', el('span', 'accent', '$'), ' ', el('span', 'cmd', raw)));
+    if (out) history.append(el('p', 'out', out));
+    shellPanel.scrollTop = shellPanel.scrollHeight;
+  }
 
   function execute(raw: string) {
     const cmd = raw.trim().toLowerCase();
-    reply!.textContent = replyFor(cmd);
+    if (cmd === 'clear') {
+      history.replaceChildren();
+      return;
+    }
+    echo(raw.trim(), replyFor(cmd));
     if (DOOM_COMMANDS.has(cmd)) openDoom();
   }
+
+  // ── Fixed size: the window keeps the height of its initial content and the scrollback scrolls. ──
+  const panels = document.querySelector<HTMLElement>('.term__panels')!;
+
+  /**
+   * Measures the panels with the scrollback taken out of flow, so a resize can't lock in the
+   * grown height. Out of flow rather than hidden: hiding the live region can re-announce it.
+   */
+  function lockHeight() {
+    panels.style.height = '';
+    history.style.position = 'absolute';
+    panels.style.height = `${panels.offsetHeight}px`;
+    history.style.position = '';
+    shellPanel.scrollTop = shellPanel.scrollHeight;
+  }
+
+  document.fonts.ready.then(lockHeight);
+  addEventListener('resize', lockHeight);
 
   function onShellKey(e: KeyboardEvent) {
     if (e.key !== 'Enter') return;
@@ -186,8 +224,8 @@ const link = (path: string) => localize(path, lang);
   /* Both panels share one grid cell, so the window always fits the taller one and
      doesn't jump when switching tabs. The inactive panel is only made invisible:
      `display: none` would drop it out of the sizing. */
-  .term__panels { display: grid; }
-  .term__panels > .term__body { grid-area: 1 / 1; }
+  .term__panels { display: grid; grid-template-rows: minmax(0, 1fr); }
+  .term__panels > .term__body { grid-area: 1 / 1; overflow-y: auto; }
   .term__panels > .term__body[hidden] { display: block; visibility: hidden; }
   .term__body { font-size: 0.85rem; line-height: 1.75; min-height: 15.5rem; }
   .term__body p { white-space: pre-wrap; word-break: break-word; }
@@ -206,7 +244,6 @@ const link = (path: string) => localize(path, lang);
     flex: 1; min-width: 0; background: none; border: 0; outline: none; padding: 0; font: inherit; color: var(--fg);
     caret-color: var(--accent); caret-shape: block;
   }
-  .reply:empty { display: none; }
   /* With JS, lines stay hidden until the typing script reveals them. */
   :global(.js) .term__body:not([data-played]) > * { visibility: hidden; }
   .term__body > .pending { visibility: hidden; }
