@@ -32,7 +32,7 @@ export const businessServices: Service[] = [
     id: 'ai-tasks',
     audience: 'business',
     areas: ['ai', 'backend'],
-    glyph: '◈',
+    glyph: '✧',
     title: { en: 'AI that takes over a task', da: 'AI, der overtager en opgave' },
     body: {
       en: 'Product texts, sorting incoming mail, reading invoices and orders into e-conomic, Dinero or your ERP: AI does the routine work, and a person checks only the cases it is unsure of. Tested on your own data before you commit.',
