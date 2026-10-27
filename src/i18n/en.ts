@@ -236,7 +236,7 @@ export const en = {
   'assistant.greet.8': 'Has he worked with your stack? Ask me!',
   'assistant.greet.dismiss': 'Dismiss',
   'assistant.hello':
-    'Hi, I’m **Buddy**, an AI assistant. Tell me what you have in mind, and I can help you:\n\n- see how Christoffer could build it, from web shops and apps to AI features\n- find what you could automate, like invoicing, reports or moving data between systems\n- check whether your scope is realistic, and get a ballpark price\n\nWhen you’re ready, I can draft a message to him.',
+    'Hi, I’m **Buddy**, an AI assistant. Tell me what you have in mind, and I can help you:\n\n- see how Christoffer could build it, from web shops and apps to AI features\n- find what you could automate, like invoicing, reports or moving data between systems\n- check whether your scope is realistic, and get a ballpark price\n\nIf you’d like to ask him something yourself, I can send him a message for you. Just ask.',
   'assistant.placeholder': 'Describe your project, or ask anything...',
   'assistant.send': 'Send',
   'assistant.reset': 'New chat',
@@ -257,8 +257,10 @@ export const en = {
   'assistant.error.too_many_turns':
     'This chat is getting long. Start a new one, or send a message through the contact form.',
   'assistant.error.default': 'Something went wrong on my end. Try again, or use the contact form.',
-  'assistant.lead.title': 'Your message to Christoffer',
-  'assistant.lead.hint': 'Check and edit it, then send. Nothing is sent until you press Send.',
+  'assistant.lead.title': 'Send this to Christoffer?',
+  'assistant.lead.hint': 'Nothing is sent until you tap Send. He replies by email.',
+  'assistant.lead.from': 'From',
+  'assistant.lead.edit': 'Edit',
   'assistant.lead.name': 'Name',
   'assistant.lead.email': 'Email',
   'assistant.lead.company': 'Company (optional)',

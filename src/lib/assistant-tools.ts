@@ -114,12 +114,16 @@ const proposeLeadTool: SiteTool = {
   definition: {
     name: 'propose_lead',
     description:
-      'Show the visitor a pre-filled message to Christoffer that they can edit and send. ' +
-      'Only after they say they want to get in touch. It does not send anything.',
+      'Show the visitor a ready-to-send message to Christoffer: one tap sends it, or they can edit it first. ' +
+      'Only after they ask you to send him something. It does not send anything by itself.',
     inputSchema: {
       type: 'object',
       properties: {
-        summary: { type: 'string', description: 'The need, scope, timeline and any estimate given, in their language' },
+        summary: {
+          type: 'string',
+          description:
+            'Their question or need, plus any scope, timeline and estimate, written as from them, in their language',
+        },
         name: { type: 'string' },
         email: { type: 'string' },
         company: { type: 'string' },
