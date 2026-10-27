@@ -44,6 +44,13 @@ const ld = graph(
 
   <section class="wrap section" aria-labelledby="packages-h">
     <div class="section-head stack"><h2 id="packages-h">{t('services.packages')}</h2><p class="dim lede">{t('services.packages.lede')}</p></div>
+    <Window title="pricing.txt" class="rate reveal" bodyClass="rate__body">
+      <div>
+        <h3 class="mono label-h rate__h">{t('services.pricing')}</h3>
+        <p class="price glow">{HOURLY_RATE_DKK} <span>DKK / h</span></p>
+      </div>
+      <p class="dim">{t('services.pricing.body').replace('{rate}', String(HOURLY_RATE_DKK))}</p>
+    </Window>
     <div class="grid grid-2">{packages.map((p) => <PackageCard pkg={p} lang={lang} />)}</div>
   </section>
 
@@ -60,20 +67,17 @@ const ld = graph(
   ))}
 
   <section class="wrap section two">
-    <Window title="pricing.txt" class="reveal">
-      <h2>{t('services.pricing')}</h2>
-      <p class="price glow">{HOURLY_RATE_DKK} <span>DKK / h</span></p>
-      <p class="dim">{t('services.pricing.body').replace('{rate}', String(HOURLY_RATE_DKK))}</p>
-    </Window>
     <div>
-      <h2 class="mono label-h">{t('services.languages')}</h2>
-      <ul class="chips">{workLanguages.map((l) => <li class="chip">{l}</li>)}</ul>
-      <h2 class="mono label-h spaced">{t('services.process')}</h2>
+      <h2 class="mono label-h">{t('services.process')}</h2>
       <ol class="steps">
         {process[lang].map((p, i) => (
           <li><span class="n mono">{String(i + 1).padStart(2, '0')}</span><div><strong>{p.step}</strong><p class="dim">{p.body}</p></div></li>
         ))}
       </ol>
+    </div>
+    <div>
+      <h2 class="mono label-h">{t('services.languages')}</h2>
+      <ul class="chips">{workLanguages.map((l) => <li class="chip">{l}</li>)}</ul>
     </div>
   </section>
 
@@ -105,15 +109,18 @@ const ld = graph(
   /* A lede belongs under its heading, not beside it as .section-head lays out a button. */
   .stack { flex-direction: column; align-items: start; gap: 0.5rem; }
   .lede { max-width: 38rem; margin: 0; }
-  .two { display: grid; grid-template-columns: 1fr 1.2fr; gap: 3rem; align-items: start; }
+  .two { display: grid; grid-template-columns: 1.2fr 1fr; gap: 3rem; align-items: start; }
+  /* .rate and .rate__body are set on Window's elements, which carry Window's scope, not this one. */
+  :global(.rate) { margin-bottom: 1.5rem; }
+  :global(.rate__body) { display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 2.5rem; align-items: center; }
+  .rate__h { margin: 0; }
   .price { font: 800 3.5rem var(--font-sans); color: var(--accent); letter-spacing: -0.04em; margin-block: 0.4rem; }
   .price span { font: 500 1rem var(--font-mono); color: var(--fg-dim); letter-spacing: 0; }
-  .spaced { margin-top: 2rem; }
   .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
   .steps li { display: grid; grid-template-columns: 2.5rem 1fr; gap: 0.8rem; }
   .steps .n { color: var(--accent); font-size: 0.9rem; padding-top: 0.15rem; }
   .values { display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem; font-size: 0.82rem; margin-bottom: 2.5rem; }
   .values a { color: var(--accent); text-decoration: none; }
   .cta { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
-  @media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
+  @media (max-width: 860px) { .two, :global(.rate__body) { grid-template-columns: 1fr; } }
 </style>
