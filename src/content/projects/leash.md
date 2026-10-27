@@ -13,7 +13,7 @@ category: open-source
 order: 4
 featured: true
 role: Sole developer
-context: Open source · npm CLI and library (not published yet)
+context: Open source · npm CLI and library · v0.17, Node 22+
 start: 2026-09
 stack: [TypeScript, Node.js, Jev, Claude Code hooks, Codex hooks, OpenCode, Vitest]
 repos: [leash]
@@ -32,7 +32,7 @@ Judging every file as if freshly written buries you in findings on a real repo. 
 - Runs as Claude Code and Codex hooks: a snapshot at the start of the turn, a check when the agent stops, and on a break it blocks the stop and names the rules to fix. OpenCode gets a plugin that re-prompts once
 - The rubric is a committed `.leash/rubric.json`, compiled by your own agent from CLAUDE.md / AGENTS.md. Rules a linter or the gate already enforce are marked `handledBy` and skipped, so Jev is only spent where nothing deterministic can decide
 - Blocks at most once per finding per turn, so a finding Jev keeps wrongly reporting can't loop
-- `leash calibrate` runs the rules over recent commits and flags ones that never fire; `leash guard` fails CI if the rubric was loosened, with no key and no Jev call
+- `leash calibrate` runs the rules over recent commits and flags ones that never fire, and `leash calibrate --from` sets each rule's bands from a [jev-eval](/projects/jev-eval) `thresholds.json`; `leash guard` fails CI if the rubric was loosened, with no key and no Jev call
 - Fails open everywhere: no key, no rubric or a timeout lets the agent through
 
 ## Honest limits

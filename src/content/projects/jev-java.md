@@ -26,5 +26,6 @@ Same idea as [jev-dotnet](/projects/jev-dotnet): typed judgments with calibrated
 
 - A sealed `Question` interface over records (`Choice`, `Score`, `Noul`), so the compiler checks you handled every kind
 - `systemOneAsync` uses `HttpClient.sendAsync` and schedules retry backoff without holding a thread
+- Image inputs, `Box` questions that locate a target in an image, and a `ThresholdGate` loaded from a [jev-eval](/projects/jev-eval) `thresholds.json`
 - Interrupt-safe backoff that restores the interrupt flag, and a typed exception hierarchy
-- A small internal JSON codec, Gradle dependency locking, and 25 JUnit tests behind an 80% JaCoCo gate
+- A small internal JSON codec, Gradle dependency locking, and ~90 JUnit tests behind an 80% JaCoCo gate

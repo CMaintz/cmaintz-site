@@ -12,7 +12,7 @@ aiPowered: true
 category: open-source
 order: 14
 role: Sole developer
-context: Open source · v1.0, not on PyPI yet
+context: Open source · v1.2 on PyPI
 start: 2026-10
 stack: [Python 3.10+, stdlib only, pytest, mypy, ruff]
 repos: [jev-eval]
@@ -28,6 +28,7 @@ Every confidence-gated workflow in the family needs a cut-point: jev-sort's `--e
 - An honesty guard by default: picking a cut-point on the same rows you score it on flatters the result, so it bootstraps 1000 resamples and reports the out-of-bag accuracy next to the optimistic one
 - Below 200 labeled rows a recommendation is marked provisional; below 50 it's refused
 - Only `run` calls Jev. Reports, thresholds and `compare` (model-pin drift, or A/B two question wordings) are pure functions over a resumable local cache, so re-slicing is free
+- `check` re-applies a published `thresholds.json` to newly labeled rows and exits 1 when a gate has drifted beyond sampling noise, so a scheduled job can alert. `run` and `report` also print the tokens Jev metered and the estimated cost
 - Writes a small versioned `thresholds.json` the [jev-tools](/projects/jev-tools) and [Leash](/projects/leash) can load
 - 99% test coverage against a fake provider, gated by [Foundry](/projects/foundry)'s Python stack
 
