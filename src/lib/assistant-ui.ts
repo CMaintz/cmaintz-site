@@ -94,6 +94,8 @@ const editor = (form: HTMLFormElement) => () => {
   form.querySelector<HTMLElement>('.lead__preview')?.remove();
   form.querySelector<HTMLElement>('.lead__edit')?.remove();
   form.querySelector<HTMLElement>('.lead__fields')?.removeAttribute('hidden');
+  // The Edit button that had focus is gone; without this, focus drops to <body>.
+  form.querySelector<HTMLElement>('.lead__fields input')?.focus();
 };
 
 function actions(form: HTMLFormElement, t: Strings) {

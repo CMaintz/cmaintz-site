@@ -1,6 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { parseChatRequest, runChat, type ChatEvent, type ChatSetup } from './assistant-chat';
 import { ASSISTANT_LIMITS } from '../data/assistant';
+import { site } from '../data/site';
 import { MockLanguageModelV4, convertArrayToReadableStream } from 'ai/test';
 
 const user = (content: string) => ({ role: 'user', content });
@@ -63,7 +64,7 @@ interface Prompt {
 }
 
 /** A model that plays back the given replies, one per call, and records each prompt. */
-function fakeSetup(replies: Part[][]) {
+function fakeSetup(replies: Part[][], page = '# Page') {
   const prompts: Prompt[][] = [];
   const model = new MockLanguageModelV4({
     doStream: async (opts) => {
@@ -71,7 +72,7 @@ function fakeSetup(replies: Part[][]) {
       return { stream: convertArrayToReadableStream(replies.shift() ?? answer('')) } as never;
     },
   });
-  const fetchPage = vi.fn(async () => new Response('# Page'));
+  const fetchPage = vi.fn(async () => new Response(page));
   const setup = {
     model,
     system: 'rules',
@@ -81,8 +82,8 @@ function fakeSetup(replies: Part[][]) {
   return { setup, prompts, fetchPage };
 }
 
-const run = async (replies: Part[][]) => {
-  const fake = fakeSetup(replies);
+const run = async (replies: Part[][], page?: string) => {
+  const fake = fakeSetup(replies, page);
   const events: ChatEvent[] = [];
   await runChat(fake.setup, [{ role: 'user', content: 'hi' }], (e) => events.push(e));
   return { ...fake, events };
@@ -99,6 +100,17 @@ it('runChat: runs a tool, gives the model its result, then streams the answer', 
   const { events, prompts } = await run([toolUse('get_page', { path: '/services' }), answer('Done.')]);
   expect(events).toEqual([{ type: 'status', tool: 'get_page' }, { type: 'text', delta: 'Done.' }, { type: 'done' }]);
   expect(JSON.stringify(resultsOf(prompts))).toContain('# Page');
+});
+
+it('runChat: keeps his email address out of tool results, so the model cannot retype it wrong', async () => {
+  const contact = `# Contact\n[${site.email}](mailto:${site.email})`;
+  const { prompts } = await run(
+    [toolCalls(['get_profile', {}], ['get_page', { path: '/contact' }]), answer('')],
+    contact,
+  );
+  const results = JSON.stringify(resultsOf(prompts));
+  expect(results).toContain('# Contact');
+  expect(results).not.toContain(site.email);
 });
 
 it('runChat: hands a lead to the visitor without sending anything', async () => {

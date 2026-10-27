@@ -9,6 +9,7 @@ import { readPage, type PageFetcher } from './assistant-pages';
 import { services } from '../data/services';
 import { ESTIMATE_SIZES } from '../data/assistant';
 import { TOPICS, type Inquiry } from './contact';
+import { site } from '../data/site';
 
 export interface ToolContext {
   catalog: McpCatalog;
@@ -148,13 +149,20 @@ const tools: SiteTool[] = [...fromMcp, findExperienceTool, estimateTool, getPage
 
 export const toolDefinitions = tools.map((t) => t.definition);
 
+// The model retypes addresses it reads and gets them wrong (maintn.dev), so it
+// never sees his: visitors reach him through the contact page or a sent message.
+const EMAIL = new RegExp(`(mailto:)?${site.email.replace(/[.]/g, '\\.')}`, 'g');
+const withoutEmail = (result: unknown): unknown =>
+  JSON.parse(JSON.stringify(result ?? null).replace(EMAIL, 'the contact page'));
+
 /** Runs one tool call; failures become error results the model can read, never exceptions. */
 export async function runTool(name: string, args: unknown, ctx: ToolContext): Promise<ToolOutcome> {
   const tool = tools.find((t) => t.definition.name === name);
   if (!tool) return { result: { error: `Unknown tool ${name}` }, isError: true };
   const input = typeof args === 'object' && args !== null ? (args as Record<string, unknown>) : {};
   try {
-    return await tool.run(input, ctx);
+    const outcome = await tool.run(input, ctx);
+    return { ...outcome, result: withoutEmail(outcome.result) };
   } catch (e) {
     return { result: { error: (e as Error).message }, isError: true };
   }
