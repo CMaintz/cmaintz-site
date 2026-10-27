@@ -189,6 +189,8 @@ export default defineConfig({
       PUBLIC_ASSISTANT: envField.string({ context: 'client', access: 'public', optional: true }),
       // Cloudflare Web Analytics beacon token - omitted when unset.
       PUBLIC_CF_BEACON_TOKEN: envField.string({ context: 'client', access: 'public', optional: true }),
+      // Umami Cloud website id (visit paths, entry pages) - omitted when unset.
+      PUBLIC_UMAMI_WEBSITE_ID: envField.string({ context: 'client', access: 'public', optional: true }),
     },
   },
 });

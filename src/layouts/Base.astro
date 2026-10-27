@@ -9,7 +9,7 @@ import '@fontsource/jetbrains-mono/600.css';
 import '@fontsource/silkscreen/400.css';
 import '../styles/global.css';
 import '../styles/prose.css';
-import { PUBLIC_ASSISTANT, PUBLIC_CF_BEACON_TOKEN } from 'astro:env/client';
+import { PUBLIC_ASSISTANT, PUBLIC_CF_BEACON_TOKEN, PUBLIC_UMAMI_WEBSITE_ID } from 'astro:env/client';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PixelField from '../components/PixelField.astro';
@@ -126,6 +126,12 @@ const metaDescription = clipDescription(description);
     {
       PUBLIC_CF_BEACON_TOKEN && (
         <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: PUBLIC_CF_BEACON_TOKEN })} />
+      )
+    }
+    {
+      // data-domains keeps PR previews and local builds out of the stats.
+      PUBLIC_UMAMI_WEBSITE_ID && (
+        <script defer src="https://cloud.umami.is/script.js" data-website-id={PUBLIC_UMAMI_WEBSITE_ID} data-domains={Astro.site?.hostname} />
       )
     }
   </body>

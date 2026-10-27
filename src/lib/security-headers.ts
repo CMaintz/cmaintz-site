@@ -8,14 +8,14 @@
 const CSP = [
   "default-src 'self'",
   // wasm-unsafe-eval: Pagefind search and DOOM run WebAssembly. 'self' frames: DOOM.
-  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://giscus.app",
+  "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://cloud.umami.is https://giscus.app",
   "style-src 'self' 'unsafe-inline' https://giscus.app",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "media-src 'self'",
   // GitHub: the /keystatic blog editor commits through api.github.com and loads
   // file contents from raw.githubusercontent.com, both from the browser.
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cloudflareinsights.com https://api.github.com https://raw.githubusercontent.com",
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cloudflareinsights.com https://gateway.umami.is https://api.github.com https://raw.githubusercontent.com",
   "frame-src 'self' https://*.maintz.dev https://challenges.cloudflare.com https://giscus.app",
   "frame-ancestors 'self'",
   "base-uri 'self'",
