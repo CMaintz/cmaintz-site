@@ -169,6 +169,11 @@ it('runChat: turns en and em dashes into plain hyphens before the visitor sees t
   expect(events[0]).toEqual({ type: 'text', delta: 'Yes - he has - twice' });
 });
 
+it('runChat: spaces out an em dash written between words, so it does not read as a hyphenated word', async () => {
+  const { events } = await run([answer('I can send it—just ask, 2–7 days')]);
+  expect(events[0]).toEqual({ type: 'text', delta: 'I can send it - just ask, 2-7 days' });
+});
+
 it('runChat: reports an unknown tool to the model as an error result, not a crash', async () => {
   const { prompts, events } = await run([toolUse('delete_site', {}), answer('Sorry.')]);
   expect(prompts).toHaveLength(2);
