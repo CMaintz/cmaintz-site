@@ -115,18 +115,19 @@ To write locally, run `npm run editor` and open `http://localhost:4321/editor` (
 
 ## Phase 9 - Site assistant (Buddy)
 
-A chat window in the corner that answers questions about services, experience and prices, and drafts a message for the contact form. It runs on Claude Haiku through the Worker (`src/pages/api/assistant.ts`) and stays hidden until you switch it on.
+Buddy floats in the corner, says hello once per visit, and opens a chat that answers questions about services, experience and prices, and drafts a message for the contact form. The Worker runs it (`src/pages/api/assistant.ts`) through the AI SDK, so the model provider is configuration. It stays hidden until you switch it on.
 
-1. **You:** create an API key at https://console.anthropic.com and set a monthly spend limit there.
-2. **You:** Cloudflare dashboard -> AI -> AI Gateway -> Create gateway (e.g. `maintz-site`). Under its settings, add a spend limit (e.g. $5 a month) and turn logging off or to short retention. Copy the Anthropic endpoint: `https://gateway.ai.cloudflare.com/v1/<account id>/<gateway>/anthropic`.
-3. **You:** in your own terminal: `npx wrangler secret put ANTHROPIC_API_KEY --name cmaintz-site`, then `npx wrangler secret put ASSISTANT_GATEWAY_URL --name cmaintz-site` with the endpoint from step 2. Without the gateway URL the Worker calls Anthropic directly (works, but without the gateway's spend cap).
-4. **You:** GitHub -> Settings -> Secrets and variables -> Actions -> Variables: `PUBLIC_ASSISTANT` = `on`, then re-run the latest `main` deploy.
+1. **Default, nothing to set up:** Workers AI through the Worker's `AI` binding (`wrangler.jsonc`), model `@cf/openai/gpt-oss-120b`. No API key. The free plan includes 10,000 neurons a day, roughly 25 questions; after that Buddy says he's resting until tomorrow. On Workers Paid the overage is billed instead (well under a cent a question).
+2. **You:** GitHub -> Settings -> Secrets and variables -> Actions -> Variables: `PUBLIC_ASSISTANT` = `on`, then re-run the latest `main` deploy (needs the CI change in #133).
+3. **Optional, another provider:** set `ASSISTANT_PROVIDER` (`anthropic` or `openai-compatible`) and `ASSISTANT_MODEL` as Worker variables, and the key with `npx wrangler secret put ASSISTANT_API_KEY --name cmaintz-site`. `openai-compatible` covers OpenRouter, Groq, OpenAI and similar, and also needs `ASSISTANT_BASE_URL`. To put a spend cap in front of a paid provider, create a Cloudflare AI Gateway with a spend limit and use its endpoint as `ASSISTANT_BASE_URL`. Provider defaults live in `ASSISTANT_PROVIDERS` in `src/data/assistant.ts`.
 
-Limits on top of the spend caps: 8 requests a minute per IP and 40 a minute site-wide (`ratelimits` in `wrangler.jsonc`), 12 visitor messages per chat, and short replies (`src/data/assistant.ts`). Drafted messages go through the normal contact endpoint, so Turnstile and its rate limit apply. Price estimates come from the hour ranges in `estimateRubric` in `src/data/assistant.ts`: tune them as you learn what jobs really take.
+Limits: 8 requests a minute per IP and 40 a minute site-wide (`ratelimits` in `wrangler.jsonc`), 12 visitor messages per chat, and short replies (`src/data/assistant.ts`). Drafted messages go through the normal contact endpoint, so Turnstile and its rate limit apply. Price estimates come from the hour ranges in `estimateRubric` in `src/data/assistant.ts`: tune them as you learn what jobs really take.
 
-Before switching it on, run the golden questions against a preview with the real key: `npm run build`, put `ANTHROPIC_API_KEY` in `dist/server/.dev.vars`, `npm run preview`, then `npm run eval:assistant -- http://127.0.0.1:4321`. It checks for overclaiming, price caveats and Danish answers, and costs a few cents. If the Danish ones fail, change `ASSISTANT_MODEL` in `src/data/assistant.ts` to `claude-sonnet-5-5`.
+Check answer quality with the golden questions: `npm run eval:assistant -- http://127.0.0.1:4399` against a running dev server (`PUBLIC_ASSISTANT=on npm run dev -- --port 4399`; logged in to wrangler, the binding uses your account). It checks for overclaiming, price caveats and Danish answers. Run it after changing the prompt, the model or the provider. Answers vary between runs, so one failure is a reason to read the answer, not necessarily a regression.
 
-Locally: put `PUBLIC_ASSISTANT=on` and `ANTHROPIC_API_KEY=...` in `.env`. Under `npm run dev` the assistant can't read pages (the Markdown versions are made by `npm run build`), so test page reading with `npm run preview`.
+Under `npm run dev` the assistant can't read pages (the Markdown versions are made by `npm run build`), so test page reading with `npm run preview`.
+
+Buddy's animations are the brand sprites (`brand/buddy-sprites`, `python generate.py`). After regenerating, copy `out/manifest.json` to `src/data/buddy-sprites.json` and each `out/front-<name>-sheet.png` to `public/img/buddy/<name>.png`.
 
 ---
 

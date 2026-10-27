@@ -1,15 +1,24 @@
 // One visitor message in, a streamed reply out. The browser keeps the
 // conversation (text only) and sends it whole each turn, so the Worker holds
 // no state. Within a turn, the model may call tools up to maxSteps times.
-import type Anthropic from '@anthropic-ai/sdk';
-import { ASSISTANT_LIMITS, ASSISTANT_MODEL } from '../data/assistant';
+import {
+  jsonSchema,
+  stepCountIs,
+  streamText,
+  tool,
+  type FinishReason,
+  type LanguageModel,
+  type SystemModelMessage,
+  type ToolSet,
+} from 'ai';
+import { ASSISTANT_LIMITS } from '../data/assistant';
 import { runTool, toolDefinitions, type ToolContext } from './assistant-tools';
 import type { Inquiry } from './contact';
 import { isSitePath } from './assistant-pages';
 import type { Lang } from '../i18n/ui';
 
 export interface ChatRequest {
-  messages: Anthropic.MessageParam[];
+  messages: Turn[];
   lang: Lang;
   page: string;
 }
@@ -62,7 +71,7 @@ export function parseChatRequest(body: unknown): ChatRequest | { error: string }
 export const sseEvent = (e: ChatEvent) => `event: ${e.type}\ndata: ${JSON.stringify(e)}\n\n`;
 
 export interface ChatSetup {
-  client: Anthropic;
+  model: LanguageModel;
   system: string;
   visit: string;
   ctx: ToolContext;
@@ -70,72 +79,96 @@ export interface ChatSetup {
   signal?: AbortSignal;
 }
 
-/** The stable prompt is cached; the per-visit block after it is not. */
-const systemBlocks = (s: ChatSetup): Anthropic.TextBlockParam[] => [
-  { type: 'text', text: s.system, cache_control: { type: 'ephemeral' } },
-  { type: 'text', text: s.visit },
+/**
+ * Provider-specific tuning, keyed by provider so the others ignore it. Chat
+ * answers don't gain from deep thinking; low effort keeps replies quick and cheap.
+ */
+const PROVIDER_OPTIONS = { anthropic: { effort: 'low' } };
+
+/** The stable prompt is cached where the provider supports it; the per-visit block after it is not. */
+const instructions = (s: ChatSetup): SystemModelMessage[] => [
+  { role: 'system', content: s.system, providerOptions: { anthropic: { cacheControl: { type: 'ephemeral' } } } },
+  { role: 'system', content: s.visit },
 ];
 
-async function modelStep(s: ChatSetup, messages: Anthropic.MessageParam[], emit: Emit) {
-  const params = {
-    model: ASSISTANT_MODEL,
-    max_tokens: ASSISTANT_LIMITS.maxReplyTokens,
-    // Chat answers don't gain from deep thinking; low effort keeps replies quick and cheap.
-    output_config: { effort: 'low' as const },
-    system: systemBlocks(s),
-    tools: toolDefinitions,
-    messages,
-  };
-  const stream = s.client.messages.stream(params, { signal: s.signal });
-  stream.on('text', (delta) => emit({ type: 'text', delta }));
-  return stream.finalMessage();
-}
-
-/** Tool output still allowed this visitor message, in characters. */
+/**
+ * Tool output still allowed this visitor message, in characters, and calls in
+ * the current step. Every step resends earlier tool output, so these keep one
+ * question from costing dollars.
+ */
 interface Budget {
   chars: number;
+  calls: number;
 }
 
-const refused = (call: Anthropic.ToolUseBlock, error: string): Anthropic.ToolResultBlockParam => ({
-  type: 'tool_result',
-  tool_use_id: call.id,
-  content: JSON.stringify({ error }),
-  is_error: true,
-});
+const refusal = (error: string) => ({ error });
 
-async function runCall(s: ChatSetup, call: Anthropic.ToolUseBlock, emit: Emit) {
-  emit({ type: 'status', tool: call.name });
-  const out = await runTool(call.name, call.input, s.ctx);
-  if (out.lead) emit({ type: 'lead', draft: out.lead });
-  return { call, content: JSON.stringify(out.result), isError: out.isError };
-}
-
-/** Charges a result to the budget; over budget, the model gets a short error instead. */
-function charge(r: Awaited<ReturnType<typeof runCall>>, budget: Budget): Anthropic.ToolResultBlockParam {
-  if (r.content.length > budget.chars) return refused(r.call, 'Tool budget for this message is used up; answer now.');
-  budget.chars -= r.content.length;
-  return { type: 'tool_result', tool_use_id: r.call.id, content: r.content, is_error: r.isError };
-}
-
-async function toolResults(s: ChatSetup, content: Anthropic.ContentBlock[], emit: Emit, budget: Budget) {
-  const calls = content.filter((b): b is Anthropic.ToolUseBlock => b.type === 'tool_use');
+async function runBudgeted(s: ChatSetup, name: string, args: unknown, emit: Emit, budget: Budget) {
   const max = ASSISTANT_LIMITS.maxToolCallsPerStep;
-  const ran = await Promise.all(calls.slice(0, max).map((call) => runCall(s, call, emit)));
-  const skipped = calls.slice(max).map((call) => refused(call, `At most ${max} tool calls at once.`));
-  return [...ran.map((r) => charge(r, budget)), ...skipped];
+  if (++budget.calls > max) return refusal(`At most ${max} tool calls at once.`);
+  emit({ type: 'status', tool: name });
+  const out = await runTool(name, args, s.ctx);
+  if (out.lead) emit({ type: 'lead', draft: out.lead });
+  const size = JSON.stringify(out.result).length;
+  if (size > budget.chars) return refusal('Tool budget for this message is used up; answer now.');
+  budget.chars -= size;
+  return out.result;
 }
+
+function siteTools(s: ChatSetup, emit: Emit, budget: Budget): ToolSet {
+  const entries = toolDefinitions.map((d) => [
+    d.name,
+    tool({
+      description: d.description,
+      inputSchema: jsonSchema(d.inputSchema),
+      execute: (args: unknown) => runBudgeted(s, d.name, args, emit, budget),
+    }),
+  ]);
+  return Object.fromEntries(entries) as ToolSet;
+}
+
+function startStream(s: ChatSetup, history: Turn[], emit: Emit) {
+  const budget: Budget = { chars: ASSISTANT_LIMITS.maxToolChars, calls: 0 };
+  return streamText({
+    model: s.model,
+    instructions: instructions(s),
+    messages: history,
+    tools: siteTools(s, emit, budget),
+    stopWhen: stepCountIs(ASSISTANT_LIMITS.maxSteps),
+    prepareStep: () => {
+      budget.calls = 0;
+      return undefined;
+    },
+    maxOutputTokens: ASSISTANT_LIMITS.maxReplyTokens,
+    maxRetries: 1,
+    abortSignal: s.signal,
+    providerOptions: PROVIDER_OPTIONS,
+  });
+}
+
+/** A last step that still wanted tools means the step limit cut it off. */
+const endEvent = (finish?: FinishReason): ChatEvent =>
+  finish === 'content-filter'
+    ? { type: 'error', code: 'refused' }
+    : finish === 'tool-calls'
+      ? { type: 'error', code: 'too_many_steps' }
+      : { type: 'done' };
+
+/**
+ * Models write en and em dashes (and non-breaking hyphens) despite the rule
+ * against them; the site's voice uses plain hyphens, so they are swapped here.
+ */
+const plainDashes = (text: string) => text.replace(/[–—]/g, '-').replace(/‑/g, '-');
 
 /** Runs the tool loop for the latest visitor message, streaming everything through emit. */
-export async function runChat(s: ChatSetup, history: Anthropic.MessageParam[], emit: Emit) {
-  const messages = [...history];
-  const budget: Budget = { chars: ASSISTANT_LIMITS.maxToolChars };
-  for (let step = 0; step < ASSISTANT_LIMITS.maxSteps && !s.signal?.aborted; step++) {
-    const reply = await modelStep(s, messages, emit);
-    // The whole reply goes back, thinking blocks included, or the next step loses them.
-    messages.push({ role: 'assistant', content: reply.content });
-    if (reply.stop_reason === 'refusal') return emit({ type: 'error', code: 'refused' });
-    if (reply.stop_reason !== 'tool_use') return emit({ type: 'done' });
-    messages.push({ role: 'user', content: await toolResults(s, reply.content, emit, budget) });
+export async function runChat(s: ChatSetup, history: Turn[], emit: Emit) {
+  if (s.signal?.aborted) return;
+  let finish: FinishReason | undefined;
+  // Reasoning and tool parts stay on the server: the visitor sees the answer only.
+  for await (const part of startStream(s, history, emit).fullStream) {
+    if (part.type === 'text-delta') emit({ type: 'text', delta: plainDashes(part.text) });
+    else if (part.type === 'error') throw part.error;
+    else if (part.type === 'finish') finish = part.finishReason;
   }
-  emit({ type: 'error', code: 'too_many_steps' });
+  emit(endEvent(finish));
 }

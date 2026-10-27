@@ -1,13 +1,14 @@
 // The site assistant (Buddy): POST a conversation, get the reply as
 // server-sent events. Logic in src/lib/assistant-chat.ts.
 import type { APIRoute } from 'astro';
-import Anthropic from '@anthropic-ai/sdk';
 import { env } from 'cloudflare:workers';
-import { ANTHROPIC_API_KEY, ASSISTANT_GATEWAY_URL } from 'astro:env/server';
+import { ASSISTANT_API_KEY, ASSISTANT_BASE_URL, ASSISTANT_MODEL, ASSISTANT_PROVIDER } from 'astro:env/server';
 import { parseChatRequest, runChat, sseEvent, type ChatEvent, type ChatSetup } from '../../lib/assistant-chat';
 import { experienceFacts } from '../../lib/assistant-experience';
 import { systemPrompt, visitContext } from '../../lib/assistant-prompt';
 import type { PageFetcher } from '../../lib/assistant-pages';
+import { chatModel, configProblem, failureCode, type ModelConfig } from '../../lib/assistant-model';
+import type { AiBinding } from '../../lib/workers-ai';
 import { loadCatalog } from '../../lib/content';
 import { overLimit, type RateLimiter } from '../../lib/rate-limit';
 import { ASSISTANT_LIMITS } from '../../data/assistant';
@@ -18,7 +19,20 @@ export const prerender = false;
 interface Assets {
   fetch(input: URL | Request): Promise<Response>;
 }
-const bindings = env as { ASSISTANT_LIMITER?: RateLimiter; ASSISTANT_GLOBAL_LIMITER?: RateLimiter; ASSETS?: Assets };
+const bindings = env as {
+  ASSISTANT_LIMITER?: RateLimiter;
+  ASSISTANT_GLOBAL_LIMITER?: RateLimiter;
+  ASSETS?: Assets;
+  AI?: AiBinding;
+};
+
+const modelConfig = (): ModelConfig => ({
+  provider: ASSISTANT_PROVIDER,
+  model: ASSISTANT_MODEL,
+  apiKey: ASSISTANT_API_KEY,
+  baseUrl: ASSISTANT_BASE_URL,
+  ai: bindings.AI,
+});
 
 /** Per visitor, and a site-wide ceiling so a botnet can't run up the bill. */
 const rateLimited = async (ip: string | null) =>
@@ -40,15 +54,13 @@ const pageFetcher =
 async function setup(origin: URL, lang: Lang, page: string, signal: AbortSignal): Promise<ChatSetup> {
   const cat = await loadCatalog(origin);
   return {
-    client: new Anthropic({ apiKey: ANTHROPIC_API_KEY, baseURL: ASSISTANT_GATEWAY_URL || undefined, maxRetries: 1 }),
+    model: chatModel(modelConfig()),
     system: systemPrompt(cat),
     visit: visitContext(lang, page),
     ctx: { catalog: cat, facts: experienceFacts(cat), fetchPage: pageFetcher(origin) },
     signal,
   };
 }
-
-const failureCode = (err: unknown) => (err instanceof Anthropic.RateLimitError ? 'busy' : 'upstream');
 
 type Run = (emit: (e: ChatEvent) => void, signal: AbortSignal) => Promise<void>;
 
@@ -95,7 +107,7 @@ const parseJson = (text: string) => {
 };
 
 export const POST: APIRoute = async ({ request, clientAddress, url }) => {
-  if (!ANTHROPIC_API_KEY) return fail(503, 'not_configured');
+  if (configProblem(modelConfig())) return fail(503, 'not_configured');
   if (await rateLimited(request.headers.get('cf-connecting-ip') ?? clientAddress ?? null))
     return fail(429, 'rate_limited');
   const body = await boundedBody(request);

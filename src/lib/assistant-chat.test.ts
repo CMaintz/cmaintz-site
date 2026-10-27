@@ -1,7 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
-import type Anthropic from '@anthropic-ai/sdk';
 import { parseChatRequest, runChat, type ChatEvent, type ChatSetup } from './assistant-chat';
 import { ASSISTANT_LIMITS } from '../data/assistant';
+import { MockLanguageModelV4, convertArrayToReadableStream } from 'ai/test';
 
 const user = (content: string) => ({ role: 'user', content });
 const bot = (content: string) => ({ role: 'assistant', content });
@@ -32,55 +32,73 @@ it('parseChatRequest: falls back to "/" for a page that is not a plain site path
   expect(parseChatRequest({ messages: [user('hi')], page: 'javascript:x' })).toMatchObject({ page: '/', lang: 'en' });
 });
 
-type Reply = Pick<Anthropic.Message, 'content' | 'stop_reason'>;
+type Part = Record<string, unknown> & { type: string };
+const usage = {
+  inputTokens: { total: 1, noCache: 1, cacheRead: 0, cacheWrite: 0 },
+  outputTokens: { total: 1, text: 1, reasoning: 0 },
+};
+const finish = (unified: string): Part => ({ type: 'finish', usage, finishReason: { unified, raw: unified } });
 
-const toolUse = (name: string, input: unknown): Reply => ({
-  stop_reason: 'tool_use',
-  content: [{ type: 'tool_use', id: `t-${name}`, name, input } as Anthropic.ToolUseBlock],
-});
-const answer = (text: string): Reply => ({
-  stop_reason: 'end_turn',
-  content: [{ type: 'text', text, citations: null } as Anthropic.TextBlock],
-});
+/** One model reply that calls the given tools. */
+const toolCalls = (...calls: [string, unknown][]): Part[] => [
+  ...calls.map(([name, input], i) => ({
+    type: 'tool-call',
+    toolCallId: `t${i}-${name}`,
+    toolName: name,
+    input: JSON.stringify(input),
+  })),
+  finish('tool-calls'),
+];
+const toolUse = (name: string, input: unknown) => toolCalls([name, input]);
+const answer = (text: string): Part[] => [
+  { type: 'text-start', id: 'a' },
+  { type: 'text-delta', id: 'a', delta: text },
+  { type: 'text-end', id: 'a' },
+  finish('stop'),
+];
 
-/** A stream that plays back one canned reply. */
-const playback = (reply: Reply) => ({
-  on: (event: string, cb: (d: string) => void) =>
-    reply.content.forEach((b) => event === 'text' && b.type === 'text' && cb(b.text)),
-  finalMessage: async () => reply,
-});
+interface Prompt {
+  role: string;
+  content: { type: string; output?: { value: unknown } }[];
+}
 
-/** A client whose stream() plays back the given replies, one per model call. */
-function fakeSetup(replies: Reply[]) {
-  const calls: Anthropic.MessageParam[][] = [];
-  const stream = vi.fn((params: { messages: Anthropic.MessageParam[] }) => {
-    calls.push(structuredClone(params.messages));
-    return playback(replies.shift()!);
+/** A model that plays back the given replies, one per call, and records each prompt. */
+function fakeSetup(replies: Part[][]) {
+  const prompts: Prompt[][] = [];
+  const model = new MockLanguageModelV4({
+    doStream: async (opts) => {
+      prompts.push(structuredClone(opts.prompt) as Prompt[]);
+      return { stream: convertArrayToReadableStream(replies.shift() ?? answer('')) } as never;
+    },
   });
   const fetchPage = vi.fn(async () => new Response('# Page'));
   const setup = {
-    client: { messages: { stream } } as unknown as Anthropic,
+    model,
     system: 'rules',
     visit: 'visit',
     ctx: { catalog: { base: new URL('https://maintz.dev'), projects: [], posts: [] }, facts: [], fetchPage },
   } satisfies ChatSetup;
-  return { setup, calls, fetchPage };
+  return { setup, prompts, fetchPage };
 }
 
-const run = async (replies: Reply[]) => {
+const run = async (replies: Part[][]) => {
   const fake = fakeSetup(replies);
   const events: ChatEvent[] = [];
   await runChat(fake.setup, [{ role: 'user', content: 'hi' }], (e) => events.push(e));
   return { ...fake, events };
 };
 
+/** What the model was handed back as tool output on its second call. */
+const resultsOf = (prompts: Prompt[][]) =>
+  prompts[1].filter((m) => m.role === 'tool').flatMap((m) => m.content.map((c) => c.output?.value));
+const isRefusal = (v: unknown) => typeof v === 'object' && v !== null && 'error' in v;
+
 afterEach(() => vi.unstubAllGlobals());
 
 it('runChat: runs a tool, gives the model its result, then streams the answer', async () => {
-  const { events, calls } = await run([toolUse('get_page', { path: '/services' }), answer('Done.')]);
+  const { events, prompts } = await run([toolUse('get_page', { path: '/services' }), answer('Done.')]);
   expect(events).toEqual([{ type: 'status', tool: 'get_page' }, { type: 'text', delta: 'Done.' }, { type: 'done' }]);
-  const results = calls[1].at(-1)!.content as Anthropic.ToolResultBlockParam[];
-  expect(results[0]).toMatchObject({ tool_use_id: 't-get_page', content: expect.stringContaining('# Page') });
+  expect(JSON.stringify(resultsOf(prompts))).toContain('# Page');
 });
 
 it('runChat: hands a lead to the visitor without sending anything', async () => {
@@ -97,35 +115,34 @@ it('runChat: hands a lead to the visitor without sending anything', async () => 
 
 it('runChat: stops a model that keeps calling tools', async () => {
   const loop = Array.from({ length: ASSISTANT_LIMITS.maxSteps + 1 }, () => toolUse('get_faq', {}));
-  const { events, calls } = await run(loop);
-  expect(calls).toHaveLength(ASSISTANT_LIMITS.maxSteps);
+  const { events, prompts } = await run(loop);
+  expect(prompts).toHaveLength(ASSISTANT_LIMITS.maxSteps);
   expect(events.at(-1)).toEqual({ type: 'error', code: 'too_many_steps' });
 });
 
-/** One model reply that asks for `n` pages at once. */
-const manyPages = (n: number): Reply => ({
-  stop_reason: 'tool_use',
-  content: Array.from(
-    { length: n },
-    (_, i) =>
-      ({ type: 'tool_use', id: `p${i}`, name: 'get_page', input: { path: `/p${i}` } }) as Anthropic.ToolUseBlock,
-  ),
-});
-const resultsOf = (calls: Anthropic.MessageParam[][]) => calls[1].at(-1)!.content as Anthropic.ToolResultBlockParam[];
+const manyPages = (n: number) =>
+  toolCalls(...Array.from({ length: n }, (_, i): [string, unknown] => ['get_page', { path: `/p${i}` }]));
 
 it('runChat: runs at most maxToolCallsPerStep tools from one reply and refuses the rest', async () => {
-  const { calls, fetchPage } = await run([manyPages(ASSISTANT_LIMITS.maxToolCallsPerStep + 2), answer('ok')]);
+  const { prompts, fetchPage } = await run([manyPages(ASSISTANT_LIMITS.maxToolCallsPerStep + 2), answer('ok')]);
   expect(fetchPage).toHaveBeenCalledTimes(ASSISTANT_LIMITS.maxToolCallsPerStep);
-  expect(resultsOf(calls).filter((r) => r.is_error)).toHaveLength(2);
+  expect(resultsOf(prompts).filter(isRefusal)).toHaveLength(2);
+});
+
+it('runChat: the per-step call limit starts over on the next step', async () => {
+  const max = ASSISTANT_LIMITS.maxToolCallsPerStep;
+  const { fetchPage } = await run([manyPages(max), manyPages(max), answer('ok')]);
+  expect(fetchPage).toHaveBeenCalledTimes(2 * max);
 });
 
 it('runChat: stops handing back tool output once the per-message budget is spent', async () => {
   const fake = fakeSetup([manyPages(ASSISTANT_LIMITS.maxToolCallsPerStep), answer('ok')]);
   fake.fetchPage.mockImplementation(async () => new Response('x'.repeat(ASSISTANT_LIMITS.maxPageChars)));
   await runChat(fake.setup, [{ role: 'user', content: 'read everything' }], () => {});
-  const sent = resultsOf(fake.calls).reduce((n, r) => n + (r.is_error ? 0 : String(r.content).length), 0);
+  const results = resultsOf(fake.prompts);
+  const sent = results.filter((r) => !isRefusal(r)).reduce((n: number, r) => n + JSON.stringify(r).length, 0);
   expect(sent).toBeLessThanOrEqual(ASSISTANT_LIMITS.maxToolChars);
-  expect(resultsOf(fake.calls).at(-1)!.is_error).toBe(true);
+  expect(isRefusal(results.at(-1))).toBe(true);
 });
 
 it('runChat: makes no model call once the visitor has gone', async () => {
@@ -133,11 +150,27 @@ it('runChat: makes no model call once the visitor has gone', async () => {
   const gone = new AbortController();
   gone.abort();
   await runChat({ ...fake.setup, signal: gone.signal }, [{ role: 'user', content: 'hi' }], () => {});
-  expect(fake.calls).toHaveLength(0);
+  expect(fake.prompts).toHaveLength(0);
+});
+
+it('runChat: never shows the visitor reasoning or tool output, only the answer', async () => {
+  const thinking: Part[] = [
+    { type: 'reasoning-start', id: 'r' },
+    { type: 'reasoning-delta', id: 'r', delta: 'secret plan' },
+    { type: 'reasoning-end', id: 'r' },
+    ...toolUse('get_page', { path: '/services' }),
+  ];
+  const { events } = await run([thinking, answer('Here.')]);
+  expect(JSON.stringify(events)).not.toMatch(/secret plan|# Page/);
+});
+
+it('runChat: turns en and em dashes into plain hyphens before the visitor sees them', async () => {
+  const { events } = await run([answer('Yes – he has — twice')]);
+  expect(events[0]).toEqual({ type: 'text', delta: 'Yes - he has - twice' });
 });
 
 it('runChat: reports an unknown tool to the model as an error result, not a crash', async () => {
-  const { calls, events } = await run([toolUse('delete_site', {}), answer('Sorry.')]);
-  expect((calls[1].at(-1)!.content as Anthropic.ToolResultBlockParam[])[0].is_error).toBe(true);
+  const { prompts, events } = await run([toolUse('delete_site', {}), answer('Sorry.')]);
+  expect(prompts).toHaveLength(2);
   expect(events.at(-1)).toEqual({ type: 'done' });
 });

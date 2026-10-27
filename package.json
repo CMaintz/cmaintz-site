@@ -28,7 +28,8 @@
     "crosspost": "node --experimental-strip-types scripts/crosspost.mjs"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^1.3.0",
+    "@ai-sdk/anthropic": "^4.0.79",
+    "@ai-sdk/openai-compatible": "^3.0.68",
     "@astrojs/cloudflare": "^14.3.3",
     "@astrojs/markdown-remark": "^7.3.1",
     "@astrojs/mdx": "^8.0.2",
@@ -41,6 +42,7 @@
     "@keystatic/astro": "^6.0.0",
     "@keystatic/core": "^0.6.9",
     "@supabase/supabase-js": "^2.117.2",
+    "ai": "^7.0.138",
     "astro": "^7.3.5",
     "astro-expressive-code": "^0.44.2",
     "astro-mermaid": "^2.1.0",

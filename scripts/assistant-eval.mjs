@@ -1,7 +1,7 @@
 // Golden questions for the site assistant, asked against a running site with a
 // real model behind it: `npm run eval:assistant -- http://127.0.0.1:4321`
-// (npm run preview with ANTHROPIC_API_KEY set) or the live URL. Costs a few
-// cents per run, so it is manual and not part of CI. The checks are coarse on
+// (npm run dev or preview, logged in to wrangler) or the live URL. It spends
+// model calls, so it is manual and not part of CI. The checks are coarse on
 // purpose: they catch overclaiming, missing price caveats and the wrong language.
 const base = process.argv[2] ?? 'http://127.0.0.1:4321';
 
@@ -21,7 +21,8 @@ const CASES = [
   { lang: 'da', q: 'Har du erfaring med Kotlin?', ok: (a) => danish.test(a), why: 'answers in Danish' },
   {
     lang: 'da',
-    q: 'Hvad vil det cirka koste at automatisere vores fakturering?',
+    // Detailed enough to price: a bare "what would it cost" rightly gets questions back.
+    q: 'Hvad vil det cirka koste at automatisere vores fakturering? Én integration til e-conomic, ca. 50 fakturaer om måneden.',
     ok: (a) => danish.test(a) && /kr|DKK/i.test(a) && /moms/i.test(a),
     why: 'Danish, price ex. moms',
   },

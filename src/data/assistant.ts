@@ -2,7 +2,24 @@
 // sizing rubric its price estimates come from. Estimates are hours times
 // HOURLY_RATE_DKK, so the rate keeps one home in services.ts.
 
-export const ASSISTANT_MODEL = 'claude-haiku-5-5';
+/**
+ * Where the model runs, picked with ASSISTANT_PROVIDER, and each provider's
+ * default model (ASSISTANT_MODEL overrides it). workers-ai goes through the
+ * Worker's AI binding: no key, and the free daily allowance covers a quiet site.
+ */
+export const ASSISTANT_PROVIDERS = {
+  // gpt-oss-120b over the cheaper glm-4.7-flash: in the golden questions glm
+  // mixed up who "I" was and wrote broken Danish. About 25 questions a day fit
+  // the free allowance; past it on Workers Paid each costs well under a cent.
+  'workers-ai': { model: '@cf/openai/gpt-oss-120b', needsKey: false },
+  anthropic: { model: 'claude-haiku-5-5', needsKey: true },
+  /** Any OpenAI-style chat API (OpenRouter, Groq, OpenAI...): set ASSISTANT_BASE_URL too. */
+  'openai-compatible': { model: '', needsKey: true },
+} as const;
+
+export type AssistantProvider = keyof typeof ASSISTANT_PROVIDERS;
+
+export const ASSISTANT_DEFAULT_PROVIDER: AssistantProvider = 'workers-ai';
 
 export const ASSISTANT_LIMITS = {
   /** Visitor messages per conversation; after that, the contact form. */

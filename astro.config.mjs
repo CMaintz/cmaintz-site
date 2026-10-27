@@ -173,9 +173,13 @@ export default defineConfig({
       KEYSTATIC_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
       PUBLIC_KEYSTATIC_GITHUB_APP_SLUG: envField.string({ context: 'client', access: 'public', optional: true }),
       // Site assistant (Buddy) - see SETUP.md. The widget only renders when PUBLIC_ASSISTANT is "on".
-      ANTHROPIC_API_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
-      // Cloudflare AI Gateway endpoint for Anthropic, for its spend limit and logs; direct to Anthropic when unset.
-      ASSISTANT_GATEWAY_URL: envField.string({ context: 'server', access: 'secret', optional: true }),
+      // Which model answers (src/data/assistant.ts): workers-ai (default, no key), anthropic or openai-compatible.
+      // "secret" only so they are read at runtime: a Worker variable can switch models without a rebuild.
+      ASSISTANT_PROVIDER: envField.string({ context: 'server', access: 'secret', optional: true }),
+      ASSISTANT_MODEL: envField.string({ context: 'server', access: 'secret', optional: true }),
+      ASSISTANT_API_KEY: envField.string({ context: 'server', access: 'secret', optional: true }),
+      // The provider's API, or a Cloudflare AI Gateway endpoint in front of it for a spend limit.
+      ASSISTANT_BASE_URL: envField.string({ context: 'server', access: 'secret', optional: true }),
       // A string, not an enum: an unset GitHub variable reaches the build as "", which an enum rejects.
       PUBLIC_ASSISTANT: envField.string({ context: 'client', access: 'public', optional: true }),
       // Cloudflare Web Analytics beacon token - omitted when unset.
