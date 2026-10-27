@@ -7,12 +7,13 @@ export type Strings = Record<string, string>;
 
 function inlineNode(i: Inline): Node {
   if (i.t === 'text') return document.createTextNode(i.v);
-  const el = document.createElement(i.t === 'bold' ? 'strong' : 'a');
-  el.textContent = i.v;
-  if (i.t === 'link' && el instanceof HTMLAnchorElement) {
-    el.href = i.href;
-    if (/^https:/i.test(i.href)) Object.assign(el, { target: '_blank', rel: 'noopener' });
+  if (i.t === 'link') {
+    const a = Object.assign(document.createElement('a'), { href: i.href, textContent: i.v });
+    if (/^https:/i.test(i.href)) Object.assign(a, { target: '_blank', rel: 'noopener' });
+    return a;
   }
+  const el = document.createElement(i.t === 'bold' ? 'strong' : 'em');
+  el.append(...i.v.map(inlineNode));
   return el;
 }
 
