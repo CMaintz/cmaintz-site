@@ -30,4 +30,4 @@ live: https://plantekalender.cmaintz-site.workers.dev
 - **One API, three clients** - a Hono API and React SPA on one Cloudflare Worker with D1. The SwiftUI and Kotlin/Jetpack Compose apps talk to the same JSON API
 - **Testable rule engine** - the domain logic is pure and layered apart from I/O, and the SQL runs against `node:sqlite` in tests, so the same queries are tested that run in production. Gated by [Foundry](/projects/foundry)
 
-Only the iOS app's repo is public. The plant catalogue is written from general gardening knowledge and hasn't had a rule-by-rule expert review yet.
+Only the iOS app's repo is public.
