@@ -84,7 +84,12 @@ const viteModulesBeforeWorker = {
 
 export default defineConfig({
   site: SITE,
-  adapter: cloudflare({ imageService: 'passthrough' }),
+  adapter: cloudflare({
+    imageService: 'passthrough',
+    // Prerendering never calls the AI binding, and its remote connection needs a
+    // Cloudflare login that CI builds don't have. Dev keeps it, to test the assistant.
+    remoteBindings: !process.argv.includes('build'),
+  }),
   trailingSlash: 'ignore',
   // No server sessions needed; avoids provisioning a KV namespace on Cloudflare.
   session: false,

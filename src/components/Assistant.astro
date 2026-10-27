@@ -1,7 +1,7 @@
 ---
 // The site assistant: Buddy floating in the corner, greeting once per visit
-// and opening a chat window. Hidden
-// until its script runs, so visitors without JS never see a dead button.
+// and opening a chat window. Hidden until its script runs, so visitors
+// without JS never see a dead button.
 // Logic in src/lib/assistant-client.ts; the server side in src/pages/api/assistant.ts.
 import { PUBLIC_TURNSTILE_SITE_KEY } from 'astro:env/client';
 import Buddy from './Buddy.astro';
@@ -117,7 +117,7 @@ const suggestions = (['assistant.suggest.1', 'assistant.suggest.2', 'assistant.s
     from { opacity: 0; transform: translateY(6px) scale(0.96); }
   }
   @media (prefers-reduced-motion: reduce) {
-    .greet { animation: none; }
+    .greet, .log :global(.msg--assistant:empty)::after { animation: none; }
   }
 
   .panel {

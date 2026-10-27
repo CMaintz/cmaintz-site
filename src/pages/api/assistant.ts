@@ -40,6 +40,13 @@ const rateLimited = async (ip: string | null) =>
 
 const fail = (status: number, code: string) => Response.json({ error: code }, { status });
 
+/** Logs what is missing, since the visitor only sees "not configured". */
+function configured() {
+  const problem = configProblem(modelConfig());
+  if (problem) console.error('assistant:', problem);
+  return !problem;
+}
+
 /**
  * Markdown twins live in the static assets. Without that binding (astro dev) this
  * fetches the HTML page instead, which readPage turns down.
@@ -107,7 +114,7 @@ const parseJson = (text: string) => {
 };
 
 export const POST: APIRoute = async ({ request, clientAddress, url }) => {
-  if (configProblem(modelConfig())) return fail(503, 'not_configured');
+  if (!configured()) return fail(503, 'not_configured');
   if (await rateLimited(request.headers.get('cf-connecting-ip') ?? clientAddress ?? null))
     return fail(429, 'rate_limited');
   const body = await boundedBody(request);

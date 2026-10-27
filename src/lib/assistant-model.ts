@@ -1,7 +1,7 @@
 // The one place that knows which company's model Buddy talks to. Everything
 // else speaks the AI SDK's provider-neutral LanguageModel, so swapping
 // providers is configuration (ASSISTANT_PROVIDER, ASSISTANT_MODEL), not code.
-import { APICallError, type LanguageModel } from 'ai';
+import { APICallError, RetryError, type LanguageModel } from 'ai';
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { ASSISTANT_DEFAULT_PROVIDER, ASSISTANT_PROVIDERS, type AssistantProvider } from '../data/assistant';
@@ -20,6 +20,7 @@ const providerOf = (c: ModelConfig): AssistantProvider =>
 
 /** Why this config can't reach a model, or null when it can. */
 export function configProblem(c: ModelConfig): string | null {
+  if (c.provider && !(c.provider in ASSISTANT_PROVIDERS)) return `unknown ASSISTANT_PROVIDER "${c.provider}"`;
   const provider = providerOf(c);
   if (provider === 'workers-ai' && !c.ai) return 'no AI binding';
   if (ASSISTANT_PROVIDERS[provider].needsKey && !c.apiKey) return 'no ASSISTANT_API_KEY';
@@ -29,9 +30,11 @@ export function configProblem(c: ModelConfig): string | null {
 
 /** The error code the visitor sees: worth waiting a minute, back tomorrow, or anything else. */
 export function failureCode(err: unknown) {
+  // Once its retries run out, the SDK wraps the provider's error in a RetryError.
+  const cause = RetryError.isInstance(err) ? err.lastError : err;
   // Workers AI error 4006: the free daily neurons are used up until midnight UTC.
-  if (/\b4006\b|daily free allocation/i.test(String((err as Error)?.message))) return 'resting';
-  return APICallError.isInstance(err) && err.statusCode === 429 ? 'busy' : 'upstream';
+  if (/\b4006\b|daily free allocation/i.test(String((cause as Error)?.message))) return 'resting';
+  return APICallError.isInstance(cause) && cause.statusCode === 429 ? 'busy' : 'upstream';
 }
 
 export function chatModel(c: ModelConfig): LanguageModel {

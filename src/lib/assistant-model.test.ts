@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { APICallError } from 'ai';
+import { APICallError, RetryError } from 'ai';
 import { configProblem, failureCode } from './assistant-model';
 
 const ai = { run: async () => ({}) };
@@ -10,6 +10,20 @@ it('failureCode: tells a spent daily allowance and a rate limit apart from other
   const busy = new APICallError({ message: 'slow down', url: 'u', requestBodyValues: {}, statusCode: 429 });
   expect(failureCode(busy)).toBe('busy');
   expect(failureCode(new Error('boom'))).toBe('upstream');
+});
+
+it('failureCode: sees a rate limit through the SDK retry wrapper', () => {
+  const busy = new APICallError({ message: 'slow down', url: 'u', requestBodyValues: {}, statusCode: 429 });
+  const retried = new RetryError({
+    message: 'Failed after 2 attempts',
+    reason: 'maxRetriesExceeded',
+    errors: [busy, busy],
+  });
+  expect(failureCode(retried)).toBe('busy');
+});
+
+it('configProblem: a misspelt provider is reported, not swapped for the default', () => {
+  expect(configProblem({ provider: 'antropic', ai })).toMatch(/antropic/);
 });
 
 it('configProblem: the default provider needs the AI binding but no key', () => {

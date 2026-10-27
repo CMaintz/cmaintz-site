@@ -28,6 +28,14 @@ it('bindingFetch: passes a streamed answer through as server-sent events', async
   expect(await res.text()).toBe('data: {"choices":[]}\n\n');
 });
 
+it('bindingFetch: still splits events when the stream uses CRLF line ends', async () => {
+  const sse = 'data: {"choices":[1]}\r\n\r\ndata: {"response":""}\r\n\r\n';
+  const res = await bindingFetch(binding(new Response(sse).body!))('https://ignored', {
+    body: JSON.stringify({ model: 'm', stream: true }),
+  });
+  expect(await res.text()).toBe('data: {"choices":[1]}\n\n');
+});
+
 it('bindingFetch: drops the closing Workers AI chunk that is not in the OpenAI format', async () => {
   const sse = 'data: {"choices":[{"delta":{"content":"Hi"}}]}\n\ndata: {"response":"","usage":{}}\n\ndata: [DONE]\n\n';
   const res = await bindingFetch(binding(new Response(sse).body!))('https://ignored', {

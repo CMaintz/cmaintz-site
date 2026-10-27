@@ -23,7 +23,7 @@ function openAiEventsOnly(body: ReadableStream<Uint8Array>) {
   return body.pipeThrough(
     new TransformStream<Uint8Array, Uint8Array>({
       transform(chunk, out) {
-        const events = (buffered + decoder.decode(chunk, { stream: true })).split('\n\n');
+        const events = (buffered + decoder.decode(chunk, { stream: true })).split(/\r?\n\r?\n/);
         buffered = events.pop() ?? '';
         pass(events, out);
       },

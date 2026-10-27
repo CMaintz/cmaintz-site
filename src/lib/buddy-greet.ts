@@ -15,6 +15,8 @@ export interface Greeting {
   t: Strings;
   player?: BuddyPlayer;
   busy: () => boolean;
+  /** Set once it has been hidden, so a pending greeting never comes back. */
+  done?: boolean;
 }
 
 function seen() {
@@ -34,12 +36,19 @@ function pickLine(t: Strings) {
   return lines[Math.floor(Math.random() * lines.length)] ?? '';
 }
 
-export const hideGreeting = (g: Greeting) => (g.bubble.hidden = true);
+/** Hides the bubble for good, e.g. once the visitor has opened the chat themselves. */
+export function hideGreeting(g: Greeting) {
+  g.done = true;
+  // Hiding the focused dismiss button would drop keyboard focus onto <body>.
+  if (g.bubble.contains(document.activeElement)) g.root.querySelector<HTMLElement>('[data-buddy-launch]')?.focus();
+  g.bubble.hidden = true;
+}
 
 function show(g: Greeting) {
-  if (g.busy() || seen()) return;
-  g.bubble.querySelector('[data-buddy-greet-text]')!.textContent = pickLine(g.t);
+  if (g.done || g.busy() || seen()) return;
   g.bubble.hidden = false;
+  // Filled a frame after it appears: screen readers skip a live region's first text while it is still hidden.
+  requestAnimationFrame(() => (g.bubble.querySelector('[data-buddy-greet-text]')!.textContent = pickLine(g.t)));
   g.player?.play('wave');
   setTimeout(() => hideGreeting(g), SHOW_MS);
 }

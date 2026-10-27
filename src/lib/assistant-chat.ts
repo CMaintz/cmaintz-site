@@ -108,10 +108,11 @@ async function runBudgeted(s: ChatSetup, name: string, args: unknown, emit: Emit
   if (++budget.calls > max) return refusal(`At most ${max} tool calls at once.`);
   emit({ type: 'status', tool: name });
   const out = await runTool(name, args, s.ctx);
-  if (out.lead) emit({ type: 'lead', draft: out.lead });
   const size = JSON.stringify(out.result).length;
   if (size > budget.chars) return refusal('Tool budget for this message is used up; answer now.');
   budget.chars -= size;
+  // Only after the budget check: a refused draft must not show a card the model thinks failed.
+  if (out.lead) emit({ type: 'lead', draft: out.lead });
   return out.result;
 }
 
