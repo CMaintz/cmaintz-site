@@ -12,10 +12,10 @@ category: open-source
 order: 2
 featured: true
 role: Sole designer & developer
-context: Open source (MIT) · semver v1.0-v1.2
+context: Open source (MIT) · semver, latest v2.13
 start: 2026-08
 stack: [GitHub Actions, mise, Python, POSIX shell, TypeScript, Semgrep, gitleaks, osv-scanner, ESLint, Spotless, PMD, Claude Code]
-repos: [foundry, cmaintz-skills]
+repos: [foundry, cmaintz-skills, foundry-habit-hooks-dotnet]
 metrics:
   - value: "6"
     label: { en: language-agnostic verbs, da: sprog-agnostiske verber }
@@ -41,7 +41,10 @@ A unified engineering-quality system in two MIT repos: **`foundry`** (reusable C
 - **Ratcheting instead of gating** - existing issues are baselined and only new violations fail; baselines may only shrink
 - **Anti-gaming `ruleset-guard`** - refuses a PR that loosens the gate alongside a source change unless a human labels it deliberate; merge-base-scoped
 - **Fresh-context AI review** - the diff is reviewed against the linked spec independently of the session that wrote it
+- **Verify against the ticket** - the `verify` skill walks each acceptance criterion and the approved Definition of Done in a fresh context and reports pass or fail with evidence, from both `feature` and `ship`. Advisory: only the gate blocks
+- **A cited codebase map** - the `codemap` skill writes a committed, SHA-stamped map of the repo where every claim cites its code, which grounds `spec`, `feature` and review. `mise run codemap:check` flags citations that no longer resolve
 - **Autonomous backlog-to-PR** - the `feature` skill claims a labelled ticket via a GitHub-label state machine, implements in an isolated worktree, runs a bounded `fix → gate` loop and hands off to `ship`
+- **C#/.NET smell sensor** - `foundry-habit-hooks-dotnet` (v1.5 on PyPI) runs SonarAnalyzer's structural rules against an accepted-debt baseline, so only new smells gate
 - **Supply-chain hygiene** - SHA-pinned actions, least-privilege tokens, no API keys in CI, secret scanning and diff-aware SAST
 
 ## Impact

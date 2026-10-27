@@ -15,7 +15,7 @@ featured: true
 role: Sole developer
 context: Personal project · Movie Explorer spin-off
 start: 2026-05
-stack: [React 19, TypeScript, Vite, TanStack Query, Cloudflare Workers, Vitest]
+stack: [React 19, TypeScript, Vite, Three.js, Tailwind CSS, TanStack Query, Cloudflare Workers, Vitest]
 repos: [movie-wheel]
 demo: https://moviewheel.maintz.dev/
 live: https://moviewheel.maintz.dev/
@@ -23,9 +23,10 @@ live: https://moviewheel.maintz.dev/
 
 ## Highlights
 
+- **3D wheel** - the default is a three.js scene with real lighting, shadows and bloom on the marquee bulbs, loaded on demand. The 2D canvas wheel stays as a toggle and as the fallback without WebGL
 - **Server-side TMDB proxy** - a platform-neutral core behind a Cloudflare Worker. It injects the key, 403s foreign origins, allow-lists paths segment by segment, and rate-limits to 60/min per IP
 - **Genre combos** - Rom-Com, Horror Comedy, Action Thriller and more, each requiring both genres. TMDB can't express "(A and B) or C", so every selection is queried separately and mixed
 - **Better filters** - a minimum vote count (default 100) so a 9.0 with 12 votes stays off the wheel, and original language as a filter. Combos TV can't match are greyed out
 - **Result card** with the director (or creator for TV) and a trailer link
-- **Tested wheel math** - landing angles are pure functions with a property test, which caught repeat spins landing on the wrong poster. The shuffle is a proper Fisher-Yates. Vitest with an 88% line-coverage floor, CI on every PR
+- **Tested wheel math** - landing angles are pure functions with a property test, which caught repeat spins landing on the wrong poster. The shuffle is a proper Fisher-Yates. Vitest with an 88% line-coverage floor, CI on every PR, and main deploys to Cloudflare Workers once checks pass
 - **Spin as a state machine** - `idle → loading → spinning → stopped`, eased with easeOutCubic, posters preloaded with `crossOrigin` so they can be drawn on the canvas

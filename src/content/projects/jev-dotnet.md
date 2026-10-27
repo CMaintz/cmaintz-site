@@ -27,5 +27,7 @@ A chat LLM hands you a paragraph you have to parse. Jev hands you a value with a
 - Typed `Choice`, `Score` and `Noul` questions, all answered in one request
 - Retry with exponential backoff and jitter on 429/529, honouring `Retry-After`
 - A typed exception hierarchy under `JevException`, so callers can tell auth, validation and overload apart
-- An injectable `HttpMessageHandler` seam for offline tests; 18 xUnit tests behind a 90% line-coverage gate, warnings as errors
+- Image inputs, `Box` questions that locate a target in an image, and a `ThresholdGate` loaded from a [jev-eval](/projects/jev-eval) `thresholds.json`
+- Bring your own `HttpClient` (say, from `IHttpClientFactory` with Polly handlers): the client never disposes or modifies it
+- An injectable `HttpMessageHandler` seam for offline tests; ~90 xUnit tests behind a 90% line-coverage gate, warnings as errors
 - The Java sibling is [jev-java](/projects/jev-java)

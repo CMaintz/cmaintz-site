@@ -36,6 +36,7 @@ A fail-safe guardrail for an agent's tool calls. Because Jev is effectively free
 - Adapters for LangChain JS (middleware) and the Vercel AI SDK, with structural types so neither framework is a dependency
 - Presets (`shellPolicy()`, `filesystemPolicy()`, `sqlPolicy()`, `paymentsPolicy()`), `perTool` decisions that skip Jev for cheap, safe tools, an audit hook on every verdict, a verdict cache, and an `onHold` handler for asking a human
 - Not a security boundary: think second opinion, not sandbox
+- jev-guard and jev-sort can read a [jev-eval](/projects/jev-eval) `thresholds.json` for their hold and escalate cut-offs instead of a guessed number
 
 ## jev-triage
 
@@ -59,4 +60,4 @@ jq for judgment: a CLI that streams JSONL/CSV rows through Jev and appends typed
 
 ## Related
 
-[jev-eval](/projects/jev-eval) measures where each tool's confidence cut-point should sit, [jev-rerank](/projects/jev-rerank) applies the same idea to RAG in Python, and [Leash](/projects/leash) uses Jev to keep a coding agent to your project's rules. Every package is gated by [Foundry](/projects/foundry), versioned and released on its own (a release script builds the changelog from conventional commits and refuses a breaking change without a major bump), and set up to publish to npm through trusted publishing with provenance (not released to npm yet; install from source).
+[jev-eval](/projects/jev-eval) measures where each tool's confidence cut-point should sit, [jev-rerank](/projects/jev-rerank) applies the same idea to RAG in Python, and [Leash](/projects/leash) uses Jev to keep a coding agent to your project's rules. Every package is gated by [Foundry](/projects/foundry), versioned and released on its own (a release script builds the changelog from conventional commits and refuses a breaking change without a major bump). The npm packages publish from CI through trusted publishing with provenance: `@cmaintz/jev-core` 1.0, `@cmaintz/jev-guard` and `@cmaintz/jev-sort` 2.0 (`npm install @cmaintz/jev-guard`, `npm i -g @cmaintz/jev-sort`). jev-triage 1.1 ships as a GitHub Action.

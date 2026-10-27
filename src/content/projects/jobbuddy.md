@@ -32,5 +32,6 @@ The backend is **strict hexagonal (ports & adapters)**: controllers depend only 
 
 - **Privacy by design** - the `CareerProfileForAi` payload excludes all PII; identity is merged into documents after the AI call
 - **All-Postgres search** - `tsvector` full-text for keywords, **pgvector** for semantic search (embedding-based query vectors)
+- **Writing templates per CV section** - STAR, XYZ or CAR for experience bullets, plus personas you write yourself
 - **Pluggable LLMs** - the model provider is an adapter behind a port, swappable without touching use cases
 - Angular standalone components with lazy routes, Firebase JWT auth, Flyway migrations, OpenAPI docs, Docker Compose
