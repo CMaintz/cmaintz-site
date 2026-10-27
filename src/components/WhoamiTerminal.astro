@@ -65,6 +65,8 @@ const link = (path: string) => localize(path, lang);
 </Window>
 
 <script>
+  import { completions, ShellHistory } from '../lib/shell-history';
+
   const tabs = [...document.querySelectorAll<HTMLButtonElement>('.term [role="tab"]')];
   const panelOf = (tab: HTMLButtonElement) => document.getElementById(tab.getAttribute('aria-controls')!)!;
 
@@ -101,8 +103,10 @@ const link = (path: string) => localize(path, lang);
   });
 
   // ── The tiny shell on the last prompt. Mostly here for one secret command. ──
+  /** What `help` lists and Tab completes; the DOOM commands stay a secret. */
+  const COMMANDS = ['whoami', 'ls', 'contact', 'clear', 'help'];
   const replies: Record<string, string> = {
-    help: 'commands: whoami, ls, contact, clear, help ... and maybe something from 1993',
+    help: `commands: ${COMMANDS.join(', ')} ... and maybe something from 1993`,
     whoami: 'christoffer maintz',
     ls: 'illux-product-ai  foundry  jev-tools  leash  jobbuddy  tech-atlas',
     contact: 'christoffer@maintz.dev',
@@ -116,7 +120,7 @@ const link = (path: string) => localize(path, lang);
   /** Next tick, so the Enter keypress can't land on the new window's buttons. */
   const openDoom = () => setTimeout(() => dispatchEvent(new CustomEvent('doom:open')));
 
-  const shell = document.querySelector<HTMLInputElement>('[data-shell]');
+  const shell = document.querySelector<HTMLInputElement>('[data-shell]')!;
   const history = document.querySelector<HTMLElement>('[data-history]')!;
   const shellPanel = document.getElementById('panel-whoami')!;
 
@@ -163,14 +167,59 @@ const link = (path: string) => localize(path, lang);
   document.fonts.ready.then(lockHeight);
   addEventListener('resize', lockHeight);
 
-  function onShellKey(e: KeyboardEvent) {
-    if (e.key !== 'Enter') return;
-    e.preventDefault();
-    execute(shell!.value);
-    shell!.value = '';
+  // ── Line editing: history recall, Tab completion and Ctrl+C, like a real shell. ──
+  const past = new ShellHistory();
+
+  const setLine = (text: string) => {
+    shell.value = text;
+    shell.setSelectionRange(text.length, text.length);
+  };
+
+  function submit() {
+    past.remember(shell.value);
+    execute(shell.value);
+    shell.value = '';
   }
 
-  shell?.addEventListener('keydown', onShellKey);
+  function recall(step: number) {
+    const line = past.recall(step, shell.value);
+    if (line !== undefined) setLine(line);
+  }
+
+  /** One match completes the line; several are listed, the way bash does on a double Tab. */
+  function complete() {
+    const matches = completions(shell.value, COMMANDS);
+    if (matches.length === 1) setLine(matches[0]);
+    else if (matches.length > 1) echo(shell.value, matches.join('  '));
+  }
+
+  function cancelLine() {
+    echo(`${shell.value}^C`, '');
+    past.remember('');
+    shell.value = '';
+  }
+
+  /**
+   * Tab is only taken over while the line has text, so an empty prompt never traps
+   * keyboard focus; Ctrl+C only while nothing is selected, so copying still works.
+   */
+  function shellAction(e: KeyboardEvent) {
+    if (e.key === 'Enter') return submit;
+    if (e.key === 'ArrowUp') return () => recall(-1);
+    if (e.key === 'ArrowDown') return () => recall(1);
+    if (e.key === 'Tab' && !e.shiftKey && shell.value.trim()) return complete;
+    const selected = shell.selectionStart !== shell.selectionEnd;
+    if (e.ctrlKey && e.key === 'c' && !selected) return cancelLine;
+  }
+
+  function onShellKey(e: KeyboardEvent) {
+    const action = shellAction(e);
+    if (!action) return;
+    e.preventDefault();
+    action();
+  }
+
+  shell.addEventListener('keydown', onShellKey);
 
   // ── Typing: commands appear character by character, output lines all at once. ──
   const CHAR_MS = 28;
