@@ -4,6 +4,10 @@ import { readEvents } from './assistant-sse';
 import { bubble, renderInto, type Strings } from './assistant-ui';
 import { mountLead } from './assistant-lead';
 import { API_PATHS } from './api-catalog';
+import { animateBuddy } from './buddy-sprite';
+import { hideGreeting, scheduleGreeting, type Greeting } from './buddy-greet';
+import type { BuddyPlayer } from './buddy-player';
+import type { BuddyMood } from '../data/buddy';
 import type { ChatEvent, Turn } from './assistant-chat';
 
 interface Ui {
@@ -17,6 +21,8 @@ interface Ui {
   siteKey: string;
   /** The reply in flight; New chat aborts it so it can't write into the fresh conversation. */
   pending?: AbortController;
+  player?: BuddyPlayer;
+  greeting: Greeting;
 }
 
 const STORE = 'buddy:chat';
@@ -37,7 +43,10 @@ function saveHistory(turns: Turn[]) {
   }
 }
 
-const setState = (ui: Ui, state: 'idle' | 'thinking' | 'talking') => (ui.root.dataset.state = state);
+function setState(ui: Ui, state: BuddyMood) {
+  ui.root.dataset.state = state;
+  ui.player?.setMood(state);
+}
 
 function showStatus(ui: Ui, key: string | null) {
   ui.status.textContent = key ? `${ui.t[`assistant.status.${key}`] ?? ui.t['assistant.status.default']}...` : '';
@@ -49,12 +58,17 @@ function scrollDown(ui: Ui) {
 
 const errorText = (ui: Ui, code: string) => ui.t[`assistant.error.${code}`] ?? ui.t['assistant.error.default'];
 
-/** Collects one streamed reply into a bubble; returns the text when the stream ends. */
+/**
+ * Collects one streamed reply. Text written after a tool call goes in a
+ * bubble of its own, so a bubble never repeats what the one above it said.
+ */
 class Reply {
-  readonly el = bubble('assistant');
+  private el = bubble('assistant');
+  /** Everything said, for the history. */
   text = '';
-  /** Set by a tool call, so the text after it starts a new paragraph. */
-  private gap = false;
+  /** What the current bubble shows. */
+  private shown = '';
+  private afterTool = false;
 
   constructor(
     private ui: Ui,
@@ -68,20 +82,29 @@ class Reply {
     if (e.type === 'text') this.addText(e.delta);
     else if (e.type === 'status') this.toolStarted(e.tool);
     else if (e.type === 'lead') this.ui.log.append(mountLead(e.draft, this.ui.t, this.ui.siteKey));
-    else if (e.type === 'error') renderInto(this.el, `${this.text}\n\n${errorText(this.ui, e.code)}`.trim());
+    else if (e.type === 'error') renderInto(this.el, `${this.shown}\n\n${errorText(this.ui, e.code)}`.trim());
     scrollDown(this.ui);
   };
 
   private addText(delta: string) {
-    this.text += (this.gap && this.text ? '\n\n' : '') + delta;
-    this.gap = false;
+    if (this.afterTool && this.shown) this.nextBubble();
+    this.afterTool = false;
+    this.shown += delta;
+    this.text += delta;
     setState(this.ui, 'talking');
     showStatus(this.ui, null);
-    renderInto(this.el, this.text);
+    renderInto(this.el, this.shown);
+  }
+
+  private nextBubble() {
+    this.el = bubble('assistant');
+    this.ui.log.append(this.el);
+    this.shown = '';
+    this.text += '\n\n';
   }
 
   private toolStarted(tool: string) {
-    this.gap = true;
+    this.afterTool = true;
     setState(this.ui, 'thinking');
     showStatus(this.ui, tool);
   }
@@ -141,6 +164,7 @@ function reset(ui: Ui) {
 
 function toggle(ui: Ui, open: boolean) {
   ui.root.toggleAttribute('data-open', open);
+  hideGreeting(ui.greeting);
   ui.root.querySelector('[data-buddy-launch]')?.setAttribute('aria-expanded', String(open));
   if (!open) return ui.root.querySelector<HTMLElement>('[data-buddy-launch]')?.focus();
   // Only on first open: rebuilding later would drop a lead card the visitor hasn't sent yet.
@@ -181,18 +205,43 @@ function wireButtons(ui: Ui) {
     .forEach((b) => b.addEventListener('click', () => askSuggestion(ui, b.textContent ?? '')));
 }
 
-export function mountAssistant(root: HTMLElement) {
-  const ui: Ui = {
+function wireBuddy(ui: Ui) {
+  const launch = ui.root.querySelector<HTMLElement>('[data-buddy-launch]')!;
+  launch.addEventListener('pointerenter', () => ui.player?.play('hop'));
+  const bubbleEl = ui.greeting.bubble;
+  bubbleEl.querySelector('[data-buddy-greet-open]')?.addEventListener('click', () => toggle(ui, true));
+  bubbleEl.querySelector('[data-buddy-greet-close]')?.addEventListener('click', () => hideGreeting(ui.greeting));
+  scheduleGreeting(ui.greeting);
+}
+
+function greetingFor(root: HTMLElement, t: Strings, player?: BuddyPlayer): Greeting {
+  const bubbleEl = root.querySelector<HTMLElement>('[data-buddy-greet]')!;
+  // A visitor already chatting or with the window open needs no invitation.
+  const busy = () => root.hasAttribute('data-open') || loadHistory().length > 0;
+  return { root, bubble: bubbleEl, t, player, busy };
+}
+
+function uiFor(root: HTMLElement): Ui {
+  const t = JSON.parse(root.dataset.strings ?? '{}') as Strings;
+  const player = animateBuddy(root.querySelector<HTMLElement>('[data-buddy-launch] [data-buddy-sprite]')!);
+  return {
     root,
     log: root.querySelector('[data-buddy-log]')!,
     form: root.querySelector('[data-buddy-form]')!,
     input: root.querySelector('[data-buddy-input]')!,
     status: root.querySelector('[data-buddy-status]')!,
-    t: JSON.parse(root.dataset.strings ?? '{}') as Strings,
+    t,
     lang: root.dataset.lang ?? 'en',
     siteKey: root.dataset.sitekey ?? '',
+    player,
+    greeting: greetingFor(root, t, player),
   };
+}
+
+export function mountAssistant(root: HTMLElement) {
+  const ui = uiFor(root);
   wireInput(ui);
   wireButtons(ui);
+  wireBuddy(ui);
   root.hidden = false;
 }

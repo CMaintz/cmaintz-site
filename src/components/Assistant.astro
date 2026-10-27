@@ -1,5 +1,6 @@
 ---
-// The site assistant: Buddy in the corner, opening a chat window. Hidden
+// The site assistant: Buddy floating in the corner, greeting once per visit
+// and opening a chat window. Hidden
 // until its script runs, so visitors without JS never see a dead button.
 // Logic in src/lib/assistant-client.ts; the server side in src/pages/api/assistant.ts.
 import { PUBLIC_TURNSTILE_SITE_KEY } from 'astro:env/client';
@@ -35,10 +36,7 @@ const suggestions = (['assistant.suggest.1', 'assistant.suggest.2', 'assistant.s
         <button type="button" class="tool pixel" data-buddy-close aria-label={t('assistant.close')}>✕</button>
       </span>
     </div>
-    <div class="head">
-      <Buddy />
-      <p class="disclaimer">{t('assistant.disclaimer')}</p>
-    </div>
+    <p class="disclaimer">{t('assistant.disclaimer')}</p>
     <div class="log" data-buddy-log aria-live="polite"></div>
     <div class="suggest">
       {suggestions.map((s) => <button type="button" class="chip mono" data-buddy-suggest>{s}</button>)}
@@ -54,9 +52,22 @@ const suggestions = (['assistant.suggest.1', 'assistant.suggest.2', 'assistant.s
       <button type="submit" class="btn btn--primary">{t('assistant.send')}</button>
     </form>
   </section>
-  <button type="button" class="launch buddy-hop" data-buddy-launch aria-expanded="false" aria-controls="buddy-panel">
+  <div class="greet" data-buddy-greet aria-live="polite" hidden>
+    <button type="button" class="greet__say" data-buddy-greet-open>
+      <span class="greet__who mono">{t('assistant.who')}</span>
+      <span data-buddy-greet-text></span>
+    </button>
+    <button type="button" class="greet__x" data-buddy-greet-close aria-label={t('assistant.greet.dismiss')}>✕</button>
+  </div>
+  <button
+    type="button"
+    class="launch"
+    data-buddy-launch
+    aria-expanded="false"
+    aria-controls="buddy-panel"
+    aria-label={t('assistant.open')}
+    title={t('assistant.open')}>
     <Buddy scale={2} />
-    <span class="launch__label pixel">{t('assistant.open')}</span>
   </button>
 </aside>
 
@@ -74,16 +85,40 @@ const suggestions = (['assistant.suggest.1', 'assistant.suggest.2', 'assistant.s
   }
   .buddy-chat[hidden] { display: none; }
 
+  /* Just Buddy, floating: no box, a soft shadow under him so he reads on any background. */
   .launch {
-    display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.8rem 0.3rem 0.3rem;
-    background: var(--bg-2); color: var(--fg); cursor: pointer;
-    border: 2px solid var(--line-strong); box-shadow: 4px 4px 0 var(--shadow-c);
-    transition: transform 120ms steps(2);
+    padding: 0; background: none; border: 0; cursor: pointer;
+    filter: drop-shadow(0 6px 4px rgb(0 0 0 / 0.18));
   }
-  :root:not([data-theme='light']) .launch { border-color: #4a4a47; }
-  .launch:hover { transform: translateY(-3px); }
-  .launch__label { font-size: 0.8rem; text-transform: uppercase; }
-  .buddy-chat[data-open] .launch__label { display: none; }
+  .launch:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+
+  /* The speech bubble is deliberately smooth rather than pixel art, so it reads as speech. */
+  .greet {
+    position: relative; display: flex; align-items: flex-start; gap: 0.25rem; max-width: 16rem;
+    margin-right: 3.5rem; padding: 0.6rem 0.5rem 0.65rem 0.85rem;
+    background: var(--bg-2); color: var(--fg); border: 1px solid var(--line-strong); border-radius: 1rem;
+    box-shadow: 0 6px 18px rgb(0 0 0 / 0.14); animation: greet-in 260ms ease-out;
+  }
+  .greet[hidden], .buddy-chat[data-open] .greet { display: none; }
+  .greet::after {
+    content: ''; position: absolute; right: 1.6rem; bottom: -0.45rem; width: 0.8rem; height: 0.8rem;
+    background: inherit; border: inherit; border-width: 0 1px 1px 0; transform: rotate(45deg);
+  }
+  .greet__say {
+    display: grid; gap: 0.15rem; padding: 0; text-align: left; font: 0.92rem/1.35 var(--font-sans);
+    color: inherit; background: none; border: 0; cursor: pointer;
+  }
+  .greet__who { font-size: 0.68rem; color: var(--accent-2); text-transform: uppercase; letter-spacing: 0.04em; }
+  .greet__x {
+    padding: 0.1rem 0.3rem; font-size: 0.75rem; color: var(--fg-dim); background: none; border: 0; cursor: pointer;
+  }
+  .greet__x:hover, .greet__say:hover [data-buddy-greet-text] { color: var(--accent); }
+  @keyframes greet-in {
+    from { opacity: 0; transform: translateY(6px) scale(0.96); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .greet { animation: none; }
+  }
 
   .panel {
     display: none; width: min(25rem, calc(100vw - 1.5rem)); height: min(38rem, calc(100dvh - 8rem));
@@ -97,10 +132,10 @@ const suggestions = (['assistant.suggest.1', 'assistant.suggest.2', 'assistant.s
   }
   .tool:hover { color: var(--accent); }
 
-  .head {
-    display: flex; gap: 0.7rem; align-items: center; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--line);
+  .disclaimer {
+    margin: 0; padding: 0.5rem 0.8rem; font-size: 0.72rem; color: var(--fg-dim); line-height: 1.35;
+    border-bottom: 1px solid var(--line);
   }
-  .disclaimer { margin: 0; font-size: 0.72rem; color: var(--fg-dim); line-height: 1.35; }
 
   .log { flex: 1; overflow-y: auto; padding: 0.8rem; display: flex; flex-direction: column; gap: 0.6rem; }
   .log :global(.msg) {
@@ -116,6 +151,14 @@ const suggestions = (['assistant.suggest.1', 'assistant.suggest.2', 'assistant.s
     align-self: flex-end; background: var(--accent); color: var(--accent-ink); white-space: pre-wrap;
   }
   .log :global(.msg a) { color: var(--accent); }
+  /* The reply's bubble exists before its first word; until then it shows typing dots. */
+  .log :global(.msg--assistant:empty)::after {
+    content: '...'; display: inline-block; width: 1.5em; overflow: hidden; vertical-align: bottom;
+    letter-spacing: 0.1em; animation: typing 900ms steps(4) infinite;
+  }
+  @keyframes typing {
+    from { width: 0; }
+  }
 
   .log :global(.lead) {
     display: grid; gap: 0.5rem; padding: 0.75rem; border: 2px dashed var(--accent-2); font-size: 0.85rem;
@@ -146,10 +189,9 @@ const suggestions = (['assistant.suggest.1', 'assistant.suggest.2', 'assistant.s
   .buddy-chat[data-busy] .ask button { opacity: 0.5; pointer-events: none; }
 
   @media (max-width: 40rem) {
-    /* !important: Buddy sets --scale inline. */
-    .launch :global(.buddy) { --scale: 1 !important; }
     .buddy-chat[data-open] { left: 0.75rem; }
-    .panel { width: 100%; height: calc(100dvh - 7.5rem); }
+    .panel { width: 100%; height: calc(100dvh - 9.5rem); }
+    .greet { max-width: min(16rem, calc(100vw - 2rem)); margin-right: 2.5rem; }
   }
   @media print { .buddy-chat { display: none; } }
 </style>
