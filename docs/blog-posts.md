@@ -23,6 +23,9 @@ A component lives in three places that change together:
 
 ## Front matter
 
+- The filename is the post's id and URL slug: `src/content/blog/<slug>.mdx` is served at `/blog/<slug>`, or `/da/blog/<slug>` with `lang: da`. Use a lowercase, hyphenated slug in the post's own language; the editor derives it from the title the same way. Renaming a published post breaks its URL, and cross-posting then creates a second dev.to article, since articles are matched by canonical URL.
+- `lang` and `translation`: an English post and its Danish version are two files. Each sets `translation` to the other's slug, and the Danish one sets `lang: da`. `src/lib/translations.test.ts` fails when a pair doesn't point both ways.
+- `cover`: the image goes in `src/assets/blog/`, referenced as `cover: ../../assets/blog/<file>`, the path the editor writes.
 - `tags`: ids from `src/data/tags.ts`. A new tag goes there first, with its dev.to equivalent if one is well followed. Its header says how the list's order picks a post's four dev.to tags.
 - `areas`: ids from `src/data/areas.ts`.
 - `crosspost: [devto]` publishes to dev.to after the post reaches `main` and is live (not `draft`, `pubDate` not in the future). Later pushes that change the post update the article.
