@@ -107,20 +107,21 @@ import DisplayMenu from './DisplayMenu.astro';
   }
 
   .nav { margin-left: 1rem; }
-  .nav ul { display: flex; gap: 0.25rem; list-style: none; margin: 0; padding: 0; }
-  /* Every link reserves the active marker's slot on its left, so marking a link changes
-     neither its size nor where its label sits. */
+  .nav ul { display: flex; gap: 0.6rem; list-style: none; margin: 0; padding: 0; }
   .nav a {
-    --mark: calc(1ch + 0.2em);
-    position: relative;
     font: 500 0.85rem var(--font-mono);
-    text-decoration: none; color: var(--fg-dim); white-space: nowrap;
-    padding: 0.35rem 0.6rem 0.35rem calc(0.3rem + var(--mark));
+    text-decoration: none; padding: 0.35rem 0.6rem; color: var(--fg-dim); white-space: nowrap;
     border: 1px solid transparent;
   }
   .nav a:hover { color: var(--fg); border-color: var(--line); }
-  .nav a[aria-current='page'] { color: var(--accent-ink); background: var(--accent); }
-  .nav a[aria-current='page']::before { content: '>'; position: absolute; top: 0.35rem; left: 0.3rem; }
+  /* The marker grows the active link to the left into the gap, and the negative margin cancels
+     that growth, so the label and every neighbour stay where they are on every page. */
+  .nav a[aria-current='page'] {
+    --mark: calc(1ch + 0.3em);
+    color: var(--accent-ink); background: var(--accent);
+    margin-left: calc(-1 * var(--mark));
+  }
+  .nav a[aria-current='page']::before { content: '>'; margin-right: 0.3em; }
 
   .tools { display: flex; align-items: center; gap: 0.5rem; margin-left: auto; }
   /* Global so DisplayMenu's summary gets the same look; two classes keep the old specificity,
@@ -146,7 +147,7 @@ import DisplayMenu from './DisplayMenu.astro';
   .menu__panel a { display: block; padding: 0.5rem 0.7rem; font: 500 0.95rem var(--font-mono); text-decoration: none; }
   .menu__panel a[aria-current='page'] { background: var(--accent); color: var(--accent-ink); }
 
-  /* Six links plus the tools need about 1090px in either language; below that the menu takes over. */
+  /* Six links plus the tools need about 1085px in either language; below that the menu takes over. */
   @media (max-width: 1100px) {
     .nav { display: none; }
     .tools { margin-left: auto; }
