@@ -86,22 +86,24 @@ async function showMoreAddsRows(page) {
   return width > 1 && rowByRow && fullRows && last.reduce((a, b) => a + b) === total;
 }
 
-/** Main nav link boxes, as "x:width", on one page. */
-async function navBoxes(page, path) {
+/** Where each main nav label's text starts, on one page. The active link's box grows by design,
+ * so the labels are what must hold still. */
+async function navLabels(page, path) {
   await page.goto(`${BASE}${path}`);
   return page.$$eval('.site-header .nav a', (as) =>
     as.map((a) => {
-      const r = a.getBoundingClientRect();
-      return `${Math.round(r.x)}:${Math.round(r.width)}`;
+      const text = document.createRange();
+      text.selectNodeContents(a.lastChild);
+      return Math.round(text.getBoundingClientRect().x);
     }),
   );
 }
 
-/** Marking a link as the current page doesn't move or resize any nav link. */
+/** Marking a link as the current page doesn't move any nav label. */
 async function navHoldsStill(page) {
-  const home = await navBoxes(page, '/');
-  const about = await navBoxes(page, '/about');
-  return home.length > 0 && home.join() === about.join();
+  const home = await navLabels(page, '/');
+  const projects = await navLabels(page, '/projects');
+  return home.length > 0 && home.join() === projects.join();
 }
 
 async function langSwitches(page) {
