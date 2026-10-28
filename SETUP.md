@@ -84,6 +84,8 @@ Free tier: 2 active projects, 50,000 monthly active users, 500 MB database. Free
 
 **You:** Cloudflare -> Web Analytics -> Add site -> copy the token, add it as the GitHub repo variable `PUBLIC_CF_BEACON_TOKEN`, then re-run the latest `main` deploy. Cookieless, no consent banner needed.
 
+**You (visit paths and entry pages):** cloud.umami.is -> Add website, domain `maintz.dev` -> copy the website id, add it as the GitHub repo variable `PUBLIC_UMAMI_WEBSITE_ID`, then re-run the latest `main` deploy. Also cookieless; a visitor's id resets daily.
+
 ## Phase 7 - Domain (whenever you buy one)
 
 1. **You:** buy it (Cloudflare Registrar sells at cost; any registrar works if you point its nameservers to Cloudflare).
