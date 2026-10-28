@@ -1,5 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { isHoneypotHit, parseInquiry, passesTurnstile, sendInquiry, validationError, type Inquiry } from './contact';
+import {
+  isHoneypotHit,
+  looksLikeSpam,
+  parseInquiry,
+  passesTurnstile,
+  sendInquiry,
+  validationError,
+  type Inquiry,
+} from './contact';
 
 const formOf = (fields: Record<string, string>) => {
   const form = new FormData();
@@ -99,6 +107,24 @@ describe('isHoneypotHit', () => {
 });
 
 const form = formOf({ 'cf-turnstile-response': 'token-123' });
+
+describe('looksLikeSpam', () => {
+  it('lets ordinary inquiries through, Danish included', () => {
+    expect(looksLikeSpam(valid)).toBe(false);
+    expect(looksLikeSpam({ ...valid, name: 'Søren Ærø', message: 'Hej, kan du hjælpe med vores webshop?' })).toBe(
+      false,
+    );
+    expect(looksLikeSpam({ ...valid, budget: '135215', company: 'google' })).toBe(false);
+  });
+
+  it('catches a name with a run of digits', () => {
+    expect(looksLikeSpam({ ...valid, name: 'NARTYTRYUT275017NERTYTRY' })).toBe(true);
+  });
+
+  it('catches a message that is one unbroken token', () => {
+    expect(looksLikeSpam({ ...valid, message: 'MERTYHRTHYHT275017MAYTRYR' })).toBe(true);
+  });
+});
 
 describe('passesTurnstile configuration', () => {
   it('passes without calling Cloudflare when Turnstile is not configured', async () => {

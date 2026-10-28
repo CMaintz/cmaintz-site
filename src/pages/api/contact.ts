@@ -6,6 +6,7 @@ import {
   parseInquiry,
   validationError,
   isHoneypotHit,
+  looksLikeSpam,
   passesTurnstile,
   sendInquiry,
   type Inquiry,
@@ -40,6 +41,7 @@ async function botOutcome(form: FormData, ip: string | null): Promise<Outcome | 
 async function deliver(inquiry: Inquiry): Promise<Outcome> {
   const invalid = validationError(inquiry);
   if (invalid) return { status: 400, error: invalid };
+  if (looksLikeSpam(inquiry)) return { status: 200 };
   if (!RESEND_API_KEY) return { status: 503, error: 'not_configured' };
   const sent = await sendInquiry(inquiry, { apiKey: RESEND_API_KEY, to: CONTACT_TO_EMAIL, from: CONTACT_FROM_EMAIL });
   return sent ? { status: 200 } : { status: 502, error: 'send_failed' };
