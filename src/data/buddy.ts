@@ -8,6 +8,21 @@ export interface Clip {
   sheet: string;
   /** Milliseconds per frame, from the manifest. */
   durations: number[];
+  /** Frame size in sprite pixels; roaming clips are bigger than the idle frame. */
+  width: number;
+  height: number;
+  /** Where the idle frame's top-left sits inside this clip's frame, in sprite pixels. */
+  offset: [number, number];
+  /** Per-frame drop in sprite pixels that the page adds, so the sprite itself never floats. */
+  bob?: number[];
+}
+
+interface ManifestEntry {
+  frame_width: number;
+  frame_height: number;
+  durations_ms: number[];
+  offset?: number[];
+  bob?: number[];
 }
 
 const FRONT = 'front-';
@@ -15,11 +30,20 @@ const FRONT = 'front-';
 export const BUDDY_CLIPS: Record<string, Clip> = Object.fromEntries(
   Object.entries(manifest)
     .filter(([key]) => key.startsWith(FRONT))
-    .map(([key, m]) => [
-      key.slice(FRONT.length),
-      { sheet: `/img/buddy/${key.slice(FRONT.length)}.png`, durations: m.durations_ms },
-    ]),
+    .map(([key, m]) => [key.slice(FRONT.length), toClip(key.slice(FRONT.length), m)]),
 );
+
+function toClip(name: string, m: ManifestEntry): Clip {
+  const [x = 0, y = 0] = m.offset ?? [];
+  return {
+    sheet: `/img/buddy/${name}.png`,
+    durations: m.durations_ms,
+    width: m.frame_width,
+    height: m.frame_height,
+    offset: [x, y],
+    bob: m.bob,
+  };
+}
 
 export const BUDDY_FRAME = { width: manifest['front-idle'].frame_width, height: manifest['front-idle'].frame_height };
 
@@ -33,6 +57,7 @@ export const BUDDY_EXTRAS: Record<string, number> = {
   twirl: 1,
   loop: 1,
   hop: 1,
+  swim: 1,
 };
 
 /** Idle time between random extras, in ms. */

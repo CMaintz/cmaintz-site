@@ -1,7 +1,7 @@
 ---
 // Buddy, the site assistant (clips in src/data/buddy.ts). It renders his
-// neutral pose; src/lib/buddy-sprite.ts animates it by moving --frame and
-// swapping --sheet.
+// neutral pose; src/lib/buddy-sprite.ts animates it by moving --frame,
+// swapping --sheet and gliding the sprite through the idle's float.
 import { BUDDY_CLIPS, BUDDY_FRAME } from '../data/buddy';
 
 interface Props {
@@ -12,25 +12,42 @@ interface Props {
 const { scale = 1, class: cls } = Astro.props;
 
 const idle = BUDDY_CLIPS.idle;
-const style = [
-  `--w: ${BUDDY_FRAME.width}px`,
-  `--h: ${BUDDY_FRAME.height}px`,
-  `--scale: ${scale}`,
+const box = [`--w: ${BUDDY_FRAME.width}px`, `--h: ${BUDDY_FRAME.height}px`, `--scale: ${scale}`].join('; ');
+const sprite = [
+  `--cw: ${idle.width}px`,
+  `--ch: ${idle.height}px`,
+  '--ox: 0px',
+  '--oy: 0px',
   `--sheet: url(${idle.sheet})`,
   `--frames: ${idle.durations.length}`,
   '--frame: 0',
 ].join('; ');
 ---
 
-<span class:list={['buddy', cls]} style={style} data-buddy-sprite aria-hidden="true"></span>
+<span class:list={['buddy', cls]} style={box} data-buddy-sprite aria-hidden="true">
+  <span class="buddy__clip" style={sprite}></span>
+</span>
 
 <style>
+  /* The box keeps the idle frame's size in the layout; clips that roam past
+     it (the swim) draw a bigger frame that overflows it, anchored so he
+     starts and ends exactly where he idles. */
   .buddy {
+    position: relative;
     display: block;
     width: calc(var(--w) * var(--scale));
     height: calc(var(--h) * var(--scale));
-    background: var(--sheet) calc(var(--w) * var(--frame) * var(--scale) * -1) 0 /
-      calc(var(--w) * var(--frames) * var(--scale)) 100% no-repeat;
+  }
+  .buddy__clip {
+    position: absolute;
+    left: calc(var(--ox) * var(--scale) * -1);
+    top: calc(var(--oy) * var(--scale) * -1);
+    width: calc(var(--cw) * var(--scale));
+    height: calc(var(--ch) * var(--scale));
+    background: var(--sheet) calc(var(--cw) * var(--frame) * var(--scale) * -1) 0 /
+      calc(var(--cw) * var(--frames) * var(--scale)) 100% no-repeat;
     image-rendering: pixelated;
+    /* A roaming frame is mostly empty; clicks there belong to the page, not to him. */
+    pointer-events: none;
   }
 </style>
