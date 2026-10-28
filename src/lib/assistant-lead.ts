@@ -45,10 +45,11 @@ const failureText = (t: Strings, code: string) =>
   t['assistant.lead.failed'];
 
 export function mountLead(draft: Inquiry, t: Strings, siteKey: string) {
-  const { form, captcha, send } = leadCard(draft, t);
+  const { form, captcha, send, ready } = leadCard(draft, t);
   const resetCaptcha = siteKey ? mountCaptcha(captcha, siteKey) : () => undefined;
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (!ready()) return;
     send.setAttribute('disabled', '');
     const error = await sendLead(form).catch(() => 'network');
     if (!error) return form.replaceChildren(bubble('assistant', t['assistant.lead.sent']));

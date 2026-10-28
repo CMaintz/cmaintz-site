@@ -159,7 +159,13 @@ const endEvent = (finish?: FinishReason): ChatEvent =>
  * Models write en and em dashes (and non-breaking hyphens) despite the rule
  * against them; the site's voice uses plain hyphens, so they are swapped here.
  */
-const plainDashes = (text: string) => text.replace(/[–—]/g, '-').replace(/‑/g, '-');
+// An unspaced em dash joins two words ("it—just"); a bare hyphen would read as
+// one word, so it gets spaces. An en dash is usually a range ("2–7"), kept tight.
+const plainDashes = (text: string) =>
+  text
+    .replace(/(?<!\s)—(?!\s)/g, ' - ')
+    .replace(/[–—]/g, '-')
+    .replace(/‑/g, '-');
 
 /** Runs the tool loop for the latest visitor message, streaming everything through emit. */
 export async function runChat(s: ChatSetup, history: Turn[], emit: Emit) {
