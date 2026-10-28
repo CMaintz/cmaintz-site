@@ -129,7 +129,7 @@ Check answer quality with the golden questions: `npm run eval:assistant -- http:
 
 Under `npm run dev` the assistant can't read pages (the Markdown versions are made by `npm run build`), so test page reading with `npm run preview`.
 
-Buddy's animations are the brand sprites (`brand/buddy-sprites`, `python generate.py`). After regenerating, copy `out/manifest.json` to `src/data/buddy-sprites.json` and each `out/front-<name>-sheet.png` to `public/img/buddy/<name>.png`.
+Buddy's animations are the brand sprites (`brand/buddy-sprites`, `python generate.py`). After regenerating, copy `out/manifest.json` to `src/data/buddy-sprites.json` and `out/front-atlas.png` to `public/img/buddy/sheet.png`.
 
 ---
 
