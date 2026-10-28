@@ -45,8 +45,8 @@ export const faq: FaqItem[] = [
     topic: 'pricing',
     q: { en: 'What does it cost?', da: 'Hvad koster det?' },
     a: {
-      en: `Hourly from ${HOURLY_RATE_DKK} DKK ex. VAT. Fixed-price work is quoted after scoping, because the price depends on the complexity. The first 30-minute call is free.`,
-      da: `Timepris fra ${HOURLY_RATE_DKK} kr. ekskl. moms. Opgaver til fast pris får et tilbud efter afgrænsning, fordi prisen afhænger af kompleksiteten. Det første 30-minutters opkald er gratis.`,
+      en: `Hourly from ${HOURLY_RATE_DKK} DKK ex. VAT. Smaller, well-defined jobs come as fixed-price starter packages, priced on the services page. Larger projects get a fixed quote once we have scoped them together. It all starts with a free 30-minute mini-audit.`,
+      da: `Timepris fra ${HOURLY_RATE_DKK} kr. ekskl. moms. Mindre, veldefinerede opgaver findes som startpakker til fast pris med priserne på siden om ydelser. Større projekter får en fast pris, når vi har afgrænset opgaven sammen. Det hele starter med en gratis mini-audit på 30 minutter.`,
     },
   },
   {
@@ -61,8 +61,8 @@ export const faq: FaqItem[] = [
     topic: 'services',
     q: { en: 'Can you help with more than AI?', da: 'Kan du hjælpe med andet end AI?' },
     a: {
-      en: 'Yes. Developer experience, CI/CD and quality gates, DevOps, Shopware 6 plugins and full-stack web apps are all part of what I do.',
-      da: 'Ja. Developer experience, CI/CD og kvalitets-gates, DevOps, Shopware 6-plugins og full-stack webapps er alt sammen en del af det, jeg laver.',
+      en: 'Yes. For businesses: workflow automation and integrations, webshops, full-stack web apps and mobile apps. For dev teams: CI/CD and quality gates, legacy modernisation and developer experience.',
+      da: 'Ja. Til virksomheder: automatisering og integrationer, webshops, full-stack webapps og mobilapps. Til udviklingsteams: CI/CD og kvalitets-gates, modernisering af legacy-kode og developer experience.',
     },
   },
   {
