@@ -66,15 +66,18 @@ const ld = graph(
       <p class="dim">{t('services.pricing.body').replace('{rate}', String(HOURLY_RATE_DKK))}</p>
     </Window>
     <div>
-      <h2 class="mono label-h">{t('services.languages')}</h2>
-      <ul class="chips">{workLanguages.map((l) => <li class="chip">{l}</li>)}</ul>
-      <h2 class="mono label-h spaced">{t('services.process')}</h2>
+      <h2 class="mono label-h">{t('services.process')}</h2>
       <ol class="steps">
         {process[lang].map((p, i) => (
           <li><span class="n mono">{String(i + 1).padStart(2, '0')}</span><div><strong>{p.step}</strong><p class="dim">{p.body}</p></div></li>
         ))}
       </ol>
     </div>
+  </section>
+
+  <section class="wrap langs">
+    <h2 class="mono label-h">{t('services.languages')}</h2>
+    <ul class="chips">{workLanguages.map((l) => <li class="chip">{l}</li>)}</ul>
   </section>
 
   <FaqTeaser lang={lang} topics={['pricing', 'working']} class="wrap" />
@@ -106,9 +109,10 @@ const ld = graph(
   .stack { flex-direction: column; align-items: start; gap: 0.5rem; }
   .lede { max-width: 38rem; margin: 0; }
   .two { display: grid; grid-template-columns: 1fr 1.2fr; gap: 3rem; align-items: start; }
+  .langs { margin-bottom: 2.5rem; }
+  .langs .chips { max-width: 38rem; }
   .price { font: 800 3.5rem var(--font-sans); color: var(--accent); letter-spacing: -0.04em; margin-block: 0.4rem; }
   .price span { font: 500 1rem var(--font-mono); color: var(--fg-dim); letter-spacing: 0; }
-  .spaced { margin-top: 2rem; }
   .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
   .steps li { display: grid; grid-template-columns: 2.5rem 1fr; gap: 0.8rem; }
   .steps .n { color: var(--accent); font-size: 0.9rem; padding-top: 0.15rem; }
