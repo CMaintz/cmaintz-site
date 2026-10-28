@@ -1,6 +1,7 @@
 // Build step: writes a Markdown twin (`index.md`) next to every prerendered page,
 // so src/worker.ts can answer `Accept: text/markdown` without scraping HTML.
 // Only the page's <main> is kept; scripts, forms, media and decoration are dropped.
+// Links are made absolute: a twin is often read without its URL, so "/projects/" would dangle.
 import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { unified } from 'unified';
@@ -26,8 +27,12 @@ const DROP = new Set([
 const SKIP_DIRS = new Set(['_astro', 'doom', 'pagefind', 'og', 'img', 'media']);
 
 const isElement = (n: RootContent): n is Element => n.type === 'element';
+// `data-agent-directive` is the HTML page's pointer to llms.txt; the twin opens with its own.
 const hidden = (el: Element) =>
-  DROP.has(el.tagName) || el.properties.ariaHidden === 'true' || el.properties.hidden != null;
+  DROP.has(el.tagName) ||
+  el.properties.ariaHidden === 'true' ||
+  el.properties.hidden != null ||
+  el.properties.dataAgentDirective != null;
 
 function prune<T extends { children: RootContent[] }>(node: T): T {
   node.children = node.children.filter((c) => !(isElement(c) && hidden(c)));
@@ -47,18 +52,32 @@ function findTag(node: { children: RootContent[] }, tag: string): Element | unde
 const text = (el: Element | undefined): string =>
   el ? el.children.map((c) => (c.type === 'text' ? c.value : isElement(c) ? text(c) : '')).join('') : '';
 
+function absolutize(node: { children: RootContent[] }, base: string) {
+  for (const c of node.children) {
+    if (!isElement(c)) continue;
+    for (const attr of ['href', 'src'] as const) {
+      const value = c.properties[attr];
+      if (typeof value === 'string') c.properties[attr] = URL.parse(value, base)?.href ?? value;
+    }
+    absolutize(c, base);
+  }
+}
+
 /** Swaps the document for its <main>, keeping the <title> for the front matter. */
 const rehypeMain = () => (tree: Root, file: { data: Record<string, unknown> }) => {
   file.data.title = text(findTag(tree, 'title')).trim();
-  return prune({ type: 'root', children: findTag(tree, 'main')?.children ?? [] } as Root);
+  const main = prune({ type: 'root', children: findTag(tree, 'main')?.children ?? [] } as Root);
+  absolutize(main, String(file.data.url));
+  return main;
 };
 
 const processor = unified().use(rehypeParse).use(rehypeMain).use(rehypeRemark).use(remarkGfm).use(remarkStringify);
 
 export async function htmlToMarkdown(html: string, url: string) {
-  const file = await processor.process(html);
+  const file = await processor.process({ value: html, data: { url } });
   const title = String(file.data.title ?? '').replaceAll('"', '\\"');
-  return `---\ntitle: "${title}"\nurl: ${url}\n---\n\n${String(file)}`;
+  const directive = `> For the complete documentation index, see [llms.txt](${new URL('/llms.txt', url)}).`;
+  return `---\ntitle: "${title}"\nurl: ${url}\n---\n\n${directive}\n\n${String(file)}`;
 }
 
 async function pageDirs(root: string, rel = ''): Promise<string[]> {

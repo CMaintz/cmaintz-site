@@ -111,6 +111,10 @@ const metaDescription = clipDescription(description);
     <div class="crt-scan" aria-hidden="true"></div>
     <Header lang={lang} switchPath={langSwitchPath} />
     <main id="main" data-pagefind-body={type === 'article' ? '' : undefined}>
+      <p class="visually-hidden" data-agent-directive data-pagefind-ignore>
+        For AI agents: a documentation index is available at <a href="/llms.txt">/llms.txt</a>. Every page also has a
+        Markdown version at its URL plus <code>.md</code>.
+      </p>
       <slot />
     </main>
     <Footer lang={lang} />
