@@ -114,6 +114,11 @@ import DisplayMenu from './DisplayMenu.astro';
     border: 1px solid transparent;
   }
   .nav a:hover { color: var(--fg); border-color: var(--line); }
+  /* Press-in, like .btn:active. `top` rather than transform because the links are inline boxes. */
+  .nav a, .menu__panel a { position: relative; }
+  .nav a:active, .menu__panel a:active {
+    top: 1px; color: var(--accent-ink); background: var(--accent); border-color: var(--accent);
+  }
   /* The marker grows the active link to the left into the gap, and the negative margin cancels
      that growth, so the label and every neighbour stay where they are on every page. */
   .nav a[aria-current='page'] {
