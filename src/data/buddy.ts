@@ -57,6 +57,7 @@ export const BUDDY_EXTRAS: Record<string, number> = {
   twirl: 1,
   loop: 1,
   hop: 1,
+  swim: 1,
 };
 
 /** Idle time between random extras, in ms. */
