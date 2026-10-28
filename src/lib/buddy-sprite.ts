@@ -17,9 +17,8 @@ function draw(el: HTMLElement, clip: string, frame: number) {
   const c = BUDDY_CLIPS[clip];
   const sprite = el.firstElementChild as HTMLElement;
   const scale = Number(el.style.getPropertyValue('--scale')) || 1;
-  sprite.style.setProperty('--sheet', `url(${c.sheet})`);
-  sprite.style.setProperty('--frames', String(c.durations.length));
   sprite.style.setProperty('--frame', String(frame));
+  sprite.style.setProperty('--y', `${c.y}px`);
   sprite.style.setProperty('--cw', `${c.width}px`);
   sprite.style.setProperty('--ch', `${c.height}px`);
   sprite.style.setProperty('--ox', `${c.offset[0]}px`);
@@ -29,14 +28,8 @@ function draw(el: HTMLElement, clip: string, frame: number) {
   sprite.style.transform = `translateY(${floatTarget(c, frame) * scale}px)`;
 }
 
-/** Loads every sheet up front, so a clip's first frame never shows blank. */
-function preload() {
-  for (const { sheet } of Object.values(BUDDY_CLIPS)) new Image().src = sheet;
-}
-
 export function animateBuddy(el: HTMLElement): BuddyPlayer | undefined {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
-  preload();
   const player = new BuddyPlayer({
     clips: BUDDY_CLIPS,
     extras: BUDDY_EXTRAS,

@@ -1,11 +1,13 @@
 // Buddy, the site assistant: the axolotl from the brand sprites
 // (brand/buddy-sprites, rigged from buddy-2.png). buddy-sprites.json is that
-// folder's out/manifest.json as generated; each front-<name>-sheet.png is
-// copied to public/img/buddy/<name>.png. Regenerate, then copy both again.
+// folder's out/manifest.json as generated, and out/front-atlas.png, every
+// clip's sheet stacked in one image, is copied to public/img/buddy/sheet.png.
+// Regenerate, then copy both again.
 import manifest from './buddy-sprites.json';
 
 export interface Clip {
-  sheet: string;
+  /** Top of this clip's row in the atlas, in sprite pixels. */
+  y: number;
   /** Milliseconds per frame, from the manifest. */
   durations: number[];
   /** Frame size in sprite pixels; roaming clips are bigger than the idle frame. */
@@ -20,23 +22,32 @@ export interface Clip {
 interface ManifestEntry {
   frame_width: number;
   frame_height: number;
+  frames: number;
   durations_ms: number[];
+  atlas_y: number;
   offset?: number[];
   bob?: number[];
 }
 
 const FRONT = 'front-';
-
-export const BUDDY_CLIPS: Record<string, Clip> = Object.fromEntries(
-  Object.entries(manifest)
-    .filter(([key]) => key.startsWith(FRONT))
-    .map(([key, m]) => [key.slice(FRONT.length), toClip(key.slice(FRONT.length), m)]),
+// The side swim isn't in the atlas; the in-check also narrows its type away.
+const front = Object.entries(manifest).flatMap(([key, m]): [string, ManifestEntry][] =>
+  key.startsWith(FRONT) && 'atlas_y' in m ? [[key.slice(FRONT.length), m]] : [],
 );
 
-function toClip(name: string, m: ManifestEntry): Clip {
+export const BUDDY_CLIPS: Record<string, Clip> = Object.fromEntries(front.map(([name, m]) => [name, toClip(m)]));
+
+/** The one image every clip is drawn from, and its size in sprite pixels. */
+export const BUDDY_SHEET = {
+  src: '/img/buddy/sheet.png',
+  width: Math.max(...front.map(([, m]) => m.frame_width * m.frames)),
+  height: Math.max(...front.map(([, m]) => m.atlas_y + m.frame_height)),
+};
+
+function toClip(m: ManifestEntry): Clip {
   const [x = 0, y = 0] = m.offset ?? [];
   return {
-    sheet: `/img/buddy/${name}.png`,
+    y: m.atlas_y,
     durations: m.durations_ms,
     width: m.frame_width,
     height: m.frame_height,

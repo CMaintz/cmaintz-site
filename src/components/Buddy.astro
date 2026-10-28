@@ -1,8 +1,8 @@
 ---
 // Buddy, the site assistant (clips in src/data/buddy.ts). It renders his
-// neutral pose; src/lib/buddy-sprite.ts animates it by moving --frame,
-// swapping --sheet and gliding the sprite through the idle's float.
-import { BUDDY_CLIPS, BUDDY_FRAME } from '../data/buddy';
+// neutral pose; src/lib/buddy-sprite.ts animates it by moving --frame and
+// --y across the atlas and gliding the sprite through the idle's float.
+import { BUDDY_CLIPS, BUDDY_FRAME, BUDDY_SHEET } from '../data/buddy';
 
 interface Props {
   /** Whole-number zoom, so the pixels stay square. */
@@ -18,8 +18,10 @@ const sprite = [
   `--ch: ${idle.height}px`,
   '--ox: 0px',
   '--oy: 0px',
-  `--sheet: url(${idle.sheet})`,
-  `--frames: ${idle.durations.length}`,
+  `--sheet: url(${BUDDY_SHEET.src})`,
+  `--sheet-w: ${BUDDY_SHEET.width}px`,
+  `--sheet-h: ${BUDDY_SHEET.height}px`,
+  `--y: ${idle.y}px`,
   '--frame: 0',
 ].join('; ');
 ---
@@ -44,8 +46,9 @@ const sprite = [
     top: calc(var(--oy) * var(--scale) * -1);
     width: calc(var(--cw) * var(--scale));
     height: calc(var(--ch) * var(--scale));
-    background: var(--sheet) calc(var(--cw) * var(--frame) * var(--scale) * -1) 0 /
-      calc(var(--cw) * var(--frames) * var(--scale)) 100% no-repeat;
+    background: var(--sheet) calc(var(--cw) * var(--frame) * var(--scale) * -1)
+      calc(var(--y) * var(--scale) * -1) / calc(var(--sheet-w) * var(--scale))
+      calc(var(--sheet-h) * var(--scale)) no-repeat;
     image-rendering: pixelated;
     /* A roaming frame is mostly empty; clicks there belong to the page, not to him. */
     pointer-events: none;
