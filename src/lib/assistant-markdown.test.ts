@@ -18,10 +18,24 @@ it('parseInline: turns an unsafe link into its label only', () => {
 it('parseInline: keeps text around bold and links in order', () => {
   expect(parseInline('See **fixed prices** on [services](/services/).')).toEqual([
     { t: 'text', v: 'See ' },
-    { t: 'bold', v: 'fixed prices' },
+    { t: 'bold', v: [{ t: 'text', v: 'fixed prices' }] },
     { t: 'text', v: ' on ' },
     { t: 'link', v: 'services', href: '/services/' },
     { t: 'text', v: '.' },
+  ]);
+});
+
+it('parseInline: keeps a link that the model wrapped in bold', () => {
+  expect(parseInline('- **[About page](/about/)** - his DevOps work')).toEqual([
+    { t: 'text', v: '- ' },
+    { t: 'bold', v: [{ t: 'link', v: 'About page', href: '/about/' }] },
+    { t: 'text', v: ' - his DevOps work' },
+  ]);
+});
+
+it('parseInline: reads single asterisks as emphasis, not literal stars', () => {
+  expect(parseInline('*The range depends on the platform.*')).toEqual([
+    { t: 'em', v: [{ t: 'text', v: 'The range depends on the platform.' }] },
   ]);
 });
 
