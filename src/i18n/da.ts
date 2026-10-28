@@ -228,6 +228,7 @@ export const da: Record<keyof typeof en, string> = {
   'footer.synced': 'GitHub synkroniseret',
   skip: 'Spring til indhold',
   'assistant.open': 'Spørg Buddy, AI-assistenten',
+  'assistant.intro': 'Hej, jeg er Buddy, en AI-assistent!',
   'assistant.close': 'Luk chat',
   'assistant.title': 'buddy.exe',
   'assistant.who': 'Buddy · AI-assistent',

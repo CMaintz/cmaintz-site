@@ -65,10 +65,10 @@ const suggestions = (['assistant.suggest.1', 'assistant.suggest.2', 'assistant.s
     data-buddy-launch
     aria-expanded="false"
     aria-controls="buddy-panel"
-    aria-label={t('assistant.open')}
-    title={t('assistant.open')}>
+    aria-label={t('assistant.open')}>
     <Buddy scale={2} />
   </button>
+  <p class="intro" aria-hidden="true">{t('assistant.intro')}</p>
 </aside>
 
 <script>
@@ -94,15 +94,17 @@ const suggestions = (['assistant.suggest.1', 'assistant.suggest.2', 'assistant.s
   }
   .launch:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 
-  /* The speech bubble is deliberately smooth rather than pixel art, so it reads as speech. */
-  .greet {
-    position: relative; display: flex; align-items: flex-start; gap: 0.25rem; max-width: 16rem;
-    margin-right: 3.5rem; padding: 0.6rem 0.5rem 0.65rem 0.85rem;
+  /* Speech bubbles are deliberately smooth rather than pixel art, so they read as speech. */
+  .greet, .intro {
     background: var(--bg-2); color: var(--fg); border: 1px solid var(--line-strong); border-radius: 1rem;
     box-shadow: 0 6px 18px rgb(0 0 0 / 0.14); animation: greet-in 260ms ease-out;
   }
+  .greet {
+    position: relative; display: flex; align-items: flex-start; gap: 0.25rem; max-width: 16rem;
+    margin-right: 3.5rem; padding: 0.6rem 0.5rem 0.65rem 0.85rem;
+  }
   .greet[hidden], .buddy-chat[data-open] .greet { display: none; }
-  .greet::after {
+  .greet::after, .intro::after {
     content: ''; position: absolute; right: 1.6rem; bottom: -0.45rem; width: 0.8rem; height: 0.8rem;
     background: inherit; border: inherit; border-width: 0 1px 1px 0; transform: rotate(45deg);
   }
@@ -118,8 +120,20 @@ const suggestions = (['assistant.suggest.1', 'assistant.suggest.2', 'assistant.s
   @keyframes greet-in {
     from { opacity: 0; transform: translateY(6px) scale(0.96); }
   }
+
+  /* Replaces the native title tooltip. Touch screens have no hover, so it never shows there,
+     and it steps aside whenever the greeting or the chat already has Buddy talking. */
+  .intro {
+    position: absolute; right: 3.5rem; bottom: calc(100% + 0.75rem); display: none; width: max-content;
+    max-width: 16rem; margin: 0; padding: 0.6rem 0.85rem 0.65rem; font: 0.92rem/1.35 var(--font-sans);
+    pointer-events: none;
+  }
+  @media (hover: hover) {
+    .launch:is(:hover, :focus-visible) ~ .intro { display: block; }
+    .buddy-chat[data-open] .intro, .greet:not([hidden]) ~ .intro { display: none; }
+  }
   @media (prefers-reduced-motion: reduce) {
-    .greet, .log :global(.msg--assistant:empty)::after { animation: none; }
+    .greet, .intro, .log :global(.msg--assistant:empty)::after { animation: none; }
   }
 
   .panel {
@@ -207,6 +221,7 @@ const suggestions = (['assistant.suggest.1', 'assistant.suggest.2', 'assistant.s
     .buddy-chat[data-open] { left: 0.75rem; }
     .panel { width: 100%; height: calc(100dvh - 9.5rem); }
     .greet { max-width: min(16rem, calc(100vw - 2rem)); margin-right: 2.5rem; }
+    .intro { right: 2.5rem; max-width: min(16rem, calc(100vw - 2rem)); }
   }
   @media print { .buddy-chat { display: none; } }
 </style>

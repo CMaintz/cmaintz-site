@@ -223,6 +223,7 @@ export const en = {
   'footer.synced': 'GitHub synced',
   skip: 'Skip to content',
   'assistant.open': 'Ask Buddy, the AI assistant',
+  'assistant.intro': 'Hi, I’m Buddy, an AI assistant!',
   'assistant.close': 'Close chat',
   'assistant.title': 'buddy.exe',
   'assistant.who': 'Buddy · AI assistant',
