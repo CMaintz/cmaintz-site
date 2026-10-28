@@ -245,7 +245,8 @@ export const da: Record<keyof typeof en, string> = {
   'assistant.placeholder': 'Beskriv dit projekt, eller spørg om hvad som helst...',
   'assistant.send': 'Send',
   'assistant.reset': 'Ny chat',
-  'assistant.disclaimer': 'Buddy er en AI og kan tage fejl; priser er uforpligtende. Chats gemmes ikke på dette site.',
+  'assistant.disclaimer':
+    'Buddy er en AI og kan tage fejl; priser er uforpligtende. Dine beskeder sendes til en AI-tjeneste, som svarer dig, og gemmes ikke på dette site.',
   'assistant.suggest.1': 'Hvad kan vi automatisere i vores virksomhed?',
   'assistant.suggest.2': 'Er min projektidé realistisk?',
   'assistant.suggest.3': 'Hvad koster en webshop cirka?',
