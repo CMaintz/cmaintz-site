@@ -29,7 +29,7 @@ const period = projectPeriod(p, lang);
     <span>{period}</span>
     <span class="flags">
       {p.data.grade && <span class="badge">{p.data.grade}</span>}
-      {p.data.demo && <span class="badge badge--accent">demo</span>}
+      {p.data.live && <a class="badge badge--accent live" href={p.data.live} target="_blank" rel="noopener">{t('project.live')} ↗</a>}
       {stats && stats.stars > 0 && <span>★ {stats.stars}</span>}
     </span>
   </footer>
@@ -67,4 +67,7 @@ const period = projectPeriod(p, lang);
     color: var(--fg-dim); border-top: 1px dashed var(--line); padding-top: 0.7rem; flex-wrap: wrap;
   }
   .flags { display: inline-flex; gap: 0.4rem; align-items: center; }
+  /* Sits above .hit so it opens the live site instead of the project page. */
+  .live { position: relative; z-index: 2; text-decoration: none; }
+  .live:hover { background: var(--fg); color: var(--bg); }
 </style>

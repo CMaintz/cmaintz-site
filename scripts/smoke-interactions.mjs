@@ -63,6 +63,16 @@ async function demoLoads(page) {
   return Boolean(expected?.startsWith('https://')) && src === expected;
 }
 
+/** A card's live badge takes the click itself rather than the card-wide link to the project page. */
+async function liveBadgeClickable(page) {
+  await page.goto(`${BASE}/projects`);
+  return page.$eval('.card .live', (a) => {
+    a.scrollIntoView({ block: 'center' });
+    const r = a.getBoundingClientRect();
+    return document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)?.closest('a') === a;
+  });
+}
+
 /** Visible cards grouped into rendered rows, as row sizes (read from layout, not from the script's maths). */
 const visibleRows = (page) =>
   page.$$eval('.built > *', (cs) => {
@@ -191,6 +201,7 @@ const CHECKS = {
   filterHides,
   floppySwaps,
   demoLoads,
+  liveBadgeClickable,
   showMoreAddsRows,
   navHoldsStill,
   langSwitches,
