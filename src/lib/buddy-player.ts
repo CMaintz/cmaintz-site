@@ -9,7 +9,7 @@ const IDLE = 'idle';
 const URGENT_MS = 400;
 
 export interface PlayerOptions {
-  clips: Record<string, Clip>;
+  clips: Record<string, Pick<Clip, 'durations'>>;
   /** Random extras between idle loops, with their weights. */
   extras: Record<string, number>;
   /** Idle time before the next extra, picked uniformly in this range (ms). */
