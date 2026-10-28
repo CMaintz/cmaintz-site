@@ -240,7 +240,8 @@ export const en = {
   'assistant.placeholder': 'Describe your project, or ask anything...',
   'assistant.send': 'Send',
   'assistant.reset': 'New chat',
-  'assistant.disclaimer': 'Buddy is an AI and can be wrong; prices are non-binding. Chats are not stored on this site.',
+  'assistant.disclaimer':
+    'Buddy is an AI and can be wrong; prices are non-binding. Your messages are sent to an AI service to answer you and are not stored on this site.',
   'assistant.suggest.1': 'What could we automate in our business?',
   'assistant.suggest.2': 'Is my project idea realistic?',
   'assistant.suggest.3': 'What would a web shop cost?',
