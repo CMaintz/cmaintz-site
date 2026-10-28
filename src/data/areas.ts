@@ -40,7 +40,7 @@ export const areas: Record<AreaId, Area> = {
     principles: devops,
   },
   backend: {
-    glyph: '▤',
+    glyph: '⇄',
     label: { en: 'Backend', da: 'Backend' },
     intro: {
       en: 'Most of a product lives in its backend: the APIs, the data and the services behind them. I build those around the domain, so the business rules are easy to find, the data can be trusted and a slow dependency never takes the product down.',
@@ -49,7 +49,7 @@ export const areas: Record<AreaId, Area> = {
     principles: backend,
   },
   platform: {
-    glyph: '▦',
+    glyph: '⬡',
     label: { en: 'Platform & Infrastructure', da: 'Platform & infrastruktur' },
     intro: {
       en: 'Good platforms are paved roads: the safe, observable, repeatable way is also the quickest way to ship. I build the plumbing that makes that true, from pinned toolchains and scaffolding to config and policy as code.',
@@ -58,7 +58,7 @@ export const areas: Record<AreaId, Area> = {
     principles: platform,
   },
   ai: {
-    glyph: '◈',
+    glyph: '✧',
     label: { en: 'AI enablement', da: 'AI-enablement' },
     intro: {
       en: 'AI earns its place when it removes real, repetitive work and you can trust what it does. I build AI features and agent workflows with structure, measurement and humans on the uncertain cases.',
