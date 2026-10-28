@@ -79,8 +79,10 @@ const suggestions = (['assistant.suggest.1', 'assistant.suggest.2', 'assistant.s
 </script>
 
 <style>
+  /* The bottom gap is wider than the side one because the swim circle dips 32px below
+     Buddy's box (16 sprite px at scale 2); any less and the screen edge cuts him off. */
   .buddy-chat {
-    position: fixed; right: clamp(0.75rem, 2vw, 1.5rem); bottom: clamp(0.75rem, 2vw, 1.5rem); z-index: 70;
+    position: fixed; right: clamp(0.75rem, 2vw, 1.5rem); bottom: 2.25rem; z-index: 70;
     display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;
   }
   .buddy-chat[hidden] { display: none; }
