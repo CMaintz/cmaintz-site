@@ -16,7 +16,6 @@ context: Personal project · unreleased work in progress
 start: 2026-10
 stack: [TypeScript, Hono, Cloudflare Workers, D1, React 19, Vite, SwiftUI, Kotlin, Jetpack Compose, Vitest]
 repos: [plantekalender-ios]
-live: https://plantekalender.cmaintz-site.workers.dev
 ---
 
 **Work in progress:** not released yet. The deployed app runs, but it's still being built and isn't open to real users.
