@@ -24,16 +24,27 @@ export const basics = {
     da: 'Softwareudvikler - DevOps, Developer Experience & AI',
   } as L,
   summary: {
-    en: 'Developer (AP Degree in Computer Science) with hands-on experience building and running production-critical systems. I work across backend, DevOps and developer tooling: CI/CD pipelines and quality gates, containerised and reproducible environments, and AI integrations with the guardrails needed to trust them. As sole developer I built a business-critical AI automation system that is still in daily use, and today I work as a consultant on DevOps, automation and AI-assisted development.',
-    da: 'Datamatiker med praktisk erfaring fra udvikling og drift af produktionskritiske systemer. Jeg arbejder på tværs af backend, DevOps og udviklerværktøjer: CI/CD-pipelines og quality gates, containeriserede og reproducerbare miljøer samt AI-integrationer med de guardrails, der skal til for at kunne stole på dem. Som eneste udvikler byggede jeg et forretningskritisk AI-automatiseringssystem, der fortsat er i daglig drift, og i dag arbejder jeg som konsulent med DevOps, automatisering og AI-assisted development.',
+    en: 'Developer (AP Degree in Computer Science) with hands-on experience building and running production-critical systems. I work across backend, DevOps and developer tooling: CI/CD pipelines and quality gates, containerised and reproducible environments, and AI integrations with the guardrails needed to trust them. As sole developer I built a business-critical AI automation system that is still in daily use, and today I work as an AI-native product engineer at Faundit.',
+    da: 'Datamatiker med praktisk erfaring fra udvikling og drift af produktionskritiske systemer. Jeg arbejder på tværs af backend, DevOps og udviklerværktøjer: CI/CD-pipelines og quality gates, containeriserede og reproducerbare miljøer samt AI-integrationer med de guardrails, der skal til for at kunne stole på dem. Som eneste udvikler byggede jeg et forretningskritisk AI-automatiseringssystem, der fortsat er i daglig drift, og i dag arbejder jeg som AI-native product engineer hos Faundit.',
   } as L,
 };
 
 export const work: Job[] = [
   {
+    org: 'Faundit',
+    role: { en: 'AI-Native Product Engineer', da: 'AI-Native Product Engineer' },
+    start: '2026-10',
+    summary: {
+      en: 'Full-time AI-native product engineer.',
+      da: 'AI-native product engineer på fuld tid.',
+    },
+    highlights: { en: [], da: [] },
+  },
+  {
     org: 'DEVEX',
     role: { en: 'Consultant - DevOps, AI & Automation', da: 'Konsulent - DevOps, AI & Automation' },
     start: '2026-07',
+    end: '2026-10',
     summary: {
       en: 'Consulting across DevOps, backend, CI/CD, developer experience, automation and AI-assisted development, taking independent technical ownership of concrete solutions across software, infrastructure and development workflows.',
       da: 'Konsulent med bredt teknisk fokus på DevOps, backend, CI/CD, Developer Experience, automatisering og AI-assisted development. Tager selvstændigt teknisk ansvar for konkrete løsninger på tværs af software, infrastruktur og udviklingsflows.',
