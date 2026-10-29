@@ -23,7 +23,7 @@ export const da: Record<keyof typeof en, string> = {
   'fx.glow': 'Glød',
   'fx.motion': 'Baggrundsanimation',
   'lang.label': 'Sprog',
-  'home.status': 'åben for nye roller',
+  'home.status': 'åben for mindre freelanceopgaver',
   'home.hello': 'Hej, jeg hedder Christoffer.',
   'home.lede':
     'Jeg bygger maskineriet, der gør softwareteams hurtigere og sikrere: developer experience, CI/CD og kvalitets-gates, platformværktøjer og AI, der rent faktisk kommer i produktion.',
@@ -197,13 +197,11 @@ export const da: Record<keyof typeof en, string> = {
   'start.link': 'I tvivl om, hvad I har brug for? Tag guiden på 1 minut',
   'start.noscript': 'Guiden kræver JavaScript. Du kan altid bare skrive til mig på kontaktsiden.',
   'contact.title': 'Kontakt',
-  'contact.lede':
-    'Freelance, konsulentopgaver, jobmuligheder eller bare et hej.\nJeg svarer typisk inden for en dag eller to.',
+  'contact.lede': 'Freelance, konsulentopgaver eller bare et hej.\nJeg svarer typisk inden for en dag eller to.',
   'contact.name': 'Navn',
   'contact.email': 'E-mail',
   'contact.company': 'Virksomhed (valgfrit)',
   'contact.topic': 'Emne',
-  'contact.topic.job': 'Jobmulighed',
   'contact.topic.freelance': 'Freelance / projekt',
   'contact.topic.audit': 'Gratis mini-audit',
   'contact.topic.consulting': 'Konsulentopgave',

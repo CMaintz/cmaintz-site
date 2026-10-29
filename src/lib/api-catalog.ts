@@ -76,7 +76,7 @@ const inquiry = {
     name: { type: 'string', maxLength: 120 },
     email: { type: 'string', format: 'email', maxLength: 200 },
     company: { type: 'string', maxLength: 120 },
-    topic: { type: 'string', enum: ['job', 'freelance', 'consulting', 'other'], default: 'other' },
+    topic: { type: 'string', enum: ['freelance', 'consulting', 'other'], default: 'other' },
     budget: { type: 'string', maxLength: 80 },
     message: { type: 'string', minLength: 10, maxLength: 5000 },
     website: {
@@ -107,7 +107,7 @@ const contactOperation = {
   operationId: 'sendInquiry',
   summary: `Send ${site.name} a message`,
   description:
-    'Delivers a job, freelance or consulting inquiry by email. Send `Accept: application/json` for a JSON result; ' +
+    'Delivers a freelance or consulting inquiry by email. Send `Accept: application/json` for a JSON result; ' +
     'without it the endpoint answers with a 303 redirect back to /contact. Rate limited to 3 messages a minute per IP.',
   requestBody: {
     required: true,
@@ -145,7 +145,7 @@ export function openApiSpec(base: URL) {
     info: {
       title: `${site.name} contact API`,
       version: '1.0.0',
-      description: `Send ${site.name} a job, freelance or consulting inquiry. Human docs: ${new URL(API_PATHS.docs, base)}`,
+      description: `Send ${site.name} a freelance or consulting inquiry. Human docs: ${new URL(API_PATHS.docs, base)}`,
       contact: { name: site.name, email: site.email, url: new URL('/contact/', base).toString() },
     },
     servers: [{ url: new URL('/', base).toString().replace(/\/$/, '') }],

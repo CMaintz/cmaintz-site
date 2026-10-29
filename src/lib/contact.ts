@@ -11,9 +11,8 @@ export interface Inquiry {
   source?: 'assistant';
 }
 
-export const TOPICS = ['job', 'freelance', 'audit', 'consulting', 'other'];
+export const TOPICS = ['freelance', 'audit', 'consulting', 'other'];
 const TOPIC_LABELS: Record<string, string> = {
-  job: 'job opportunity',
   freelance: 'freelance project',
   audit: 'free mini-audit request',
   consulting: 'consulting',

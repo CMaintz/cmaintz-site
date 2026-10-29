@@ -19,9 +19,9 @@ const valid: Inquiry = {
   name: 'Ada',
   email: 'ada@example.com',
   company: '',
-  topic: 'job',
+  topic: 'freelance',
   budget: '',
-  message: 'Hello, I have a role for you.',
+  message: 'Hello, I have a project for you.',
 };
 
 const mockFetch = (impl: () => Promise<unknown>) => {
@@ -188,7 +188,7 @@ async function sentText(q: Inquiry) {
 describe('sendInquiry email body', () => {
   it('lists the sender details, then the message', async () => {
     const lines = ['Sent from the contact form on https://maintz.dev', '', 'Name: Ada', 'Email: ada@example.com'];
-    const expected = [...lines, 'Company: Acme', 'Topic: job', 'Budget: 10k', '', valid.message].join('\n');
+    const expected = [...lines, 'Company: Acme', 'Topic: freelance', 'Budget: 10k', '', valid.message].join('\n');
     await expect(sentText({ ...valid, company: 'Acme', budget: '10k' })).resolves.toBe(expected);
   });
 
@@ -219,7 +219,7 @@ describe('sendInquiry', () => {
       from: cfg.from,
       to: [cfg.to],
       reply_to: valid.email,
-      subject: 'New inquiry via maintz.dev: job opportunity from Ada (Acme)',
+      subject: 'New inquiry via maintz.dev: freelance project from Ada (Acme)',
     });
   });
 });

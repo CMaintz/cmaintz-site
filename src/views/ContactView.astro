@@ -10,7 +10,7 @@ import { packages } from '../data/packages';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useT(lang);
-const topics = ['freelance', 'audit', 'consulting', 'job', 'other'] as const;
+const topics = ['freelance', 'audit', 'consulting', 'other'] as const;
 const packageTitles = JSON.stringify(Object.fromEntries(packages.map((p) => [p.id, p.title[lang]])));
 ---
 
