@@ -7,14 +7,18 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useT(lang);
 
+const credit = {
+  label: lang === 'da' ? 'Buddys oprindelige sprite af Martin “lashman” Przelaskowski' : 'Buddy’s original sprite by Martin “lashman” Przelaskowski',
+  href: 'https://nexusworks.fi/',
+};
 // From the master CV's tools section. Edit freely.
-const groups = [
+const groups: { title: string; items: (string | typeof credit)[] }[] = [
   { title: 'editors', items: ['JetBrains IDEs (WebStorm, IntelliJ IDEA, Rider, PhpStorm)', 'Visual Studio', 'VS Code', 'Xcode', 'Android Studio'] },
   { title: 'terminal', items: ['Ghostty', 'Claude Code (with custom skills & hooks)', 'Herdr for agent orchestration', 'mise for toolchains & tasks', 'gh CLI'] },
   { title: 'quality', items: ['Foundry gate: ESLint, Semgrep, gitleaks, osv-scanner', 'Vitest, JUnit, PHPUnit', 'Renovate'] },
   { title: 'infra', items: ['Docker & Docker Compose', 'Kubernetes (k8s)', 'DDEV for PHP/Shopware', 'GitHub Actions, GitLab CI, Azure Pipelines', 'Cloudflare'] },
   { title: 'api & network', items: ['Postman', 'Wireshark'] },
-  { title: 'this site', items: ['Astro', 'Hand-written CSS', 'Hanken Grotesk, JetBrains Mono, Silkscreen', 'Cloudflare Workers', 'giscus, Resend, Pagefind'] },
+  { title: 'this site', items: ['Astro', 'Hand-written CSS', 'Hanken Grotesk, JetBrains Mono, Silkscreen', 'Cloudflare Workers', 'giscus, Resend, Pagefind', credit] },
 ];
 const lede = lang === 'da' ? 'Værktøjerne jeg bruger til daglig.' : 'The tools I use day to day.';
 ---
@@ -23,7 +27,7 @@ const lede = lang === 'da' ? 'Værktøjerne jeg bruger til daglig.' : 'The tools
   <div class="grid grid-3">
     {groups.map((g) => (
       <Window title={g.title} class="reveal">
-        <ul class="list">{g.items.map((i) => <li>{i}</li>)}</ul>
+        <ul class="list">{g.items.map((i) => <li>{typeof i === 'string' ? i : <a href={i.href} rel="noopener">{i.label}</a>}</li>)}</ul>
       </Window>
     ))}
   </div>
