@@ -21,7 +21,7 @@ export const en = {
   'fx.glow': 'Glow',
   'fx.motion': 'Background animation',
   'lang.label': 'Language',
-  'home.status': 'open to new roles',
+  'home.status': 'open to small freelance jobs',
   'home.hello': 'Hi, I’m Christoffer.',
   'home.lede':
     'I build the machinery that makes software teams faster and safer: developer experience, CI/CD and quality gates, platform tooling, and AI that actually ships to production.',
@@ -192,13 +192,11 @@ export const en = {
   'start.link': 'Not sure what you need? Take the 1-minute guide',
   'start.noscript': 'The guide needs JavaScript. You can always just write to me on the contact page.',
   'contact.title': 'Contact',
-  'contact.lede':
-    'Freelance work, consulting, job opportunities, or just a hello.\nI usually reply within a day or two.',
+  'contact.lede': 'Freelance work, consulting, or just a hello.\nI usually reply within a day or two.',
   'contact.name': 'Name',
   'contact.email': 'Email',
   'contact.company': 'Company (optional)',
   'contact.topic': 'Topic',
-  'contact.topic.job': 'Job opportunity',
   'contact.topic.freelance': 'Freelance / project',
   'contact.topic.audit': 'Free mini-audit',
   'contact.topic.consulting': 'Consulting',
