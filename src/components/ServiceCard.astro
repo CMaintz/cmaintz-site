@@ -24,12 +24,21 @@ const items = deliverables ? s.deliverables[lang] : [];
 </Window>
 
 <style>
+  /* Colour emoji ignore `color`, so the cart glyph comes from a one-glyph subset of the monochrome Noto Emoji
+     (OFL, see OFL.txt beside it); every other glyph falls through to the normal text font. */
+  @font-face {
+    font-family: 'Noto Emoji Cart';
+    src: url('../assets/fonts/noto-emoji-cart.woff2') format('woff2');
+    unicode-range: U+1F6D2;
+    font-display: block;
+  }
   /* .svc is set on the Window element, which carries Window's scope, not this one. */
   :global(.svc .win__body) { display: grid; gap: 0.8rem; align-content: start; }
   .svc__top { display: flex; justify-content: space-between; align-items: center; }
   .glyph {
     width: 2.4rem; height: 2.4rem; display: grid; place-items: center; background: var(--accent);
     color: var(--accent-ink); font-size: 1.2rem; box-shadow: 3px 3px 0 var(--shadow-c);
+    font-family: 'Noto Emoji Cart', var(--font-sans);
   }
   .svc__top .pricing {
     font-size: 0.8rem; padding: 0.3rem 0.65rem; border-width: 2px; box-shadow: 3px 3px 0 var(--shadow-c);
