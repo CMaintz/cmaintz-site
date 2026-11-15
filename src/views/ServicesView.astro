@@ -33,9 +33,9 @@ const ld = graph(
   <PageHead eyebrow="~/services" title={t('services.title')} lede={t('services.lede')} />
 
   {proof && (
-    <p class="wrap proof">
+    <p class="wrap proof" data-aud={proof.audience}>
       <span class="mono faint">{t('services.proof')}:</span>
-      <a href={`#case-${proof.id}`}>{proof.title[lang]}</a>
+      <a href="#cases-h">{proof.title[lang]}</a>
       <span class="mono dim">· {proof.outcomes[lang][0]}</span>
     </p>
   )}
@@ -60,7 +60,7 @@ const ld = graph(
 
   <section class="wrap section" aria-labelledby="cases-h">
     <div class="section-head stack"><h2 id="cases-h">{t('services.cases')}</h2><p class="dim lede">{t('services.cases.lede')}</p></div>
-    <div class="grid grid-2">{cases.map((c) => <div class="aud" id={`case-${c.id}`} data-aud={c.audience}><CaseCard study={c} lang={lang} /></div>)}</div>
+    <div class="grid grid-2">{cases.map((c) => <div class="aud" data-aud={c.audience}><CaseCard study={c} lang={lang} /></div>)}</div>
   </section>
 
   {[...audiences, 'both' as const].map((a) => (
@@ -108,7 +108,7 @@ const ld = graph(
 <script>
   // A link can pick the filter: /services/?for=tech, or an old #for-tech anchor.
   const wanted = new URLSearchParams(location.search).get('for') ?? location.hash.match(/^#for-([a-z]+)/)?.[1];
-  const radio = wanted && document.querySelector<HTMLInputElement>(`input[name="aud"][value="${wanted}"]`);
+  const radio = [...document.querySelectorAll<HTMLInputElement>('input[name="aud"]')].find((r) => r.value === wanted);
   if (radio) radio.checked = true;
 </script>
 

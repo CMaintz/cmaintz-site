@@ -20,7 +20,7 @@ function intro(base: URL) {
   return [
     `# ${site.name}`,
     `> ${site.description.en}`,
-    `${site.name} is based in ${site.location} and takes freelance and consulting work, remote or on-site. ` +
+    `${site.name} is based in ${site.location} and takes freelance and consulting work, mostly remote. ` +
       `Hourly from ${HOURLY_RATE_DKK} DKK ex. VAT; fixed-price work is quoted after scoping; the first 30-minute call is free. ` +
       `Works in English and Danish. Contact: ${site.email} or ${new URL('/contact/', base)}.`,
     `AI agents can query the same facts over MCP (read-only, Streamable HTTP): ${new URL('/mcp', base)}. ` +
@@ -57,7 +57,7 @@ const writing = (base: URL, posts: Post[], lang: Lang) => [
 function danish(base: URL, projects: Project[], posts: Post[]) {
   return [
     site.description.da,
-    `Freelance- og konsulentopgaver, remote eller on-site i Aarhus. Timepris fra ${HOURLY_RATE_DKK} kr. ekskl. moms; ` +
+    `Freelance- og konsulentopgaver, mest remote, on-site i Aarhus når det giver mening. Timepris fra ${HOURLY_RATE_DKK} kr. ekskl. moms; ` +
       'opgaver til fast pris får et tilbud efter afgrænsning; det første opkald på 30 minutter er gratis.',
     link(base, 'Ydelser og priser', '/da/services'),
     ...services.map((s) => `- **${s.title.da}**: ${s.body.da}`),

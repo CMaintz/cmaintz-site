@@ -1,11 +1,11 @@
 import { expect, it } from 'vitest';
 import { estimate } from './assistant-estimate';
 import { estimateRubric } from '../data/assistant';
-import { services, FOLLOW_UP_HOURS, HOURLY_RATE_DKK } from '../data/services';
+import { services, FOLLOW_UP_FROM_HOURS, FOLLOW_UP_HOURS, HOURLY_RATE_DKK } from '../data/services';
 
-it('estimate: adds no follow-up to an end of the range under four hours', () => {
+it('estimate: adds no follow-up to an end of the range below the follow-up threshold', () => {
   const [lo] = estimateRubric['seo-geo'].hours.small;
-  expect(lo).toBeLessThan(4);
+  expect(lo).toBeLessThan(FOLLOW_UP_FROM_HOURS);
   expect(estimate({ service: 'seo-geo', size: 'small' })).toMatchObject({ hours: { low: lo } });
 });
 

@@ -40,6 +40,7 @@ export function contactHref(answers: Answers, lang: Lang, intro: string) {
   const message = [intro, '', ...brief(answers, lang).map((line) => `- ${line}`), '', ''].join('\n');
   const query = new URLSearchParams({ topic, package: pkg, message });
   const budget = steps.find((s) => s.id === 'budget')?.options.find((o) => o.id === answers.budget);
-  if (budget) query.set('budget', budget.label[lang]);
+  // "No idea yet" is an answer for the brief, not a budget to put in the field.
+  if (budget && budget.id !== 'unknown') query.set('budget', budget.label[lang]);
   return `${localize('/contact', lang)}?${query}`;
 }

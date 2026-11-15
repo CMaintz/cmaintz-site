@@ -85,8 +85,8 @@ export const packages: Package[] = [
     audience: 'business',
     priceDkk: 3900,
     topic: 'freelance',
-    duration: { en: 'Half-day workshop', da: 'Halv dags workshop' },
-    title: { en: 'AI & automation readiness check', da: 'AI- & automatiseringstjek' },
+    duration: { en: 'Half-day workshop, plan within 1 week', da: 'Halv dags workshop, plan inden for 1 uge' },
+    title: { en: 'AI & automation readiness check', da: 'Parathedstjek for AI & automatisering' },
     body: {
       en: 'We walk through how work actually flows through your business, and you get a prioritised plan: what to automate, what it saves and what it costs.',
       da: 'Vi gennemgår, hvordan arbejdet reelt flyder gennem virksomheden, og I får en prioriteret plan: hvad der skal automatiseres, hvad det sparer, og hvad det koster.',
@@ -137,7 +137,7 @@ export const packages: Package[] = [
     },
     includes: {
       en: ['Answers from your own content', 'Hand-over to a person', 'Running costs known up front'],
-      da: ['Svar ud fra jeres eget indhold', 'Videregivelse til et menneske', 'Kendte driftsomkostninger'],
+      da: ['Svar ud fra jeres eget indhold', 'Overlevering til et menneske', 'Driftsomkostninger kendt på forhånd'],
     },
   },
   {

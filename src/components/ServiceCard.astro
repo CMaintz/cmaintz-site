@@ -12,8 +12,9 @@ const { service: s, lang, deliverables = true, level = 2 } = Astro.props;
 const Heading = `h${level}` as 'h2' | 'h3';
 const t = useT(lang);
 const items = deliverables ? s.deliverables[lang] : [];
-// Business buyers filter on price first; dev teams and the open-ended card get none.
-const from = s.audience === 'business' ? fromPriceDkk(s.id) : undefined;
+// Business buyers filter on price first. Dev teams get none, and neither do hourly
+// services, whose rubric counts hours per month or per task, not per job.
+const from = s.audience === 'business' && s.pricing !== 'hourly' ? fromPriceDkk(s.id) : undefined;
 ---
 
 <Window title={`${s.id}.exe`} as="article" class="svc reveal">

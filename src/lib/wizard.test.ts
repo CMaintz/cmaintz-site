@@ -95,6 +95,10 @@ describe('contactHref, budget', () => {
     expect(params(answers, 'da').get('budget')).toBe('5.000-25.000 kr.');
   });
 
+  it('leaves the budget field empty when the visitor has no budget in mind', () => {
+    expect(params({ ...answers, budget: 'unknown' }, 'en').has('budget')).toBe(false);
+  });
+
   it('leaves the budget field empty when the visitor skipped the question', () => {
     expect(params({ pain: 'unsure' }, 'en').has('budget')).toBe(false);
   });

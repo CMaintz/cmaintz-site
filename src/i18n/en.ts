@@ -155,12 +155,11 @@ export const en = {
   'services.for.tech': 'For dev teams',
   'services.for.tech.body':
     'Teams that want CI they trust, a quality gate AI agents can’t weaken, and coding agents that actually help instead of creating review work.',
-  'services.for.see': 'See services',
   'services.for.show': 'Show offers for',
   'services.for.all': 'Everything',
   'services.for.all.body': 'Every service and package, for businesses and dev teams alike.',
   'services.from': 'From',
-  'services.proof': 'Recent result',
+  'services.proof': 'A result',
   'services.for.both': 'Something else?',
   'services.packages': 'Fixed-price starters',
   'services.packages.lede':

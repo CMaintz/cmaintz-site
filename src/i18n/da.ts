@@ -26,7 +26,7 @@ export const da: Record<keyof typeof en, string> = {
   'home.status': 'åben for mindre freelanceopgaver',
   'home.hello': 'Hej, jeg hedder Christoffer.',
   'home.lede':
-    'Jeg bygger AI, der rent faktisk kommer i produktion, plus hjemmesiderne, webshoppene og automatiseringen omkring den, med den CI/CD, developer experience og de platformværktøjer, der gør det hele sikkert at ændre.',
+    'Jeg bygger AI, der rent faktisk kommer i produktion, og de hjemmesider, webshops og automatiseringer, der hører til, med CI/CD, developer experience og platformværktøjer, så det hele er sikkert at ændre.',
   'home.metaTitle': 'Freelanceudvikler i Aarhus: AI og webudvikling',
   'home.cta.work': 'Se mit arbejde',
   'home.cta.hire': 'Hyr mig',
@@ -159,12 +159,11 @@ export const da: Record<keyof typeof en, string> = {
   'services.for.tech': 'For udviklingsteams',
   'services.for.tech.body':
     'Teams, der vil have CI, de kan stole på, en kvalitets-gate AI-agenter ikke kan svække, og kodeagenter der hjælper i stedet for at skabe mere review.',
-  'services.for.see': 'Se ydelser',
   'services.for.show': 'Vis ydelser for',
   'services.for.all': 'Det hele',
   'services.for.all.body': 'Alle ydelser og pakker, både for virksomheder og udviklingsteams.',
   'services.from': 'Fra',
-  'services.proof': 'Seneste resultat',
+  'services.proof': 'Et resultat',
   'services.for.both': 'Noget andet?',
   'services.packages': 'Startpakker til fast pris',
   'services.packages.lede':
