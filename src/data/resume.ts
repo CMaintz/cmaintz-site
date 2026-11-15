@@ -35,10 +35,25 @@ export const work: Job[] = [
     role: { en: 'AI-Native Product Engineer', da: 'AI-Native Product Engineer' },
     start: '2026-10',
     summary: {
-      en: 'Full-time AI-native product engineer.',
-      da: 'AI-native product engineer på fuld tid.',
+      en: 'Full-stack product engineering on Faundit’s platform and app, with AI built into both the product and the way we build it.',
+      da: 'Full-stack produktudvikling på Faundits platform og app, med AI indbygget i både produktet og måden, vi bygger det på.',
     },
-    highlights: { en: [], da: [] },
+    highlights: {
+      en: [
+        'Building and maintaining features end to end, from data models and backend logic to user interfaces.',
+        'Implementing AI features and agents, and automating processes that are manual today.',
+        'Evaluating and choosing the AI technologies and providers that fit each use case.',
+        'Taking part in product prioritisation and turning customer needs into practical solutions.',
+        'Continuously modernising the codebase and technical infrastructure.',
+      ],
+      da: [
+        'Udvikling og vedligehold af features end-to-end, fra datamodeller og backend-logik til brugergrænseflader.',
+        'Implementering af AI-features og agenter samt automatisering af processer, der i dag er manuelle.',
+        'Vurdering og valg af de AI-teknologier og -udbydere, der passer til hver use case.',
+        'Deltagelse i produktprioritering og omsætning af kundebehov til praktiske løsninger.',
+        'Løbende modernisering af kodebasen og den tekniske infrastruktur.',
+      ],
+    },
   },
   {
     org: 'DEVEX',
