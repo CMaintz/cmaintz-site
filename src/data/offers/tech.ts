@@ -80,32 +80,6 @@ export const techServices: Service[] = [
     pricing: 'quote',
   },
   {
-    id: 'ai-platform',
-    audience: 'tech',
-    areas: ['ai', 'platform'],
-    glyph: '◫',
-    title: { en: 'AI platform engineering', da: 'AI-platform' },
-    body: {
-      en: 'One shared way for every team to use LLMs: a provider-agnostic gateway with cost-aware model routing, usage and spend per team, guardrails, caching and evals, so each new AI feature starts on a paved road.',
-      da: 'Én fælles vej for alle teams til at bruge LLM’er: en udbyder-agnostisk gateway med cost-aware model routing, forbrug og udgifter pr. team, guardrails, caching og evals, så hver ny AI-funktion starter på en asfalteret vej.',
-    },
-    deliverables: {
-      en: [
-        'LLM gateway & model routing',
-        'Cost & usage per team',
-        'Shared guardrails & evals',
-        'Docs & templates for teams',
-      ],
-      da: [
-        'LLM-gateway & model routing',
-        'Omkostninger & forbrug pr. team',
-        'Fælles guardrails & evals',
-        'Dokumentation & skabeloner til teams',
-      ],
-    },
-    pricing: 'quote',
-  },
-  {
     id: 'agent-ready',
     audience: 'tech',
     areas: ['ai', 'backend'],
@@ -136,5 +110,31 @@ export const techServices: Service[] = [
       da: ['Tjek af kodens sundhed', 'Opgraderingsplan', 'Tests før ændringer', 'Migrering trin for trin'],
     },
     pricing: 'either',
+  },
+  {
+    id: 'ai-platform',
+    audience: 'tech',
+    areas: ['ai', 'platform'],
+    glyph: '◫',
+    title: { en: 'AI platform engineering', da: 'AI-platform' },
+    body: {
+      en: 'One shared way for every team to use LLMs: a provider-agnostic gateway with cost-aware model routing, usage and spend per team, guardrails, caching and evals, so each new AI feature starts on a paved road.',
+      da: 'Én fælles vej for alle teams til at bruge LLM’er: en udbyder-agnostisk gateway med cost-aware model routing, forbrug og udgifter pr. team, guardrails, caching og evals, så hver ny AI-funktion starter på en asfalteret vej.',
+    },
+    deliverables: {
+      en: [
+        'LLM gateway & model routing',
+        'Cost & usage per team',
+        'Shared guardrails & evals',
+        'Docs & templates for teams',
+      ],
+      da: [
+        'LLM-gateway & model routing',
+        'Omkostninger & forbrug pr. team',
+        'Fælles guardrails & evals',
+        'Dokumentation & skabeloner til teams',
+      ],
+    },
+    pricing: 'quote',
   },
 ];

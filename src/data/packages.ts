@@ -73,7 +73,7 @@ export const packages: Package[] = [
     audience: 'business',
     priceDkk: 14500,
     topic: 'freelance',
-    duration: { en: '3 days', da: '3 dage' },
+    duration: { en: 'About 24 hours of work, over 3-4 weeks', da: 'Ca. 24 timers arbejde, over 3-4 uger' },
     title: { en: 'AI feasibility sprint', da: 'AI-afklaringssprint' },
     body: {
       en: 'Find out whether AI can really take over a task - on your own data - before you invest in building it properly.',
@@ -93,7 +93,7 @@ export const packages: Package[] = [
     audience: 'business',
     priceDkk: 7500,
     topic: 'freelance',
-    duration: { en: '2 days', da: '2 dage' },
+    duration: { en: 'About 16 hours of work, over 2-3 weeks', da: 'Ca. 16 timers arbejde, over 2-3 uger' },
     title: { en: 'AI product-text pilot', da: 'AI-produkttekster, pilot' },
     body: {
       en: '50 of your products get AI-written descriptions, SEO texts and categories in two languages, reviewed by a person, so you see the quality and the cost per product before doing the whole catalogue.',
@@ -109,7 +109,7 @@ export const packages: Package[] = [
     audience: 'business',
     priceDkk: 9500,
     topic: 'freelance',
-    duration: { en: '2 days', da: '2 dage' },
+    duration: { en: 'About 16 hours of work, over 2-3 weeks', da: 'Ca. 16 timers arbejde, over 2-3 uger' },
     title: { en: 'Auto-triage pilot', da: 'Automatisk sortering, pilot' },
     body: {
       en: 'Find out how much of your inbox or ticket queue AI can sort on its own, measured on your own past mail, and where a person still has to look.',
@@ -129,7 +129,7 @@ export const packages: Package[] = [
     audience: 'both',
     priceDkk: 9500,
     topic: 'freelance',
-    duration: { en: '2 days', da: '2 dage' },
+    duration: { en: 'About 16 hours of work, over 2-3 weeks', da: 'Ca. 16 timers arbejde, over 2-3 uger' },
     title: { en: 'Agent-ready website', da: 'Agent-klar hjemmeside' },
     body: {
       en: 'AI assistants increasingly read your site for your customers. Your site gets what they look for, so they find your offers and quote the right answers.',
@@ -149,7 +149,7 @@ export const packages: Package[] = [
     audience: 'tech',
     priceDkk: 14500,
     topic: 'freelance',
-    duration: { en: '3 days', da: '3 dage' },
+    duration: { en: 'About 24 hours of work, over 3-4 weeks', da: 'Ca. 24 timers arbejde, over 3-4 uger' },
     title: { en: 'CI quality-gate starter', da: 'CI-kvalitets-gate, startpakke' },
     body: {
       en: 'One repository gets a deterministic gate - format, lint, types, tests, secret scanning - running the same locally and in CI, ratcheted so nothing has to be fixed up front.',
@@ -165,7 +165,7 @@ export const packages: Package[] = [
     audience: 'tech',
     priceDkk: 9500,
     topic: 'freelance',
-    duration: { en: '2 days', da: '2 dage' },
+    duration: { en: 'About 16 hours of work, over 2-3 weeks', da: 'Ca. 16 timers arbejde, over 2-3 uger' },
     title: { en: 'Coding-agent setup', da: 'Opsætning af kodeagenter' },
     body: {
       en: 'One repository is set up for Claude Code or Codex, with the project rules, skills, hooks and permissions that keep agent output reviewable, and your team learns how to work with it.',

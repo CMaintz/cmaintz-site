@@ -39,5 +39,7 @@ export function contactHref(answers: Answers, lang: Lang, intro: string) {
   const topic = packages.find((p) => p.id === pkg)?.topic ?? 'freelance';
   const message = [intro, '', ...brief(answers, lang).map((line) => `- ${line}`), '', ''].join('\n');
   const query = new URLSearchParams({ topic, package: pkg, message });
+  const budget = steps.find((s) => s.id === 'budget')?.options.find((o) => o.id === answers.budget);
+  if (budget) query.set('budget', budget.label[lang]);
   return `${localize('/contact', lang)}?${query}`;
 }

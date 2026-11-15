@@ -26,7 +26,7 @@ export const da: Record<keyof typeof en, string> = {
   'home.status': 'åben for mindre freelanceopgaver',
   'home.hello': 'Hej, jeg hedder Christoffer.',
   'home.lede':
-    'Jeg bygger maskineriet, der gør softwareteams hurtigere og sikrere: developer experience, CI/CD og kvalitets-gates, platformværktøjer og AI, der rent faktisk kommer i produktion.',
+    'Jeg bygger AI, der rent faktisk kommer i produktion, plus hjemmesiderne, webshoppene og automatiseringen omkring den, med den CI/CD, developer experience og de platformværktøjer, der gør det hele sikkert at ændre.',
   'home.metaTitle': 'Freelanceudvikler i Aarhus: AI og webudvikling',
   'home.cta.work': 'Se mit arbejde',
   'home.cta.hire': 'Hyr mig',
@@ -139,13 +139,13 @@ export const da: Record<keyof typeof en, string> = {
   'about.funfact': 'Fun fact: Jeg byggede min første hjemmeside til min fars forretning, da jeg var 13.',
   'services.title': 'Ydelser',
   'services.lede':
-    'Mindre manuelt arbejde for danske virksomheder, bedre værktøjer for udviklingsteams.\nStartpakker til fast pris, afgrænsede projekter eller timebasis - remote eller on-site i Aarhus.',
-  'services.metaTitle': 'Ydelser: AI-automatisering og webudvikling',
+    'AI, der tager arbejde fra jeres bord, plus hjemmesider og webshops, der virker, for små og mellemstore danske virksomheder. Bedre værktøjer for udviklingsteams.\nMindre, afgrænsede opgaver til fast pris eller timepris - mest remote, on-site i Aarhus når det giver mening.',
+  'services.metaTitle': 'Ydelser: AI-automatisering, hjemmesider og webshops',
   'services.metaDescription':
-    'Freelanceudvikler i Aarhus: AI-automatisering, AI-implementering, web- og softwareudvikling og CI/CD. Fast pris eller timepris. Første 30 min. er gratis.',
+    'Freelanceudvikler i Aarhus: AI-automatisering, AI-implementering, hjemmesider, webshops, softwareudvikling og CI/CD. Fast pris eller timepris. Første 30 min. er gratis.',
   'services.pricing': 'Priser',
   'services.pricing.body':
-    'Timepris fra {rate} kr. ekskl. moms. Opgaver til fast pris får et tilbud efter afgrænsning, fordi prisen afhænger af kompleksiteten. Det første 30-minutters opkald er gratis.',
+    'Timepris fra {rate} kr. ekskl. moms. Opgaver til fast pris får et tilbud efter afgrænsning, fordi prisen afhænger af kompleksiteten. Det første 30-minutters opkald er gratis. Større opgaver deles op i faser med hver sin pris, så I kan stoppe efter enhver af dem.',
   'services.pricing.quote': 'Tilbud efter kompleksitet',
   'services.pricing.hourly': 'Timebasis',
   'services.pricing.either': 'Timebasis eller tilbud',
@@ -155,11 +155,16 @@ export const da: Record<keyof typeof en, string> = {
   'services.who': 'Hvem jeg arbejder med',
   'services.for.business': 'For virksomheder',
   'services.for.business.body':
-    'Små og mellemstore danske virksomheder, der mister timer på manuelt arbejde mellem webshop, regnskab, regneark og mail - eller vil have AI til at overtage en opgave ordentligt. Ingen teknisk baggrund nødvendig.',
+    'Små og mellemstore danske virksomheder, der har brug for en hjemmeside, der virker, en rettelse til webshoppen eller færre timer brugt på manuelt arbejde mellem systemer - eller vil have AI til at overtage en opgave ordentligt. Ingen teknisk baggrund nødvendig.',
   'services.for.tech': 'For udviklingsteams',
   'services.for.tech.body':
     'Teams, der vil have CI, de kan stole på, en kvalitets-gate AI-agenter ikke kan svække, og kodeagenter der hjælper i stedet for at skabe mere review.',
   'services.for.see': 'Se ydelser',
+  'services.for.show': 'Vis ydelser for',
+  'services.for.all': 'Det hele',
+  'services.for.all.body': 'Alle ydelser og pakker, både for virksomheder og udviklingsteams.',
+  'services.from': 'Fra',
+  'services.proof': 'Seneste resultat',
   'services.for.both': 'Noget andet?',
   'services.packages': 'Startpakker til fast pris',
   'services.packages.lede':
@@ -167,6 +172,7 @@ export const da: Record<keyof typeof en, string> = {
   'services.free': 'Gratis',
   'services.vat': 'ekskl. moms',
   'services.package.cta': 'Spørg om denne',
+  'services.package.followup': '+ {followup} timers opfølgning efter levering, inkluderet',
   'services.package.claim': 'Få en gratis mini-audit',
   'services.cases': 'Resultater',
   'services.cases.lede':
@@ -174,7 +180,7 @@ export const da: Record<keyof typeof en, string> = {
   'services.case.problem': 'Problemet',
   'services.case.solution': 'Det byggede jeg',
   'services.case.read': 'Hele casen',
-  'services.book': 'Book et opkald på 20 min',
+  'services.book': 'Book et gratis opkald på 30 min',
   'services.faq': 'Ofte stillede spørgsmål',
   'faq.title': 'Ofte stillede spørgsmål',
   'faq.lede': 'Det, kunder typisk spørger om, før vi går i gang: AI, hvad jeg laver, priser og samarbejdet.',

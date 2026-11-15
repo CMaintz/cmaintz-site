@@ -47,6 +47,22 @@ export const steps: WizardStep[] = [
     question: { en: 'What would help most right now?', da: 'Hvad ville hjælpe mest lige nu?' },
     options: [
       {
+        id: 'website',
+        audience: 'business',
+        label: {
+          en: 'Our website is outdated, slow or hard to find',
+          da: 'Vores hjemmeside er forældet, langsom eller svær at finde',
+        },
+      },
+      {
+        id: 'visibility',
+        audience: 'business',
+        label: {
+          en: 'Customers can’t find us on Google or in ChatGPT',
+          da: 'Kunderne kan ikke finde os på Google eller i ChatGPT',
+        },
+      },
+      {
         id: 'manual-work',
         audience: 'business',
         label: {
@@ -145,6 +161,8 @@ export const steps: WizardStep[] = [
 ];
 
 export const recommendations: Record<string, Recommendation> = {
+  website: { pkg: 'mini-audit', service: 'website' },
+  visibility: { pkg: 'agent-ready', service: 'seo-geo' },
   'manual-work': { pkg: 'automation-check', service: 'automation', case: 'email-preview' },
   'ai-content': { pkg: 'ai-sprint', service: 'ai-tasks', case: 'illux' },
   webshop: { pkg: 'mini-audit', service: 'webshop', case: 'illux' },

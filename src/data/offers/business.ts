@@ -55,6 +55,74 @@ export const businessServices: Service[] = [
     pricing: 'quote',
   },
   {
+    id: 'website',
+    audience: 'business',
+    areas: [],
+    glyph: '◰',
+    title: { en: 'Websites', da: 'Hjemmesider' },
+    body: {
+      en: 'A new website, a redesign, or the fixes your current one has needed for a while: faster pages, better visibility on Google, accessibility, and contact forms that actually arrive. Built with modern tools like Astro, or improved where it already lives, and easy for you to update yourself.',
+      da: 'En ny hjemmeside, et redesign eller de rettelser, jeres nuværende side har manglet længe: hurtigere sider, bedre synlighed på Google, tilgængelighed og kontaktformularer, der rent faktisk når frem. Bygget med moderne værktøjer som Astro, eller forbedret dér, hvor siden allerede bor, og nem for jer selv at opdatere.',
+    },
+    deliverables: {
+      en: [
+        'Design and build, mobile first',
+        'Speed, SEO & accessibility basics',
+        'A simple editor for your own texts',
+        'Hosting and domain in your name',
+      ],
+      da: [
+        'Design og udvikling, mobil først',
+        'Hastighed, SEO & tilgængelighed',
+        'En enkel editor til jeres egne tekster',
+        'Hosting og domæne i jeres navn',
+      ],
+    },
+    pricing: 'either',
+  },
+  {
+    id: 'seo-geo',
+    audience: 'business',
+    areas: ['ai'],
+    glyph: '◔',
+    title: { en: 'SEO & AI search visibility', da: 'SEO & synlighed i AI-søgning' },
+    body: {
+      en: 'Get found on Google and quoted by ChatGPT, Perplexity and Google’s AI answers. I fix the technical basics, give your pages the structure search engines and AI assistants read, and tell you which texts are worth writing. A quick job with effects you can measure.',
+      da: 'Bliv fundet på Google og citeret af ChatGPT, Perplexity og Googles AI-svar. Jeg retter det tekniske grundlag, giver siderne den struktur, søgemaskiner og AI-assistenter læser, og fortæller jer, hvilke tekster der er værd at skrive. En hurtig opgave med effekt, I kan måle.',
+    },
+    deliverables: {
+      en: [
+        'Technical SEO check & fixes',
+        'Structured data & llms.txt',
+        'Titles, descriptions & page structure',
+        'Before and after measurement',
+      ],
+      da: [
+        'Teknisk SEO-tjek & rettelser',
+        'Strukturerede data & llms.txt',
+        'Titler, beskrivelser & sidestruktur',
+        'Måling før og efter',
+      ],
+    },
+    pricing: 'either',
+  },
+  {
+    id: 'webshop',
+    audience: 'business',
+    areas: ['backend'],
+    glyph: '🛒',
+    title: { en: 'Webshops & e-commerce integrations', da: 'Webshops & e-handelsintegrationer' },
+    body: {
+      en: 'Features, fixes and integrations for your webshop: Shopware 6 is my speciality, and I also work with Shopify and WooCommerce. Connect the shop to your ERP, accounting, shipping or product data, or get a custom plugin built to last.',
+      da: 'Funktioner, rettelser og integrationer til jeres webshop: Shopware 6 er mit speciale, og jeg arbejder også med Shopify og WooCommerce. Forbind shoppen med ERP, regnskab, fragt eller produktdata, eller få bygget et plugin, der holder.',
+    },
+    deliverables: {
+      en: ['Custom plugins & apps', 'ERP, shipping & accounting integrations', 'Tests', 'Deployment guide'],
+      da: ['Skræddersyede plugins & apps', 'Integration til ERP, fragt & regnskab', 'Tests', 'Deployment-guide'],
+    },
+    pricing: 'either',
+  },
+  {
     id: 'ai-assistant',
     audience: 'business',
     areas: ['ai', 'backend'],
@@ -105,22 +173,6 @@ export const businessServices: Service[] = [
       ],
     },
     pricing: 'quote',
-  },
-  {
-    id: 'webshop',
-    audience: 'business',
-    areas: ['backend'],
-    glyph: '🛒',
-    title: { en: 'Webshops & e-commerce integrations', da: 'Webshops & e-handelsintegrationer' },
-    body: {
-      en: 'Features, fixes and integrations for your webshop: Shopware 6 is my speciality, and I also work with Shopify and WooCommerce. Connect the shop to your ERP, accounting, shipping or product data, or get a custom plugin built to last.',
-      da: 'Funktioner, rettelser og integrationer til jeres webshop: Shopware 6 er mit speciale, og jeg arbejder også med Shopify og WooCommerce. Forbind shoppen med ERP, regnskab, fragt eller produktdata, eller få bygget et plugin, der holder.',
-    },
-    deliverables: {
-      en: ['Custom plugins & apps', 'ERP, shipping & accounting integrations', 'Tests', 'Deployment guide'],
-      da: ['Skræddersyede plugins & apps', 'Integration til ERP, fragt & regnskab', 'Tests', 'Deployment-guide'],
-    },
-    pricing: 'either',
   },
   {
     id: 'fullstack',

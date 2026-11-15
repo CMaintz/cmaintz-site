@@ -55,6 +55,15 @@ interface Rubric {
  * The hours are first guesses, to be calibrated against real jobs.
  */
 export const estimateRubric: Record<string, Rubric> = {
+  website: {
+    hours: { small: [6, 20], medium: [20, 45], large: [45, 80] },
+    drivers:
+      'number of pages and languages, design from scratch or from a template, content ready or not, forms and integrations',
+  },
+  'seo-geo': {
+    hours: { small: [3, 8], medium: [8, 20], large: [20, 40] },
+    drivers: 'number of pages and languages, platform access, how much text needs rewriting, ongoing measurement',
+  },
   automation: {
     hours: { small: [6, 15], medium: [15, 40], large: [40, 100] },
     drivers: 'number of systems involved, whether they have APIs, error handling and volume',
