@@ -110,7 +110,7 @@ export const businessServices: Service[] = [
     id: 'webshop',
     audience: 'business',
     areas: ['backend'],
-    glyph: '▤',
+    glyph: '🛒',
     title: { en: 'Webshops & e-commerce integrations', da: 'Webshops & e-handelsintegrationer' },
     body: {
       en: 'Features, fixes and integrations for your webshop: Shopware 6 is my speciality, and I also work with Shopify and WooCommerce. Connect the shop to your ERP, accounting, shipping or product data, or get a custom plugin built to last.',
