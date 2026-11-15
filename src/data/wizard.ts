@@ -161,7 +161,7 @@ export const steps: WizardStep[] = [
 ];
 
 export const recommendations: Record<string, Recommendation> = {
-  website: { pkg: 'mini-audit', service: 'website' },
+  website: { pkg: 'website-check', service: 'website' },
   visibility: { pkg: 'agent-ready', service: 'seo-geo' },
   'manual-work': { pkg: 'automation-check', service: 'automation', case: 'email-preview' },
   'ai-content': { pkg: 'ai-sprint', service: 'ai-tasks', case: 'illux' },

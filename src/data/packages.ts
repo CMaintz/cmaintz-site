@@ -45,12 +45,48 @@ export const packages: Package[] = [
     },
   },
   {
+    id: 'website-check',
+    audience: 'business',
+    priceDkk: 4500,
+    topic: 'freelance',
+    duration: { en: 'About 6 hours of work, within 1-2 weeks', da: 'Ca. 6 timers arbejde, inden for 1-2 uger' },
+    title: { en: 'Website & webshop check', da: 'Tjek af hjemmeside & webshop' },
+    body: {
+      en: 'A look at your site the way customers and Google see it: speed, mobile, SEO, accessibility and the path to a sale or an enquiry. You get a short, prioritised list of what to fix and what it would cost.',
+      da: 'Et kig på jeres side, som kunderne og Google ser den: hastighed, mobil, SEO, tilgængelighed og vejen til et salg eller en henvendelse. I får en kort, prioriteret liste over, hvad der skal rettes, og hvad det vil koste.',
+    },
+    includes: {
+      en: ['Speed, mobile & SEO review', 'Where visitors drop off', 'Prioritised fix list with prices'],
+      da: [
+        'Gennemgang af hastighed, mobil & SEO',
+        'Hvor de besøgende falder fra',
+        'Prioriteret liste over rettelser med priser',
+      ],
+    },
+  },
+  {
+    id: 'local-basics',
+    audience: 'business',
+    priceDkk: 3500,
+    topic: 'freelance',
+    duration: { en: 'About 4-5 hours of work, within 1-2 weeks', da: 'Ca. 4-5 timers arbejde, inden for 1-2 uger' },
+    title: { en: 'Get found locally', da: 'Bliv fundet lokalt' },
+    body: {
+      en: 'The basics most small businesses skip: a complete Google Business Profile, visitor statistics that respect privacy, and a cookie banner that follows the rules.',
+      da: 'Det grundlæggende, de fleste små virksomheder springer over: en komplet Google Business-profil, besøgsstatistik, der respekterer privatlivet, og et cookiebanner, der følger reglerne.',
+    },
+    includes: {
+      en: ['Google Business Profile set up', 'Privacy-friendly analytics', 'Cookie consent that follows the rules'],
+      da: ['Google Business-profil sat op', 'Privatlivsvenlig statistik', 'Cookiesamtykke, der følger reglerne'],
+    },
+  },
+  {
     id: 'automation-check',
     audience: 'business',
     priceDkk: 3900,
     topic: 'freelance',
     duration: { en: 'Half-day workshop', da: 'Halv dags workshop' },
-    title: { en: 'Automation check', da: 'Automatiseringstjek' },
+    title: { en: 'AI & automation readiness check', da: 'AI- & automatiseringstjek' },
     body: {
       en: 'We walk through how work actually flows through your business, and you get a prioritised plan: what to automate, what it saves and what it costs.',
       da: 'Vi gennemgår, hvordan arbejdet reelt flyder gennem virksomheden, og I får en prioriteret plan: hvad der skal automatiseres, hvad det sparer, og hvad det koster.',
@@ -66,6 +102,42 @@ export const packages: Package[] = [
         'Overblik over manuelle opgaver og timeforbrug',
         'Prioriteret plan med vejledende priser',
       ],
+    },
+  },
+  {
+    id: 'accessibility-check',
+    audience: 'business',
+    priceDkk: 6000,
+    topic: 'freelance',
+    duration: { en: 'About 8 hours of work, within 2 weeks', da: 'Ca. 8 timers arbejde, inden for 2 uger' },
+    title: { en: 'Accessibility check (EAA)', da: 'Tilgængelighedstjek (EAA)' },
+    body: {
+      en: 'Since June 2025 the European Accessibility Act covers most webshops. Find out where your site stands against WCAG, tested with a keyboard and a screen reader, not just a scanner.',
+      da: 'Siden juni 2025 har den europæiske tilgængelighedslov dækket de fleste webshops. Find ud af, hvor jeres side står i forhold til WCAG, testet med tastatur og skærmlæser, ikke kun en scanner.',
+    },
+    includes: {
+      en: ['Key pages and the checkout tested', 'Findings ranked by risk', 'Fix plan, or the fixes themselves'],
+      da: [
+        'Vigtigste sider og kassen testet',
+        'Fund sorteret efter risiko',
+        'Plan for rettelser, eller selve rettelserne',
+      ],
+    },
+  },
+  {
+    id: 'ai-chat',
+    audience: 'business',
+    priceDkk: 14500,
+    topic: 'freelance',
+    duration: { en: 'About 20 hours of work, over 3-4 weeks', da: 'Ca. 20 timers arbejde, over 3-4 uger' },
+    title: { en: 'AI chat on your website', da: 'AI-chat på jeres hjemmeside' },
+    body: {
+      en: 'A chat on your site that answers from your own FAQ, products and pages, shows where the answer came from, and hands over to a person when it is unsure. The same kind of assistant this site runs.',
+      da: 'En chat på jeres side, der svarer ud fra jeres egen FAQ, produkter og sider, viser, hvor svaret kommer fra, og giver videre til et menneske, når den er usikker. Den samme slags assistent, som dette site kører.',
+    },
+    includes: {
+      en: ['Answers from your own content', 'Hand-over to a person', 'Running costs known up front'],
+      da: ['Svar ud fra jeres eget indhold', 'Videregivelse til et menneske', 'Kendte driftsomkostninger'],
     },
   },
   {

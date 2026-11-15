@@ -107,6 +107,27 @@ export const businessServices: Service[] = [
     pricing: 'either',
   },
   {
+    id: 'website-care',
+    audience: 'business',
+    areas: [],
+    glyph: '◷',
+    title: { en: 'Website care, monthly', da: 'Pleje af hjemmesiden, månedligt' },
+    body: {
+      en: 'A few hours each month for the small things: updates, text and image changes, a new page, and a check that the site, forms and backups still work. No new quote for every little job.',
+      da: 'Et par timer hver måned til de små ting: opdateringer, ændringer af tekst og billeder, en ny side og et tjek af, at siden, formularerne og backuppen stadig virker. Intet nyt tilbud for hver lille opgave.',
+    },
+    deliverables: {
+      en: ['Updates & small changes', 'Uptime & form checks', 'Backups that are tested', 'Short monthly note'],
+      da: [
+        'Opdateringer & små ændringer',
+        'Tjek af oppetid & formularer',
+        'Backups, der bliver testet',
+        'Kort månedlig status',
+      ],
+    },
+    pricing: 'hourly',
+  },
+  {
     id: 'webshop',
     audience: 'business',
     areas: ['backend'],

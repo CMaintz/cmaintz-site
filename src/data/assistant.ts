@@ -64,6 +64,11 @@ export const estimateRubric: Record<string, Rubric> = {
     hours: { small: [3, 8], medium: [8, 20], large: [20, 40] },
     drivers: 'number of pages and languages, platform access, how much text needs rewriting, ongoing measurement',
   },
+  'website-care': {
+    // Hours per month, kept under FOLLOW_UP_FROM_HOURS: a retainer has no hand-over to follow up on.
+    hours: { small: [2, 2], medium: [2, 3], large: [3, 3] },
+    drivers: 'hours per month; plugins and integrations to keep updated, how often content changes',
+  },
   automation: {
     hours: { small: [6, 15], medium: [15, 40], large: [40, 100] },
     drivers: 'number of systems involved, whether they have APIs, error handling and volume',
