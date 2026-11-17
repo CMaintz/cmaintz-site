@@ -86,3 +86,20 @@ describe('contactHref', () => {
     expect(url.searchParams.get('topic')).toBe('audit');
   });
 });
+
+describe('contactHref, budget', () => {
+  const params = (a: typeof answers | { pain: string }, lang: 'en' | 'da') =>
+    new URL(contactHref(a, lang, 'Hi'), 'https://x.test').searchParams;
+
+  it('fills the budget field with the budget the visitor picked', () => {
+    expect(params(answers, 'da').get('budget')).toBe('5.000-25.000 kr.');
+  });
+
+  it('leaves the budget field empty when the visitor has no budget in mind', () => {
+    expect(params({ ...answers, budget: 'unknown' }, 'en').has('budget')).toBe(false);
+  });
+
+  it('leaves the budget field empty when the visitor skipped the question', () => {
+    expect(params({ pain: 'unsure' }, 'en').has('budget')).toBe(false);
+  });
+});

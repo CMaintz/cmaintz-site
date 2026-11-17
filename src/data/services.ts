@@ -9,6 +9,15 @@ type L = Record<Lang, string>;
 export const HOURLY_RATE_DKK = 650;
 
 /**
+ * Hours added to every estimate of 4+ hours, low and high end, for questions and
+ * small fixes after delivery. Fixed-price packages include it in their price.
+ */
+export const FOLLOW_UP_HOURS: readonly [number, number] = [1, 2];
+export const FOLLOW_UP_FROM_HOURS = 4;
+/** "1-2": the follow-up hours as copy shows them. */
+export const FOLLOW_UP_RANGE = FOLLOW_UP_HOURS.join('-');
+
+/**
  * How a service is priced. No fixed amounts: a fixed price depends on the
  * complexity, so it's quoted after scoping. Labels live in the i18n files.
  */
@@ -70,7 +79,10 @@ export const process: Record<Lang, { step: string; body: string }[]> = {
     },
     { step: 'Scope', body: 'A written proposal: deliverables, timeline, fixed price or hourly estimate.' },
     { step: 'Build', body: 'Short iterations, visible progress, everything in your repo from day one.' },
-    { step: 'Hand over', body: 'Docs, a walkthrough, and code your team can own without me.' },
+    {
+      step: 'Hand over',
+      body: `Docs, a walkthrough, and code your team can own without me, plus ${FOLLOW_UP_RANGE} hours of follow-up afterwards for questions and small fixes.`,
+    },
   ],
   da: [
     { step: 'Opkald', body: 'Gratis 30 minutter til at høre, hvad I har brug for, og om jeg er det rette match.' },
@@ -80,6 +92,9 @@ export const process: Record<Lang, { step: string; body: string }[]> = {
     },
     { step: 'Afgrænsning', body: 'Et skriftligt oplæg: leverancer, tidsplan, fast pris eller timeestimat.' },
     { step: 'Byg', body: 'Korte iterationer, synlige fremskridt, alt i jeres repo fra dag ét.' },
-    { step: 'Overdragelse', body: 'Dokumentation, en gennemgang og kode, jeres team kan eje uden mig.' },
+    {
+      step: 'Overdragelse',
+      body: `Dokumentation, en gennemgang og kode, jeres team kan eje uden mig, plus ${FOLLOW_UP_RANGE} timers opfølgning bagefter til spørgsmål og små rettelser.`,
+    },
   ],
 };

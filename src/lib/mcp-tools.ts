@@ -125,7 +125,7 @@ export const mcpTools: McpTool<McpCatalog>[] = [
     name: 'list_services',
     title: 'Services and pricing',
     description:
-      'Freelance services (AI automation, AI-assisted development, CI/CD and DX, full-stack, Shopware), how each is priced, and how an engagement runs.',
+      'Freelance services (websites, webshops and Shopware, AI automation, full-stack, CI/CD and DX), how each is priced, and how an engagement runs.',
     inputSchema: withLang,
     run: serviceList,
   },

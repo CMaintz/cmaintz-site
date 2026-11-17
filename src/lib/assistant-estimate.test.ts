@@ -1,13 +1,20 @@
 import { expect, it } from 'vitest';
 import { estimate } from './assistant-estimate';
 import { estimateRubric } from '../data/assistant';
-import { services, HOURLY_RATE_DKK } from '../data/services';
+import { services, FOLLOW_UP_FROM_HOURS, FOLLOW_UP_HOURS, HOURLY_RATE_DKK } from '../data/services';
 
-it('estimate: prices the hour range at the hourly rate, ex. VAT and non-binding', () => {
+it('estimate: adds no follow-up to an end of the range below the follow-up threshold', () => {
+  const [lo] = estimateRubric['seo-geo'].hours.small;
+  expect(lo).toBeLessThan(FOLLOW_UP_FROM_HOURS);
+  expect(estimate({ service: 'seo-geo', size: 'small' })).toMatchObject({ hours: { low: lo } });
+});
+
+it('estimate: prices the hour range plus follow-up at the hourly rate, ex. VAT and non-binding', () => {
   const [lo, hi] = estimateRubric['quality-gate'].hours.medium;
+  const [fLo, fHi] = FOLLOW_UP_HOURS;
   expect(estimate({ service: 'quality-gate', size: 'medium' })).toMatchObject({
-    hours: { low: lo, high: hi },
-    dkk: { low: lo * HOURLY_RATE_DKK, high: hi * HOURLY_RATE_DKK },
+    hours: { low: lo + fLo, high: hi + fHi },
+    dkk: { low: (lo + fLo) * HOURLY_RATE_DKK, high: (hi + fHi) * HOURLY_RATE_DKK },
     vatIncluded: false,
     binding: false,
   });

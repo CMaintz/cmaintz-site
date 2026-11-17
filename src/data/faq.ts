@@ -53,16 +53,16 @@ export const faq: FaqItem[] = [
     topic: 'working',
     q: { en: 'Do you work remotely?', da: 'Arbejder du remote?' },
     a: {
-      en: 'Yes, remote or on-site in Aarhus, Denmark. I work in English and Danish.',
-      da: 'Ja, remote eller on-site i Aarhus. Jeg arbejder på dansk og engelsk.',
+      en: 'Yes, mostly remote, and on-site in Aarhus, Denmark, when it helps. I work in English and Danish.',
+      da: 'Ja, mest remote, og on-site i Aarhus, når det giver mening. Jeg arbejder på dansk og engelsk.',
     },
   },
   {
     topic: 'services',
     q: { en: 'Can you help with more than AI?', da: 'Kan du hjælpe med andet end AI?' },
     a: {
-      en: 'Yes. For businesses: workflow automation and integrations, webshops, full-stack web apps and mobile apps. For dev teams: CI/CD and quality gates, legacy modernisation and developer experience.',
-      da: 'Ja. Til virksomheder: automatisering og integrationer, webshops, full-stack webapps og mobilapps. Til udviklingsteams: CI/CD og kvalitets-gates, modernisering af legacy-kode og developer experience.',
+      en: 'Yes. For businesses: websites and website care, SEO and visibility in AI search, webshops, workflow automation and integrations, full-stack web apps and mobile apps. For dev teams: CI/CD and quality gates, legacy modernisation and developer experience.',
+      da: 'Ja. Til virksomheder: hjemmesider og pleje af dem, SEO og synlighed i AI-søgning, webshops, automatisering og integrationer, full-stack webapps og mobilapps. Til udviklingsteams: CI/CD og kvalitets-gates, modernisering af legacy-kode og developer experience.',
     },
   },
   {

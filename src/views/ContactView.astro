@@ -6,12 +6,16 @@ import Window from '../components/Window.astro';
 import { type Lang, localize, useT } from '../i18n/ui';
 import { site } from '../data/site';
 import { packages } from '../data/packages';
+import { services } from '../data/services';
+import type { OfferTitles } from '../lib/contact-prefill';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useT(lang);
 const topics = ['freelance', 'audit', 'consulting', 'other'] as const;
-const packageTitles = JSON.stringify(Object.fromEntries(packages.map((p) => [p.id, p.title[lang]])));
+type Offer = { id: string; title: Record<Lang, string> };
+const titles = (list: Offer[]) => Object.fromEntries(list.map((o) => [o.id, o.title[lang]]));
+const offerTitles: OfferTitles = { package: titles(packages), service: titles(services) };
 ---
 
 <Base lang={lang} title={t('contact.title')} description={t('contact.lede')}>
@@ -20,7 +24,7 @@ const packageTitles = JSON.stringify(Object.fromEntries(packages.map((p) => [p.i
 
   <section class="wrap layout">
     <Window title="new_message.eml" meta="✉">
-      <form class="form" method="post" action="/api/contact" data-contact data-email={site.email} data-packages={packageTitles} data-package-label={t('contact.package')}>
+      <form class="form" method="post" action="/api/contact" data-contact data-email={site.email} data-offers={JSON.stringify(offerTitles)} data-package-label={t('contact.package')}>
         <div class="row2">
           <label>{t('contact.name')}<input class="field" name="name" required maxlength="120" autocomplete="name" /></label>
           <label>{t('contact.email')}<input class="field" name="email" type="email" required maxlength="200" autocomplete="email" /></label>
@@ -56,6 +60,8 @@ const packageTitles = JSON.stringify(Object.fromEntries(packages.map((p) => [p.i
 </Base>
 
 <script>
+  import { presetText, type OfferTitles } from '../lib/contact-prefill';
+
   const form = document.querySelector<HTMLFormElement>('form[data-contact]');
   const status = form?.querySelector<HTMLElement>('.status');
   const button = form?.querySelector<HTMLButtonElement>('button[type=submit]');
@@ -103,24 +109,19 @@ const packageTitles = JSON.stringify(Object.fromEntries(packages.map((p) => [p.i
     if (q.has('sent') || q.has('error')) showResult(q.has('sent'));
   }
 
-  /** ?package=<id> from a /services starter: name it at the top of the message. */
-  /** Text for the message field: the /start wizard's brief, else the chosen package's name. */
-  function presetText(q: URLSearchParams) {
-    const brief = q.get('message');
-    if (brief) return brief.slice(0, 2000);
-    const id = q.get('package');
-    const titles = JSON.parse(form?.dataset.packages ?? '{}') as Record<string, string>;
-    return id && Object.hasOwn(titles, id) ? `${form!.dataset.packageLabel} ${titles[id]}\n\n` : '';
-  }
-
-  function presetMessage() {
+  function presetFields() {
+    const q = new URLSearchParams(location.search);
+    const offers = JSON.parse(form?.dataset.offers ?? '{"package":{},"service":{}}') as OfferTitles;
     const message = form?.querySelector('textarea');
-    const text = presetText(new URLSearchParams(location.search));
+    const text = presetText(q, offers, form?.dataset.packageLabel ?? '');
     if (text && message && !message.value) message.value = text;
+    const budget = form?.querySelector<HTMLInputElement>('input[name="budget"]');
+    const wanted = q.get('budget');
+    if (wanted && budget && !budget.value) budget.value = wanted.slice(0, 80);
   }
 
   presetTopic();
-  presetMessage();
+  presetFields();
   showRedirectResult();
   form?.addEventListener('submit', onSubmit);
 </script>
